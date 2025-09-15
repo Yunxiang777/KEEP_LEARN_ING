@@ -10,6 +10,30 @@
 =========================================================================================================
 =========================================================================================================
 =========================================================================================================
+During the login process, your phone receives a text message with a one-time passcode => Something you have
+You enter your PIN to make a deposit(訂金) into an ATM => Something you know
+You can use your fingerprint to unlock the door to the data center => Something you are
+Your login will not work unless you are connected to the VPN => Somewhere you are
+
+1. Something you have（你擁有的東西）
+定義：使用者必須持有的物理或電子物件來驗證身份。
+範例：智慧卡（smart card）、OTP 令牌（token）、手機收到的驗證碼、USB 安全金鑰（YubiKey）。
+
+2. Something you know（你知道的東西）
+定義：使用者必須知道的秘密資訊來驗證身份。
+範例：密碼（password）、PIN、答案問題（security question）。
+
+3. Something you are（你是誰）
+定義：基於使用者的生物特徵來驗證身份。
+範例：指紋、虹膜掃描、臉部辨識、聲紋、生物特徵認證。
+
+4. Somewhere you are（你在哪裡）
+定義：根據使用者的地理位置或裝置位置來驗證身份。
+範例：GPS 定位、IP 位址檢查、Wi-Fi 網路位置、VPN 登入限制。
+
+💡 補充：
+多因素認證（MFA, Multi-Factor Authentication）就是要求 至少兩種不同類型的因素，
+例如「Something you have + Something you know」或「Something you know + Something you are」，大幅提升安全性。
 =========================================================================================================
 A guard checks the identification of all visitors / 檢查每個訪客的身分證 => Operational
 All returns must be approved by a Vice President(副總) => Managerial
