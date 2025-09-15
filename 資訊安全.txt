@@ -1,0 +1,81 @@
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+A guard checks the identification of all visitors / 檢查每個訪客的身分證 => Operational
+All returns must be approved by a Vice President(副總) => Managerial
+A generator is used during a power outage(停電) => Physical
+Building doors can be unlocked with an access card => Physical
+System logs are transferred automatically to a SIEM => Technical
+
+Operational：人員每天執行的程序
+Managerial：政策、授權、策略決策
+Physical：保護建築、設備、人員
+Technical：依靠技術或系統自動執行的控制
+
+✅ 總結：
+Control categories describe the type of security applied to a task or event.
+控制類別描述了應用於某項任務或事件的安全類型。
+
+Operational controls are often implemented by people instead of systems.
+操作性控制（Operational controls）通常由人員執行，而非系統自動化完成。
+
+Security guards and awareness programs are examples of an operational control.
+保全人員和資安意識訓練計畫（awareness programs）都是操作性控制的範例。
+
+Managerial controls are administrative controls associated with security design and implementation.
+管理性控制（Managerial controls）是與安全設計與實施相關的管理性控制（administrative controls）。
+
+A set of policies and procedures would be an example of a managerial control.
+一套政策與作業程序（policies and procedures）就是管理性控制的範例。
+
+Physical controls are used to limit physical access.
+實體控制（Physical controls）用於限制物理存取。
+
+Badge readers, fences, and guard shacks are categorized as physical controls.
+門禁讀卡器（badge readers）、圍欄（fences）以及保全崗亭（guard shacks）都屬於實體控制。
+
+Technical controls are implemented using systems.
+技術控制（Technical controls）是透過系統來實施的控制措施。
+
+Operating system controls, firewalls, and automated processes are considered technical controls.
+作業系統控制（Operating system controls）、防火牆（firewalls）以及自動化流程（automated processes）都被視為技術控制。
+=========================================================================================================
+Outside Building => Parking and Visitor drop-off(下車)
+	=> Fencing(柵欄)，Lighting(大燈)
+Reception(接待) => Building lobby(接待大廳)
+	=> Access control vestibule(前廳) (門禁前廳)，Security guard(守衛)
+DataCenterDoor(資料中心大門) => Entrance frominside building(從大樓內進入)
+	=> Access badge(徽章)--通行證，Biometrics(生物辨識)
+ServerAdministration => Authentication toserver consolein the data center(管理者登入驗證)
+	=> Authentication token (令牌)
+=========================================================================================================
+Attacker obtains bank account number  and birth date by calling the victim?
+	=> Vishing (與音釣魚)
+Attacker accesses a database directly  from a web browser
+	=> Injection (資料庫注入)
+Attacker intercepts all communication between a client and a web server
+	=> On-path (中間人攻擊)
+Multiple attackers overwhelm a web server
+	=> DDoS (癱瘓攻擊)
+Attacker obtains a list of all login credentials used  over the last 24 hours
+	=> Keylogger (間諜攻擊)
+	
+On-path (MITM)：攔截並可能篡改雙方通訊。
+RFID cloning：複製 RFID 晶片資料以冒用身份。
+Keylogger：記錄鍵入資訊（密碼、帳號等）以竊取資料。
+Vishing：透過語音電話詐騙取得敏感資訊。
+Rootkit：隱藏於系統核心的惡意軟體，持久控制系統。
+DDoS：用大量流量或請求癱瘓目標服務。
+Injection：將惡意輸入當作程式碼或查詢執行，操控後端。
+Supply chain attack：滲透供應鏈或第三方元件，藉信任渠道影響目標。
+=========================================================================================================
