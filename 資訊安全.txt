@@ -2,15 +2,266 @@
 =========================================================================================================
 =========================================================================================================
 =========================================================================================================
+Which of the following would be the BEST way to provide a website login using existing credentials from a third-party site?
+以下哪一種方式最適合讓使用者使用第三方網站的既有帳號進行網站登入？
+
+The Answer: A. Federation
+正確答案：A. 聯合認證（Federation）
+聯合認證允許一個組織的成員使用另一個組織的帳號與密碼進行身份驗證。
+
+The incorrect answers:
+以下是錯誤的選項：
+
+B. 802.1X
+802.1X 是一種有用的認證協議，但它需要額外功能才能跨多個使用者資料庫進行驗證。
+
+C. EAP（Extensible Authentication Protocol，可擴充認證協議）
+EAP 是一種常用於網路存取控制的認證框架。
+單獨的 EAP 無法提供跨第三方資料庫驗證所需的聯合認證功能。
+
+D. SSO
+D. 單一登入（Single Sign-On, SSO）
+SSO 是指使用一次登入即可存取多個不同網路服務的過程。
+
+Obtaining login credentials from a third-party access database does not describe the process used by SSO.
+從第三方存取資料庫取得登入憑證並不是 SSO 的運作流程。
+
+核心概念
+Federation（聯合認證） → 跨組織或跨服務使用同一組憑證
+SSO（單一登入） → 單一認證存取多個服務，但不一定跨組織
+802.1X / EAP → 主要用於網路存取控制，無法直接跨第三方帳號驗證
 =========================================================================================================
+A user connects to a third-party website and receives this message:
+一名使用者連接到第三方網站時，收到這則訊息：
+Your connection is not private. NET::ERR_CERT_INVALID
+Which of the following attacks would be the MOST likely reason for this message?
+以下哪一種攻擊最有可能導致這個訊息出現？
+
+The Answer: C. On-path
+正確答案：C. 中間人攻擊（On-path）
+An on-path attack is often associated with a third-party who is actively intercepting network traffic.
+中間人攻擊通常是由第三方主動攔截網路流量所造成。
+This entity in the middle would not be able to provide a valid SSL certificate for a third-party website, and this error would appear in the browser as a warning.
+位於中間的攻擊者無法提供第三方網站的有效 SSL 證書，因此瀏覽器會顯示此錯誤警告。
+
+D. 解除認證攻擊（Deauthentication）
+解除認證攻擊通常發生在無線網路上，通常會導致斷線或無法連線。
+範例中的錯誤訊息並非因網路中斷或斷線所導致。
+
+NET::ERR_CERT_INVALID → SSL/TLS 證書驗證失敗
+最常見原因 → 中間人攻擊（On-path/MITM）
+其他攻擊（Brute force、DoS、Deauth）通常不會導致瀏覽器出現證書錯誤
+
+1️⃣ 只有「被動監聽」封包（不修改、不插入）
+如果你只是像 竊聽者 一樣，純粹抓封包（例如用 Wireshark 監控網路流量），而沒有插手或修改資料：
+使用者和網站之間的 TLS/SSL 連線仍然是端對端加密的
+憑證驗證仍然由瀏覽器做，會成功
+因此 不會出現 NET::ERR_CERT_INVALID
+也就是說，單純抓封包只是「偷看加密流量」，憑證仍然有效。
+
+2️⃣ 什麼情況會造成憑證失效
+只有在 中間人必須插手連線 時才會觸發：
+修改封包 / 插入自己的伺服器
+你必須用自己的憑證去回應使用者
+瀏覽器檢查憑證時發現不是受信任 CA → 警告
+HTTPS 換成 HTTP 或使用自簽名憑證
+也會導致瀏覽器報錯
 =========================================================================================================
+security engineer, is viewing this record from the firewall logs:
+一名資安工程師正在查看防火牆日誌中的這筆紀錄：
+UTC  04/05/2023  03:09:15  809      AV  Gateway  Alert
+136.127.92.171    80  ->  10.16.10.14    60818
+Gateway Anti-Virus Alert:XPACK.A_7854 (Trojan) blocked.
+
+
+Which of the following can be observed from this log information?
+從這筆日誌中可以觀察到以下哪一項？
+❍A. The victim's IP address is 136.127.92.171
+❍B. A download was blocked from a web server
+❍C. A botnet DDoS attack was blocked
+❍D. The Trojan was blocked, but the file was not
+
+The Answer: B. A download was blocked from a web server
+正確答案：B. 從網頁伺服器下載的檔案被阻擋
+從網頁伺服器的 80 埠到裝置的 60818 埠的流量，表示這筆流量是由網頁伺服器的 80 埠發起的。
+136.127.92.171:80 → 這是伺服器的 HTTP 埠
+10.16.10.14:60818 → 這是內網客戶端的隨機高位元埠
+流量方向是 伺服器發送資料到客戶端 → 這就是下載行為的特徵
+檔案下載是傳送木馬最常見的方式之一，這筆日誌顯示含有 XPACK.A_7854 木馬的檔案已被阻擋。
+
+The incorrect answers:
+以下是錯誤選項：
+A. The victim’s IP address is 136.127.92.171
+受害者的 IP 位址是 136.127.92.171
+這筆日誌使用箭頭來區分攻擊者與受害者。136.127.92.171 是攻擊者 IP，受害者 IP 是 10.16.10.14。
+
+C. A botnet DDoS attack was blocked
+一個殭屍網路 DDoS 攻擊被阻擋
+殭屍網路攻擊通常不會將木馬程式包含在分散式阻斷服務（DDoS）攻擊中。
+
+D. The Trojan was blocked, but the file was not
+木馬被阻擋，但檔案沒有
+木馬攻擊是指惡意軟體偽裝成合法軟體。木馬程式與檔案是同一個實體，無法將惡意程式與檔案分開。
 =========================================================================================================
+An insurance company has created a set of policies to handle data breaches.
+一家保險公司已制定一套政策，用於處理資料外洩事件。
+The security team has been given this set of requirements based on these policies:
+資安團隊已根據這些政策被分配了一組需求：
+Access records from all devices must be saved and archived
+所有裝置的存取紀錄必須被保存並存檔
+Any data access outside of normal working hours must be immediately reported
+凡是在正常工作時間之外的資料存取，必須立即回報
+Data access must only occur inside of the country
+資料存取必須僅在國內進行
+Access logs and audit reports must be created from a single database
+存取日誌與稽核報告必須從單一資料庫產生
+Which of the following should be implemented by the security team to meet these requirements? (Select THREE)
+為了滿足這些需求，資安團隊應該實作以下哪些措施？（選三項）
+
+The Answer: A. Restrict login access by IP address and GPS location, E. Consolidate all logs on a SIEM, and G. Enable time-of-day restrictions on the authentication server
+正確答案：A. 透過 IP 位址與 GPS 位置限制登入、
+E. 將所有日誌集中到 SIEM（安全資訊與事件管理系統），以及
+G. 在驗證伺服器上啟用時間限制
+加入基於地理位置的政策，可防止資料被從國外直接存取。
+將所有裝置的日誌資訊保存，並從單一資料庫生成稽核報告，可以透過 SIEM（安全資訊與事件管理系統）來實作。
+加入工作時間檢查，可以即時通報任何在非工作時間發生的資料存取。
+----------------------------------------------------------------------------
+B. Require government-issued identification during the onboarding process
+B. 在新進人員加入時要求政府核發的身分證明
+要求正確身分驗證固然是好做法，但這不在題目列出的需求中。
+
+C. Add additional password complexity for accounts that access data
+C. 為存取資料的帳號增加密碼複雜度
+增加密碼複雜度也是良好實務，但不屬於題目提供的需求。
+
+D. Conduct monthly permission auditing
+D. 每月執行權限稽核
+題目中並未要求持續稽核，但持續稽核仍是重要的安全考量。
+
+F. Archive the encryption keys of all disabled accounts
+F. 將所有停用帳號的加密金鑰存檔
+即使帳號被停用，仍可能有加密資料需要稍後復原。存檔這些加密金鑰可以在帳號停用後仍取得該資料。
 =========================================================================================================
+A company creates a standard set of government reports each calendar quarter.
+一家公司在每個會計季度都會製作一組標準化的政府報告。
+Which of the following would describe this type of data?
+以下哪一個最能描述這種類型的資料？
+
+The Answer: D. Regulated
+正確答案：D. 受規範的資料（Regulated）
+為政府用途製作的報告與資訊，受到法律規範，需依法律規定披露特定類型的資料。
+
+A. 使用中資料（Data in use）
+使用中資料是指正在系統記憶體中被處理的資訊，例如系統 RAM、CPU 暫存器或 CPU 快取。
+政府報告是靜態文件，並非正在積極處理的資料。
+
+B. 混淆資料（Obfuscated）
+混淆資料是指將可理解的資料修改成非常難以理解的形式。
+政府報告中的資訊相對容易理解，因此不會被視為混淆資料。
+
+C. Trade secrets
+C. 商業機密（Trade secrets）
+商業機密是公司在日常業務流程中使用的私密細節，這些機密資訊不會與其他組織或公司分享。
 =========================================================================================================
+A security administrator is concerned about the potential for data exfiltration using external storage drives.
+一名資安管理員擔心透過外部儲存裝置進行資料外洩的可能性。
+Which of the following would be the BEST way to prevent this method of data exfiltration?
+以下哪一個是防止這種資料外洩方式的最佳方法？
+
+The Answer: A. Create an operating system security policy to prevent the use of removable media
+正確答案：A. 建立作業系統的安全性政策以防止使用可移除式媒體
+可移除式媒體通常透過熱插拔介面（如 USB）來連接儲存裝置。
+在作業系統中設定安全性政策，可以防止任何檔案被寫入可移除式磁碟。
+
+B. Monitor removable media usage in host-based firewall logs
+B. 在主機型防火牆的日誌中監控可移除媒體的使用情況
+主機型防火牆的功能是監控流量，它通常不會記錄硬體或 USB 磁碟的存取行為。
+
+C. Only allow applications that do not use removable media
+C. 只允許不使用可移除媒體的應用程式
+檔案存取選項與應用程式並無直接關聯，因此無法依據外部儲存裝置的使用來決定允許哪些應用程式。
+
+D. Define a removable media block rule in the UTM
+D. 在統一威脅管理（UTM, Unified Threat Management）中定義可移除媒體的封鎖規則
+UTM（統一威脅管理）主要用來監控網路流量，通常不會管理個別電腦的儲存裝置選項。
 =========================================================================================================
+A system administrator receives a text alert
+一名系統管理員收到一則簡訊警示
+when access rights are changed on a database containing private customer information.
+當一個包含客戶隱私資訊的資料庫，其存取權限被更動時。
+Which of the following would describe this alert?
+以下哪一個最能描述這種警示？
+
+正確答案：C. 自動化（Automation）
+自動化能確保合規性檢查能夠定期執行，而不需要人工介入。
+當系統配置的變更導致組織不再符合合規要求時，自動化能特別有效地即時發送警示。
+
+A. 維護時段（Maintenance window）
+維護時段是指與變更控制流程相關的排程時間。
+在維護時段內，系統與服務通常會有有限的可用性。
+
+B. 確認與認可（Attestation and acknowledgment）
+在合規流程中，確認與認可是對正式合規文件進行最終驗證的程序。
+由自動化程序產生的警示，並不能算作確認與認可。
+
+D. 外部稽核（External audit）
+外部稽核是驗證合規流程的一個重要工具，
+但監控系統的自動化警示並不屬於外部稽核的一部分。
 =========================================================================================================
+A city is building an ambulance service network for emergency medical dispatching.
+一個城市正在建置一個救護車服務網路，用於緊急醫療調度。
+Which of the following should have the highest priority?
+以下哪一個應該被視為最高優先順序？
+
+正確答案：C. 系統可用性（System availability）
+對緊急服務的請求通常至關重要，因此當有人撥打電話時，調度系統必須始終保持可用。
+
+A. 系統整合成本（Integration costs）
+當人命受到威脅時，成本通常不是系統整合中最重要的考量。
+
+B. 修補程式可用性（Patch availability）
+雖然讓系統持續更新修補程式很重要，但更重要的是確保拯救生命的服務能隨時提供給需要的人。
+
+D. 電力使用量（Power usage）
+在建置關鍵的醫療與緊急服務基礎設施時，電力使用量通常不是最重要的考量因素。
 =========================================================================================================
+A security administrator has examined a server recently compromised by an attacker,
+一名資安管理員檢查了一台最近被攻擊者入侵的伺服器，
+and has determined the system was exploited due to a known operating system vulnerability.
+並確認該系統是因為一個已知的作業系統漏洞而遭到利用。
+Which of the following would BEST describe this finding?
+以下哪一個選項最能描述這項發現？
+
+正確答案：A. 根本原因分析（Root cause analysis）
+根本原因分析的目標是解釋某事件的最終原因。
+一旦找出原因，就能更容易防範未來類似的攻擊。
+
+B. 電子取證（E-discovery）
+電子取證是指電子文件的收集、準備、審查、解讀與呈現過程。
+電子取證本身並不涉及調查與判定攻擊的根本原因。
+
+C. 風險承受度（Risk appetite）
+風險承受度是指一個組織在採取行動降低風險之前，願意接受的風險程度。
+風險承受度並不是根本原因分析的一部分。
+
+D. 資料主體（Data subject）
+資料主體是指任何與已識別或可識別的自然人有關的資訊，
+特別是在描述或管理該自然人的個人隱私資訊時使用。
 =========================================================================================================
+Which of these threat actors would be MOST likely to attack systems for direct financial gain?
+
+The Answer: A. Organized crime
+正確答案：A. 有組織犯罪（Organized crime）
+有組織犯罪的攻擊者主要受到金錢驅動，他們的駭客行為通常以能夠快速轉換成財務利益的目標為中心。
+
+B. 黑客行動主義者（Hacktivist）
+黑客行動主義者專注於推動政治議程，而不是以金錢利益為主要目標。
+
+C. 國家級行為者（Nation state）
+國家級行為者通常已經擁有充足資金，他們的主要目標並非基於營收或收入。
+
+D. 影子 IT（Shadow IT）
+影子 IT 指的是組織內繞過既有 IT 部門，自行建立應用程式或基礎設施的做法。
 =========================================================================================================
 A company's email server has received an email from a third-party,
 → 一家公司的電子郵件伺服器收到了來自第三方的電子郵件，

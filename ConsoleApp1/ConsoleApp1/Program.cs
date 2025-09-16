@@ -1,6 +1,6 @@
 ﻿using System;
 
-enum OrderStatus
+public enum OrderStatus
 {
     Pending,   // 0
     Shipped,   // 1
