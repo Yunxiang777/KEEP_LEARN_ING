@@ -2,3 +2,5 @@
 .vs/
 *.user
 *.suo
+ConsoleApp1/ConsoleApp1/bin
+ConsoleApp1/ConsoleApp1/obj
