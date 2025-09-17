@@ -2,6 +2,315 @@
 =========================================================================================================
 =========================================================================================================
 =========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+B. Acceptable use policy
+B. 可接受使用政策
+可接受使用政策正式規範公司資產與科技設備的正確使用方式。
+=========================================================================================================
+A remote user has received a text message with a link to login and confirm their upcoming work schedule.
+一位遠端使用者收到一則簡訊，內含一個連結，要求登入並確認即將到來的工作排程。
+Which of the following would BEST describe this attack?
+以下哪一個選項最能描述這種攻擊？
+
+答案：D. 簡訊釣魚（Smishing）
+Smishing，也就是 SMS（簡訊）釣魚，是一種社交工程攻擊，透過簡訊要求使用者提供敏感資訊。
+
+B. Watering hole
+B. 水坑攻擊
+水坑攻擊會感染受害者造訪的第三方網站。水坑攻擊通常不會透過簡訊傳送。
+
+C. Typosquatting
+C. 網址錯置攻擊
+網址錯置攻擊透過拼寫錯誤的網域名稱，讓受害者誤以為自己正在造訪合法網站。本題中並未提供任何特定的網域名稱或連結，因此不符合此攻擊類型。
+=========================================================================================================
+A user has assigned individual rights and permissions to a file on their network drive. 
+The user adds three additional individuals to have read-only access to the file.
+一位使用者已經為其網路磁碟上的檔案分配了個別的權利與權限。該使用者又新增了三位使用者，讓他們擁有對該檔案的唯讀存取權。
+Which of the following would describe this access control model?
+以下哪一個選項能描述這種存取控制模型？
+
+The Answer: A. Discretionary
+答案：A. 自主存取控制（Discretionary）
+自主存取控制常用於多種作業系統，這種模型允許資源的擁有者決定誰可以存取該資源。
+
+B. Mandatory
+B. 強制存取控制
+強制存取控制根據物件被分配的安全等級來決定存取權限。只有擁有該物件等級或更高等級的使用者才能存取該資源。
+
+C. Attribute-based
+C. 屬性存取控制
+屬性存取控制會結合多種不同的參數，來判斷使用者是否有權存取某個資源。
+
+D. Role-based
+D. 角色存取控制
+角色存取控制會根據使用者的角色來分配權利與權限。這些角色通常是由群組分配的。
+=========================================================================================================
+company's VPN service performs a posture assessment during the login process.
+一家公司的 VPN 服務在使用者登入時會執行姿態評估（posture assessment）。
+Which of the following mitigation techniques would this describe?
+這屬於以下哪一種緩解技術？
+
+The Answer: D. Configuration enforcement
+答案：D. 配置強制（Configuration enforcement）
+姿態評估會檢查系統的配置，確保所有配置與應用程式都是最新且盡可能安全。如果某個配置不符合標準，系統通常會提供使用者解決問題的選項，然後才能繼續登入。
+
+B. Decommissioning
+在退役過程中妥善管理資料很重要，但退役處理並不屬於 VPN 登入流程的一部分。
+=========================================================================================================
+A network administrator would like each user to authenticate with their corporate(公司的) username and password 
+when connecting to the company's wireless network.
+一位網路管理員希望每位使用者在連接公司無線網路時，都使用企業帳號與密碼進行身份驗證。
+Which of the following should the network administrator configure on the wireless access points?
+網路管理員應該在無線接取點上設定哪一個選項？
+
+答案：B. 802.1X
+802.1X 使用集中式身份驗證伺服器，允許所有使用者在登入時使用企業帳號與密碼。
+
+A. WPA3
+WPA3 是 802.11 無線網路的加密協定，但 WPA3 本身不包含題目中所描述的集中式身份驗證流程。
+
+C. PSK
+PSK 是一種無線設定選項，允許網路上的每個人使用相同的存取金鑰或密碼連接無線網路。然而本題要求每位使用者必須使用獨立的身份驗證憑證。
+=========================================================================================================
+An IT help desk is using automation to improve the response time for security events.
+IT 支援中心正在使用自動化來提升對安全事件的回應速度。
+Which of the following use cases would apply to this process?
+以下哪一個應用情境適用於這個流程？
+
+答案：A. 升級流程（Escalation）
+自動化系統可以偵測安全事件，並將與安全相關的工單自動升級到事件響應團隊，無需額外的人力介入。
+
+B. Guard rails
+B. 安全護欄
+安全護欄通常由應用程式開發人員使用，用來對使用者輸入和行為提供自動化驗證。IT 支援團隊不會使用安全護欄來處理安全事件。
+
+C. Continuous integration
+C. 持續整合
+持續整合（CI）與測試提供了一種自動化方式，持續開發、測試與部署程式碼。IT 支援中心不會使用 CI 流程來處理安全事件。
+
+D. Resource provisioning
+D. 資源佈建
+資源佈建可在員工入職或離職時自動化，以快速建立或移除權限。然而，資源佈建通常不是與安全事件通知相關的自動化流程的一部分。
+=========================================================================================================
+A security engineer runs a monthly vulnerability scan. 
+The scan doesn’t list any vulnerabilities for Windows servers, 
+but a significant vulnerability was announced(宣告) last week and none of the servers are patched yet.
+一位資安工程師每月執行一次漏洞掃描。掃描結果沒有列出任何 Windows 伺服器的漏洞，但上週有一個重大漏洞被公布，而這些伺服器尚未套用修補程式。
+
+答案：D. 假陰性（False negative）
+假陰性是指當問題實際存在時，掃描結果卻未能偵測到該問題。
+
+C. Zero-day attack
+零時差攻擊針對的是先前未知的漏洞。在這個例子中，漏洞掃描不是攻擊行為，而且漏洞已經被公開，且修補程式已可取得。
+=========================================================================================================
+A company is creating a security policy for corporate mobile devices:
+• All mobile devices must be automatically locked after a predefined time period.
+• The location of each device needs to be traceable.
+• All of the user’s information should be completely separate from company data.
+一家公司正在制定企業行動裝置的安全政策：
+• 所有行動裝置在預設時間內必須自動鎖定。
+• 每台裝置的位置必須可追蹤。
+• 使用者的所有個人資訊應與公司資料完全分離。
+
+答案：D. 行動裝置管理（MDM）
+MDM（行動裝置管理系統）提供一個集中管理所有行動裝置的平台。透過這個中央控制台，安全管理員可以為多種不同類型的行動裝置設定政策。
+
+A. Segmentation
+A. 資料分割
+資料分割指的是將使用者資料與公司資料分開，但要實施所有安全政策仍需要透過 MDM 來管理。
+
+C. COPE
+COPE（企業擁有、允許個人使用）的裝置通常由公司購買，並允許同時用於商務與個人用途。但使用 COPE 裝置本身並不提供裝置的政策管理功能。
+=========================================================================================================
+A company would like to minimize database corruption(腐敗) if power is lost to a server.
+一家公司希望在伺服器斷電時，將資料庫損毀的風險降到最低。
+Which of the following would be the BEST strategy to follow?
+以下哪一個策略是最佳做法？
+
+The Answer: C. Journaling
+答案：C. 日誌記錄（Journaling）
+日誌記錄會先將資料寫入臨時日誌，然後再寫入資料庫。如果斷電發生，系統在恢復供電後，可以從日誌中回復最後的交易。
+=========================================================================================================
+A company stores some employee information in encrypted form, but other public details are stored as plaintext.
+一家公司將部分員工資訊以加密形式儲存，但其他公開資訊則以明文形式儲存。
+
+The Answer: B. Record
+答案：B. 紀錄級加密（Record）
+紀錄級加密通常用於資料庫中，針對資料庫的個別欄位進行加密。這種方式可以讓資料庫中的部分資訊以明文儲存，而其他資訊則以加密形式儲存。
+=========================================================================================================
+A company would like to examine the credentials of each individual(個人) entering the data center building.
+一家公司希望檢查每位進入資料中心建築的人員的憑證。
+Which of the following would BEST facilitate(促進) this requirement?
+以下哪一個選項最能滿足這項需求？
+
+The Answer: A. Access control vestibule
+答案：A. 出入口管制前室（Access control vestibule）
+出入口管制前室是一個專門設計來限制人員流動的房間。它通常用於高安全區域，每個人都必須先經過評估與批准，才能進入下一個區域。
+
+B. Video surveillance
+B. 影片監控
+雖然影片監控可以協助監控建築物或房間的進出，但它無法驗證每位訪客的憑證。
+
+C. Pressure sensors
+C. 壓力感測器
+壓力感測器通常安裝在門或窗戶上，用來偵測這些設備的移動。然而，壓力感測器無法用來檢查訪客憑證。
+
+D. Bollards
+D. 防撞柱
+防撞柱與路障通常安裝在設施外圍，用來阻擋車輛進入，並引導人員通過特定的出入口。
+=========================================================================================================
+A business manager is documenting a set of steps for processing orders if the primary Internet connection fails.
+一位業務經理正在撰寫一組步驟，用來說明當主要的網際網路連線故障時，應如何處理訂單。
+
+答案：B. 營運持續性（Continuity of operations）
+擁有一組替代流程來應對任何中斷或問題總是有幫助的。營運持續性計畫（COOP）可確保當這些問題發生時，企業仍能持續運作。
+
+A. Platform diversity(多樣性)
+A. 平台多樣性
+使用不同的作業系統與平台，可以減少單一作業系統相關問題的風險，但若主要網路連線中斷，這並不能提供任何解決方法。
+
+C. Cold site recovery
+C. 冷備援站點復原
+冷備援站點需要時間建置，進行災難復原的切換成本與時間都很高。等到冷備援站點啟用時，主要的網際網路連線可能早已恢復，且其他替代方案也可能已經被部署。
+
+D. Tabletop exercise
+D. 桌上推演演練
+桌上推演通常是一場會議，讓復原小組或災難復原團隊成員討論一個災難情境，而不是實際的替代流程。
+=========================================================================================================
+An internal audit has discovered four servers that have not been updated in over a year, 
+and it will take two weeks to test and deploy the latest patches.
+一次內部稽核發現有四台伺服器已經超過一年未更新，並且需要兩週時間來測試與部署最新的修補程式。
+Which of the following would be the best way to quickly respond to this situation in the meantime?
+在此期間，以下哪一個方式是最快速回應這種情況的最佳方法？
+
+答案：C. 將伺服器移到受保護的網段
+將伺服器分段到專屬的受保護網路，可以增加額外的安全控制，同時仍維持系統的上線時間與可用性。
+
+A. Purchase cybersecurity insurance
+A. 購買網路安全保險
+網路安全保險可以幫助在重大攻擊期間處理財務問題，但它無法在這兩週內協助降低潛在的漏洞風險。
+
+B. Implement an exception for all data center services
+B. 對所有資料中心服務實施例外處理
+安全例外應該是少數情況，並且只針對少數系統。若對不在漏洞範圍內的系統建立廣泛的安全例外，會帶來高風險。
+
+D. Hire a third-party to perform an extensive audit
+D. 聘請第三方進行全面稽核
+稽核需要時間，而聘請第三方進行稽核需要更久。在第三方稽核開始進行時，這些有問題的系統可能已經完成測試與修補。
+=========================================================================================================
+What kind of security control is associated with a login banner?
+登入橫幅（login banner）屬於哪一種類型的安全控制？
+
+The Answer: B. Deterrent
+答案：B. 嚇阻性控制（Deterrent）
+嚇阻性控制並不會直接阻止攻擊，但它可能會讓攻擊者卻步，不敢採取行動。
+
+F. Directive
+F. 指導性控制
+指導性控制是一種相對較弱的控制，依靠使用者的安全遵循來發揮效果。
+=========================================================================================================
+A recent audit has found that existing password policies do not include any restrictions on password attempts(嘗試，企圖), 
+and users are not required to periodically change their passwords.
+近期的一次稽核發現，現有的密碼政策沒有針對密碼嘗試次數做任何限制，而且使用者也不需要定期更換密碼。
+以下哪些措施能夠修正這些政策問題？（請選兩項）
+
+答案：B. 密碼有效期限（Password expiration）與 D. 帳號鎖定（Account lockout）
+密碼有效期限會要求使用者在到期日後必須更換密碼。帳號鎖定則會在達到預設次數的登入失敗後，自動停用帳號。
+
+A. Password complexity
+A. 密碼複雜度
+複雜的密碼會讓暴力破解更困難，但這無法解決題目中提到的政策問題。
+
+C. Password reuse
+C. 密碼重複使用限制
+維護密碼歷史紀錄可以避免使用者重複使用舊密碼。限制密碼重複使用能確保每次更改密碼時，必須使用不同的密碼。
+
+E. Password managers
+密碼管理器提供一個安全的方式來儲存與取用密碼，但它無法解決與密碼有效期限或帳號鎖定相關的問題。
+=========================================================================================================
+The embedded OS in a company’s time clock appliance is configured to reset the file system and reboot when a file system error occurs.
+某家公司打卡機（time clock appliance）中的嵌入式作業系統被設定為：一旦檔案系統發生錯誤，就會重設檔案系統並重新開機。
+On one of the time clocks, this file system error occurs during the startup process and causes the system to constantly reboot.
+在其中一台打卡機上，這個檔案系統錯誤發生在啟動過程中，導致系統不斷(constantly)重啟。
+
+答案：C. 競爭狀態（Race condition）
+競爭狀態是指兩個程序幾乎同時發生，並導致不可預期結果的情況。
+檔案系統的問題通常可以在重新開機前修復，但這裡系統卻在修復完成之前就先重啟。這就造成了一個競爭狀態，導致系統持續重啟。
+
+A. Memory injection
+A. 記憶體注入
+記憶體注入通常被惡意軟體利用，用來將程式碼加入現有程序的記憶體中。本題的問題與檔案系統錯誤有關，並不是惡意資料注入。
+
+B. Resource consumption
+B. 資源消耗
+如果打卡機的儲存空間或記憶體耗盡，系統很可能會無法使用。但在這個例子中，問題並不是因為缺乏資源所造成的。
+
+D. Malicious update
+D. 惡意更新
+惡意更新是指在軟體更新時安裝了不需要或未授權的程式碼。許多攻擊者會在軟體更新過程中，透過更新檔植入自己的惡意程式碼。
+=========================================================================================================
+Which of the following would explain why a company would automatically add a digital signature to each outgoing email message?
+以下哪一個選項最能解釋，為什麼一家公司會在每封寄出的電子郵件中自動加上數位簽章？
+
+❍A. 機密性（Confidentiality）
+❍B. 完整性（Integrity）
+❍C. 驗證（Authentication）
+❍D. 可用性（Availability）
+
+答案：B. 完整性（Integrity）
+完整性是指資料的可信度。數位簽章能讓收件者確認，自簽章建立後，資料並未被更改。
+
+A. Confidentiality
+A. 機密性
+機密性描述的是資料的隱私性。透過 VPN 加密傳輸流量，或對隨身碟中儲存的檔案進行加密，都是資料機密性的例子。
+
+C. Authentication
+C. 驗證
+驗證指的是確認個人或系統身份的過程。帳號與密碼是常見的驗證方法，但數位簽章並不常用於身份驗證。
+
+D. Availability
+可用性是指授權使用者能夠存取資料的能力。數位簽章並不會提供與資料可用性相關的功能。
+=========================================================================================================
+Two companies have been working together for a number of months, 
+and they would now like to qualify their partnership with a broad formal agreement between both organizations.
+兩家公司已經合作了數個月，現在他們希望透過一份廣泛的正式協議來確立彼此的合作關係。
+Which of the following would describe this agreement?
+以下哪一項最能描述這種協議？
+
+答案：C. MOA
+MOA（協議備忘錄）是一份正式文件，雙方在其中同意與合作相關的一系列廣泛目標與宗旨。
+
+SLA（服務層級協議）通常是兩方之間的正式合約，記錄所提供服務的最低條件。SLA 常常包含雙方非常具體的需求與期望。
+SOW（工作說明書）是一份詳細清單，列出專案交付成果中需要完成的項目。例如，與防火牆安裝相關的工作任務清單就會記錄在 SOW 中。
+NDA（保密協議）是雙方之間的保密協定。本題並沒有提到任何隱私或保密的需求。
+=========================================================================================================
+An attacker calls into a company’s help desk and pretends to be the director of the company’s manufacturing department.
+一名攻擊者打電話到某公司的客服（Help Desk），假裝自己是該公司製造部門的主管。
+The attacker states that they have forgotten their password and they need to have the password reset quickly for an important meeting.
+攻擊者聲稱自己忘記了密碼，並且需要盡快重設密碼，以便參加一場重要會議。
+What kind of attack would BEST describe this phone call?
+這通電話最適合被描述為哪一種類型的攻擊？
+
+❍A. Social engineering
+=========================================================================================================
+A system administrator is working on a contract 
+that will specify a minimum required uptime for a set of Internet-facing firewalls.
+一位系統管理員正在處理一份合約，
+該合約將會規範一組面向網際網路的防火牆所需的最低正常運作時間（uptime）。
+The administrator needs to know how often the firewall hardware is expected to fail between repairs.
+管理員需要知道這些防火牆硬體在兩次維修之間預期會發生故障的頻率。
+Which of the following would BEST describe this information?
+以下哪一個選項最能描述這項資訊？ A:MTTR
+
+MTBF（平均故障間隔時間）是一種預測，用來估算可維修系統發生故障的頻率。
+RTO（復原時間目標）定義了一組目標，用來說明恢復到特定服務水準所需的時間。
+MTTR（平均修復時間）是修復一個元件所需的時間。
+RPO（復原點目標）描述了將一個系統視為「已復原」所需的最小資料或操作狀態。
+=========================================================================================================
 Which of the following would be the BEST way to provide a website login using existing credentials from a third-party site?
 以下哪一種方式最適合讓使用者使用第三方網站的既有帳號進行網站登入？
 
