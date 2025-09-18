@@ -7,6 +7,204 @@
 =========================================================================================================
 =========================================================================================================
 =========================================================================================================
+：An organization has identified a significant vulnerability in an Internet-facing firewall.
+翻譯：一個組織發現其面向互聯網的防火牆存在重大漏洞。
+Internet-facing firewall：直接面向外部網路的防火牆，通常保護內部網路不受外部攻擊。
+漏洞（Vulnerability）：系統或設備中可能被利用的安全缺陷。
+
+原文：The firewall company has stated(指出，表示) the firewall is no longer available for sale and there are no plans to create a patch for this vulnerability.
+翻譯：防火牆公司表示該防火牆已停止銷售，且無計畫針對此漏洞發布補丁。
+補充：這表示該設備已停止支援，未來也無法透過官方更新修復漏洞。
+
+原文：Which of the following would BEST describe this issue?
+翻譯：下列哪一個最能描述這個問題？
+
+翻譯：答案：A. 產品生命週期結束（End-of-life, EOL）
+翻譯：由於防火牆已停止販售，廠商決定停止支援與更新該設備。製造商不再支援的產品即被視為生命週期結束（End-of-life）。
+End-of-life (EOL)：產品停止銷售、停止維護或更新，可能造成安全風險，建議更換或升級。
+
+原文：D. Incompatible OS
+翻譯：D. 作業系統不相容（Incompatible OS）
+防火牆內建作業系統通常由廠商支援，且在這類專用設備上，作業系統通常不會被修改。
+=========================================================================================================
+A network team has installed new access points to support an application launch.
+翻譯：網路團隊安裝了新的無線存取點（Access Points），以支援應用程式上線。
+Access Point（AP，存取點）：無線網路的接入設備，讓使用者裝置能連接內部網路。
+
+原文：In less than 24 hours, the wireless network was attacked and private company information was accessed.
+翻譯：不到 24 小時，無線網路遭到攻擊，公司機密資訊被存取。
+補充：這表示安全防護可能存在漏洞或配置不當。
+
+原文：Which of the following would be the MOST likely reason for this breach?
+翻譯：下列哪一個最可能是這次資安事件發生的原因？
+
+翻譯：答案：D. 設定錯誤（Misconfiguration）
+翻譯：安裝存取點時有許多不同的設定選項，其中某個選項很可能允許攻擊者存取內部網路。
+Misconfiguration（設定錯誤）：設備或系統未正確配置，導致安全漏洞。
+例子：預設密碼未修改、加密方式設定過弱、訪客網路與內部網路未分隔。
+
+原文：B. Jailbreaking
+翻譯：B. 越獄（Jailbreaking）
+越獄是指替換行動裝置韌體，以存取作業系統中通常不可用的功能。越獄與無線存取點並不常相關。
+
+原文：C. Impersonation
+冒充是指攻擊者假扮成某人或某物。在此例中，沒有證據顯示攻擊者透過冒充來入侵無線網路。
+=========================================================================================================
+原文：A data breach has occurred in a large insurance company.
+翻譯：一家大型保險公司發生了資料外洩事件。
+資料外洩（Data breach）：未經授權存取或洩露敏感資料的事件，可能涉及個人資料、財務資訊或機密文件。
+
+原文：A security administrator is building new servers and security systems to get all of the financial systems back online.
+翻譯：資安管理員正在建立新的伺服器與安全系統，以將所有財務系統恢復上線。
+恢復系統（Recovery of systems）：在事件後重新部署硬體與軟體，使業務正常運作。
+
+原文：Which part of the incident response process would BEST describe these actions?
+翻譯：事件處理流程中，哪個階段最能描述這些行動？
+
+翻譯：答案：C. 復原（Recovery）
+翻譯：資料外洩事件後的復原可能採取分階段方式，可能需要數個月才能完成。
+分階段復原（Phased recovery）：先恢復最關鍵的系統，再逐步恢復次要系統，以降低業務中斷風險。
+
+原文：A. Lessons learned
+翻譯：A. 經驗回顧（Lessons learned）
+事件結束後，回顧事件處理流程有助於學習與改進，以便下次更有效應對。
+
+原文：B. Containment
+翻譯：B. 隔離（Containment）
+在事件發生期間，將受感染的系統與其他網路分離是有用的，以防止威脅擴散。
+
+原文：D. Analysis
+翻譯：D. 分析（Analysis）
+分析階段可以包含日誌檔與警示的分析，這些資料來源可以幫助偵測潛在攻擊或提供攻擊正在進行的證據。
+=========================================================================================================
+An attacker has discovered a way to disable a server by sending specially crafted packets from many remote devices to the operating system.
+翻譯：攻擊者發現一種方法，透過從多個遠端設備發送特製封包到作業系統，使伺服器無法運作。
+特製封包（specially crafted packets）：經過設計，能觸發系統漏洞或異常行為的網路封包。
+作業系統（Operating System, OS）：管理硬體與軟體資源的系統核心。
+
+原文：When the packet is received, the system crashes and must be rebooted to restore normal operations.
+翻譯：當系統接收到封包時，會當機，必須重新啟動才能恢復正常運作。
+補充：這種行為會造成服務中斷（Service outage），對企業運作造成影響。
+
+原文：Which of the following would BEST describe this attack?
+翻譯：下列哪一項最能描述這種攻擊？
+=========================================================================================================
+A technician is applying a series of patches to fifty web servers during a scheduled maintenance window.
+翻譯：一名技術人員正在排定的維護時段內，對五十台 Web 伺服器套用一系列補丁。
+補丁（Patch）：用於修復軟體漏洞或提升功能的小型程式更新。
+維護時段（Maintenance window）：事先排定的系統維護時間，以避免影響使用者。
+原文：After patching and rebooting the first server, the web service fails with a critical error.
+翻譯：在對第一台伺服器套用補丁並重新啟動後，Web 服務發生重大錯誤而無法運作。
+重大錯誤（Critical error）：會導致服務無法正常運作，通常需立即處理。
+原文：Which of the following should the technician do NEXT?
+翻譯：技術人員接下來應該做什麼？
+
+翻譯：答案：B. 依照回退計畫（Backout plan）中的步驟進行
+回退計畫（Backout plan）：在變更控制流程中，如果發現無法修復的錯誤，可將系統回復到變更前的設定或狀態的計畫。
+翻譯：變更控制流程中的回退計畫提供了如何在變更過程中發現無法修復的錯誤時，回復至先前設定的資訊。
+
+原文：A. Contact the stakeholders regarding the outage
+翻譯：A. 通知利害關係人有關停機事件
+利害關係人通常不需要在維護時段中收到每個步驟的詳細通知。變更的最終結果可以在維護完成後再告知利害關係人。
+
+原文：C. Test the upgrade process in the lab
+翻譯：C. 在實驗室測試升級流程
+變更控制流程中的測試階段應在維護時段開始前完成。一旦維護時段開始，就太晚無法在實驗室進行額外測試。
+
+原文：D. Evaluate the impact analysis associated with the change
+翻譯：D. 評估與變更相關的影響分析
+影響分析用來評估提出變更的風險。這份分析通常在變更控制核准前完成，在維護時段中用來排錯並不太有用。
+=========================================================================================================
+Which of the following is used to describe how cautious(謹慎) an organization might be to taking a specific risk?
+翻譯：下列哪一個用來描述組織對承擔特定風險的謹慎程度？
+補充：題目是在問「組織面對風險時的態度或容忍度」。
+
+翻譯：答案：A. 風險偏好（Risk appetite）
+翻譯：風險偏好是對可接受風險程度的一個廣泛描述。組織的風險偏好態度可能偏保守，也可能較積極，願意承擔額外風險。
+風險偏好（Risk appetite）：衡量組織願意接受的風險程度。
+保守（conservative）：傾向避免風險。
+積極（expansionary / aggressive）：願意承擔更多風險以追求機會。
+
+翻譯：B. 風險登錄（Risk register）
+風險登錄用於識別並記錄專案計畫中每個步驟相關的風險，但它不是用來描述組織對每個風險的謹慎程度。
+補充：風險登錄通常包含風險名稱、影響程度、可能性、責任人等。
+=========================================================================================================
+A company hires a large number of seasonal employees, and their system access should normally be disabled when the employee leaves the company.
+翻譯：一家公司聘請大量季節性員工，而當員工離職時，他們的系統存取權通常應被停用。
+季節性員工（seasonal employees）：短期聘用的員工，通常在特定季節或期間工作。
+系統存取權（system access）：使用者登入系統、應用程式或資源的權限。
+原文：The security administrator would like to verify that their systems cannot be accessed by any of the former employees.
+翻譯：資安管理員希望確認前員工無法存取公司的系統。
+原文：Which of the following would be the BEST way to provide this verification?
+翻譯：下列哪一種方式最能有效驗證此點？
+
+原文：The Answer: C. Validate the offboarding processes and procedures
+翻譯：答案：C. 驗證離職（Offboarding）流程與程序
+翻譯：停用員工帳號通常是離職流程的一部分。驗證離職政策的一種方式是對所有帳號進行稽核，並將現有帳號與現任員工名單進行比對。
+離職流程（Offboarding process）：確保員工離開公司時帳號、存取權、設備、資產等被妥善處理的流程。
+帳號稽核（Account audit）：檢查系統帳號的狀態與權限，確認是否符合政策。
+
+原文：A. Confirm that no unauthorized accounts have administrator access
+翻譯：A. 確認沒有未授權的帳號擁有管理員權限
+定期稽核管理員帳號是好做法，但這無法驗證所有前員工帳號是否已停用。
+=========================================================================================================
+Which of the following considerations are MOST commonly associated with a hybrid cloud model?
+翻譯：下列哪一項考量最常與混合雲（hybrid cloud）模型相關？
+混合雲（Hybrid Cloud）：同時使用私有雲（private cloud）與公有雲（public cloud）的架構。
+
+翻譯：答案：C. 網路防護不一致（Network protection mismatches）
+翻譯：混合雲包含多個私有雲或公有雲，這會增加整體基礎設施的複雜性，而且很容易在多個雲服務提供者之間不小心使用不同的認證選項或使用者權限設定。
+補充：
+認證選項（authentication options）：指使用者登入或驗證方式，如 OAuth、SAML、密碼等。
+使用者權限（user permissions）：控制誰能存取哪個資源。
+網路防護不一致：在多雲環境中，不同雲提供者可能使用不同的防火牆規則、存取控制或安全政策，容易造成漏洞。
+
+翻譯：A. 微服務中斷（Microservice outages）
+微服務用於建立可擴展且具韌性的應用程式實例，但微服務的可用性並非混合雲模型特有的問題。
+
+翻譯：B. 物聯網（IoT）支援
+物聯網支援在許多雲端基礎設施模型中都可用，並非混合雲特有。
+
+翻譯：D. 容器化備份（Containerization backups）
+容器化提供高效的應用程式部署方式，但容器的使用與備份並非混合雲特有。
+容器化（Containerization）：使用容器（如 Docker）封裝應用程式及其依賴，以便跨環境一致部署。
+=========================================================================================================
+A server administrator at a bank has noticed a decrease in the number of visitors to the bank's website.
+翻譯：一家銀行的伺服器管理員注意到銀行網站的訪客數量下降。
+補充：訪客數量突然下降可能是網路攻擊或流量異常的徵兆。
+
+原文：Additional research shows that users are being directed to a different IP address than the bank's web server.
+翻譯：進一步調查顯示，使用者被導向到與銀行網站伺服器不同的 IP 位址。
+補充：這通常表示有人在網路層或 DNS 層操縱流量，將使用者導向假網站。
+
+原文：Which of the following would MOST likely describe this attack?
+翻譯：下列哪一個最有可能描述這種攻擊？
+
+翻譯：答案：D. DNS 中毒（DNS poisoning）
+翻譯：DNS 中毒可以修改 DNS 伺服器，使名稱解析過程中返回的 IP 位址被更改。如果攻擊者修改了 DNS 資訊，就可以將用戶端電腦導向任何目標 IP 位址。
+補充：
+DNS（Domain Name System）：將域名轉換為 IP 位址的系統。
+DNS 中毒 / Cache Poisoning：攻擊者修改 DNS 紀錄，使使用者被導向惡意網站（例如釣魚網站）。
+
+翻譯：A. 斷線攻擊（Deauthentication）
+斷線攻擊通常與無線網路相關，用來將設備從無線網路中移除，並不會將使用者導向其他網站。
+=========================================================================================================
+A security administrator has copied a suspected malware executable from a user's computer 
+and is running the program in a sandbox.
+一位資安管理員已經從使用者的電腦中複製了一個疑似惡意軟體的可執行檔，並將該程式在沙箱（sandbox）環境中執行。
+惡意軟體（malware）：指任何旨在破壞、竊取或干擾系統運作的軟體。
+沙箱（sandbox）：隔離環境，用於安全地執行不信任的程式，避免對主系統造成影響。
+
+原文：The Answer: D. Containment
+翻譯：答案：D. 隔離（Containment）
+翻譯：隔離與控制的過程可以防止惡意軟體擴散，並允許管理員在不危及其他設備的情況下分析惡意軟體的運作。
+隔離（isolation）：將受感染的系統與其他網路或設備分離。
+控制（containment）：限制威脅的範圍，避免擴散到整個網路。
+
+翻譯：A. 根除（Eradication）
+根除階段與完全清除系統中的惡意軟體有關。這個過程通常涉及刪除系統中所有資料，並安裝或重灌一個已知安全的作業系統。
+補充：根除是「移除威脅」的階段，與分析或隔離不同。
+=========================================================================================================
 B. Acceptable use policy
 B. 可接受使用政策
 可接受使用政策正式規範公司資產與科技設備的正確使用方式。
