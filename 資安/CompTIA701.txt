@@ -4,8 +4,110 @@
 =========================================================================================================
 =========================================================================================================
 =========================================================================================================
+A company's website has been compromised(妥協，和解) and the website content has been replaced with a political message.
+翻譯：某公司的網站遭到入侵，網站內容被替換成 政治訊息。
+
+問題：Which of the following threat actors would be the MOST likely culprit(罪魁禍首)?
+翻譯：以下哪一種 威脅行為者（threat actor） 最有可能是這起事件的幕後兇手？
 =========================================================================================================
+：A manufacturing company would like to track the progress of parts used on an assembly line(流水線).
+翻譯：一家製造公司希望追蹤裝配線上零件的進度。
+題目選項：Which of the following technologies would be the BEST choice for this task?
+翻譯：以下哪一項技術是執行此任務的最佳選擇？
+
+原文：The Answer: B. Blockchain
+翻譯：答案：B. 區塊鏈（Blockchain）
+翻譯：區塊鏈的 帳本功能（ledger functionality） 可以用來追蹤或驗證零件、數位媒體、選票，以及其他實體或數位物件。
+👉 區塊鏈透過 不可竄改的分散式帳本，特別適合在供應鏈、製造業中追蹤零件流向與進度。
+
+翻譯：A. 安全區域（Secure enclave）
+👉 Secure enclave 是一種 硬體級的安全區隔，用於保護敏感資訊（如加密金鑰）。它不是設計來追蹤零件進度的。
 =========================================================================================================
+Which of the following describes two-factor authentication?
+翻譯：以下哪一個描述了 雙因素驗證（2FA, Two-Factor Authentication）？
+
+原文：The Answer: D. A Windows Domain requires a password and smart card
+翻譯：答案：D. Windows 網域需要 密碼 + 智慧卡
+👉 這裡的雙因素是：
+密碼 = 你知道的東西 (Something you know)
+智慧卡 = 你擁有的東西 (Something you have)
+
+A. A printer uses a password and a PIN
+翻譯：A. 印表機使用密碼與 PIN 碼
+👉 密碼和 PIN 都屬於 你知道的東西，所以只是一種因素（單因素），不是雙因素。
+👉 指紋是 你是什麼 (Something you are)，屬於單一生物特徵驗證，不是雙因素。
+
+C. An application requires a pseudo(偽)-random code
+翻譯：C. 一個應用程式需要輸入隨機碼
+👉 隨機碼通常來自 硬體金鑰或手機 App，屬於 你擁有的東西 (Something you have)，也是單因素。
+
+✅ 雙因素驗證 (2FA) = 必須來自 不同類別 的兩種因素。
+=========================================================================================================
+During a morning login process, a user's laptop was moved to a private VLAN and a series of updates were automatically installed.
+翻譯：在早晨的登入過程中，一名使用者的筆電被移到一個 私有 VLAN，並自動安裝了一系列更新。
+Private VLAN：一種網路隔離機制，把設備臨時放到受控區域，避免在不安全狀態下接觸主網路。
+這通常屬於 Network Access Control (NAC) 的一部分，用來驗證裝置是否符合安全規範（patch、AV、加密）。
+原文：Which of the following would describe this process?
+翻譯：以下哪一個最能描述這個過程？
+
+翻譯：答案：B. 設定強制執行（Configuration enforcement）
+翻譯：許多組織會在登入過程中執行 姿態評估（Posture assessment），以確認裝置是否具備正確的安全控制措施。如果裝置未通過評估，系統會將其隔離，並安裝缺少的安全更新。
+Posture Assessment：檢查裝置的安全狀態（是否有最新更新、防毒軟體、防火牆等）。
+Configuration Enforcement：自動確保裝置符合安全設定要求，例如更新補丁、安裝必要軟體。
+
+翻譯：C. 除役（Decommissioning）
+除役是指將設備永久移除出網路。但題目中的筆電在完成更新後仍可回到網路，因此不是除役。
+=========================================================================================================
+A company has placed a SCADA system on a segmented network with limited access from the rest of the corporate network.
+翻譯：某家公司將一個 SCADA 系統 放置在一個分段的網路中，並限制來自其他公司內部網路的存取。
+SCADA (Supervisory Control and Data Acquisition，監控與資料擷取系統)：主要用於工業控制系統（ICS），監控與控制工廠、能源、交通、水處理等關鍵基礎設施。
+Network Segmentation（網路分段）：把網路分割成不同區域，降低攻擊面並限制橫向移動。
+原文：Which of the following would describe this process?
+翻譯：以下哪一個最能描述這個做法？
+
+原文：The Answer: D. Hardening
+翻譯：答案：D. 系統強化（Hardening）
+翻譯：針對工業用 SCADA 系統 的強化過程，可能會包括 網路分段、額外的 防火牆控制，以及 存取控制清單（ACL） 的實作。
+
+原文：C. Data retention
+翻譯：C. 資料保存（Data retention）
+資料保存是指長期儲存重要資訊的策略與政策。但題目中沒有涉及強制保存資料的情境，所以不符合。
+=========================================================================================================
+A system administrator has been called to a system with a malware infection.
+翻譯：系統管理員被叫去處理一台遭受惡意軟體感染的系統。
+原文：As part of the incident response process, the administrator has imaged(成像) the operating system to a known-good version.
+翻譯：作為事件回應流程的一部分，管理員已將作業系統還原成一個已知安全的版本。
+Imaging（系統映像/還原）：用一個乾淨的、可信任的映像檔（image）覆蓋現有系統，以移除感染。
+原文：Which of these incident response steps is the administrator following?
+翻譯：管理員正在執行事件回應流程中的哪一個步驟？
+
+翻譯：答案：B. 復原（Recovery）
+
+原文：D. Containment
+翻譯：D. 隔離（Containment）
+隔離階段會將受感染的系統與其他設備隔離，以防止惡意軟體進一步擴散。隔離通常在偵測到感染後立即進行。
+=========================================================================================================
+A company has decided to perform a disaster recovery exercise during an annual meeting with the IT directors and senior directors.
+翻譯：一間公司決定在年度會議中，與 IT 部門主管及高階主管一起進行災難復原演練。
+原文：A simulated disaster will be presented, and the participants(參與者) will discuss the logistics and processes required to resolve the disaster.
+翻譯：會議中將會模擬一場災難，並由參與者討論處理該災難所需的作業細節與流程。
+Logistics（作業規劃/後勤流程）：確保資源、程序、人員能協調運作的細節安排。
+原文：Which of the following would BEST describe this exercise?
+翻譯：下列哪一項最能描述這種演練？
+
+翻譯：答案：D. 桌上演練（Tabletop exercise）
+翻譯：桌上演練讓災難復原小組能夠在不進行全面性演練的情況下，評估並規劃災難復原流程。
+Tabletop exercise：模擬災難場景，僅透過討論與情境分析，而不實際操作系統或中斷業務。
+
+原文：A. Capacity planning
+翻譯：A. 容量規劃（Capacity planning）
+容量規劃是用來決定完成特定任務需要多少資源。正式的桌上演練通常不會包含容量規劃分析。
+
+翻譯：B. 業務影響分析（Business impact analysis, BIA）
+業務影響分析通常在災難復原計劃的制定過程中進行。一旦災難已經發生，就很難再完成準確的影響分析。
+
+翻譯：C. 業務連續性（Continuity of operations, COOP）
+當發生中斷時，通常會有備援計劃以確保業務持續。這種計劃適用於各類重大中斷事件，而非專門針對災難復原測試。
 =========================================================================================================
 ：An organization has identified a significant vulnerability in an Internet-facing firewall.
 翻譯：一個組織發現其面向互聯網的防火牆存在重大漏洞。
