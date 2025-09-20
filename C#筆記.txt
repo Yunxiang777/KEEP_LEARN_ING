@@ -6,6 +6,138 @@
 ===================================================================
 ===================================================================
 ===================================================================
+===================================================================
+===================================================================
+===================================================================
+當你在 IDE「添加引用」的時候，背後其實做了這些事：
+改 .csproj → 增加 <ProjectReference> 或 <Reference>
+編譯時 → 幫 csc 加上 /reference:xxx.dll
+複製 DLL 到 bin\ 輸出資料夾
+提供 IntelliSense 型別資訊
+
+那其實，我可以直接在 .csproj 加引用的CODE，然後BUILD，專案會自己幫我開始引用了?
+完全正確 ✅
+你完全可以不透過 IDE 的「右鍵 → Add Reference」，而是直接打開 .csproj 去寫引用，然後按 Build，專案就會自動開始引用。
+這就是 Visual Studio 在背後做的事。
+
+NuGet 是 .NET 平台的套件管理工具，就像 Node.js 的 npm 或 Python 的 pip 一樣。
+它讓你可以很方便地下載、安裝、更新、管理別人寫好的 程式庫 (Library/DLL)。
+
+範例 3：NuGet 套件引用
+其實 NuGet 也是類似原理，只是 .csproj 用 <PackageReference>：
+<ItemGroup>
+  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+</ItemGroup>
+Build 時，MSBuild 會自動去下載對應的 DLL，放到專案依賴裡。
+===================================================================
+3. 編譯時 vs 執行時
+編譯時引用 (Add Reference / /reference)
+→ 編譯器會檢查型別安全、幫你補 IntelliSense。
+
+執行時引用 (Assembly.Load)
+→ 靈活，但編譯器不知道類別存在，失去了型別檢查，需要靠反射操作。
+===================================================================
+🔹 2. 執行時 (Runtime)：動態載入 DLL
+如果你想在程式執行的時候 動態引用 DLL，可以用反射 (Reflection) 或 Assembly.Load：
+
+範例：動態載入 DLL
+using System;
+using System.Reflection;
+class Program
+{
+    static void Main()
+    {
+        // 動態載入 ProjectA.dll
+        Assembly asm = Assembly.LoadFrom("ProjectA.dll");
+
+        // 找到類別 ProjectA.PublicClass
+        Type t = asm.GetType("ProjectA.PublicClass");
+
+        // 建立實例
+        object obj = Activator.CreateInstance(t);
+
+        // 呼叫方法 Hello()
+        MethodInfo method = t.GetMethod("Hello");
+        method.Invoke(obj, null);
+    }
+}
+
+👉 這種方法在 Plugin 架構 很常見，例如你讓程式支援外掛，外掛是 DLL，執行時才載入。
+===================================================================
+一般我們在 Visual Studio 裡都是用「右鍵 → 添加參考 (Add Reference)」去做，但其實底層就是在告訴 編譯器：「這個程式要依賴某個 DLL」。
+你問「能不能用 code 做」，答案是：可以，但方式不同，要看你要的情境。
+
+如果你不用 IDE，而是用 命令列編譯器 csc，你可以手動指定引用的 DLL，例如：
+csc /reference:ProjectA.dll Program.cs
+這樣 Program.cs 裡的程式碼就能用 ProjectA.dll 裡的 public 類別。
+👉 這相當於 Visual Studio 的「添加專案引用」。
+
+🔹 2. 執行時 (Runtime)：動態載入 DLL
+如果你想在程式執行的時候 動態引用 DLL，可以用反射 (Reflection) 或 Assembly.Load：
+===================================================================
+很多人一開始會以為 using 就能「導入」別的專案的程式碼，但其實 using 和 引用 是完全不同層次的東西。
+🔹 1. using 是什麼？
+using 只是一個 語法糖，讓你不用每次都寫完整名稱空間 (namespace)。
+它 不會幫你建立引用關係。
+
+例如：
+using System.Text;
+class Program
+{
+    static void Main()
+    {
+        StringBuilder sb = new StringBuilder(); // 因為有 using，所以不用寫 System.Text.StringBuilder
+    }
+}
+
+👉 如果少了 using，你還是可以寫：
+System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+2. 沒有「添加引用」會發生什麼？
+如果你在 ProjectB 裡只寫：
+using ProjectA;
+但 沒有添加 ProjectA 的專案引用，編譯器會直接報錯：
+The type or namespace name 'ProjectA' could not be found
+因為編譯器根本找不到 ProjectA.dll，它不知道這個 namespace 代表什麼。
+
+3. 比喻
+引用 (Reference) → 像是你「裝了這本書」。
+using → 像是「翻到這本書的目錄，快速跳到你要的章節」。
+
+✅ 總結：
+一定要添加引用（不論是專案引用或 DLL 引用），才能使用別的專案的程式碼。
+using 只是語法輔助，讓程式碼更好讀，不會替你解決引用問題
+===================================================================
+你前面問到 internal，剛好跟「專案引用」有關，我幫你從 C# 專案 (Project) 與 組件 (Assembly) 的角度解釋。
+🔹 1. 專案 (Project) 與 組件 (Assembly)
+在 Visual Studio / .NET 專案裡，每個 Project 編譯後，通常會產生一個 組件 (Assembly)，就是一個 .dll 或 .exe。
+
+例如：
+ProjectA → 編譯後得到 ProjectA.dll
+ProjectB → 編譯後得到 ProjectB.exe
+
+添加專案引用就是讓 A 專案能用 B 專案的公開成員 (public)。
+internal 修飾的東西，即使有引用，也不能跨專案存取。
+引用有兩種：專案引用（開發階段方便同步更新）、DLL 引用（直接用已編譯的組件）。
+===================================================================
+存取修飾詞（Access Modifiers）
+1. public
+意思：完全公開，任何地方都可以存取。
+使用情境：API 或類別需要對外提供功能。
+
+2. private
+意思：只有在 類別內部 才能存取。
+使用情境：封裝（Encapsulation），避免外部程式任意修改內部狀態。
+
+3. protected
+意思：只有 類別本身 和 子類別 (繼承它的 class) 可以存取。
+使用情境：希望子類別能用，但不想完全對外公開。
+
+4. internal
+意思：僅限 同一個組件 (Assembly) 中的程式可以存取。
+（通常一個專案編譯後是一個 Assembly，例如 .dll 或 .exe）
+使用情境：提供模組內部使用的功能，但不想讓外部專案存取。
+===================================================================
 1. 擴充方法 (Extension Method) 是什麼？
 
 擴充方法就是 在不改變原本類別的情況下，替它新增方法。
