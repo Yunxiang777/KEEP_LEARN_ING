@@ -4,6 +4,257 @@
 =========================================================================================================
 =========================================================================================================
 =========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+=========================================================================================================
+An organization’s content management system currently labels files and documents as “Public” and “Restricted.”
+一個組織的內容管理系統（CMS）目前將檔案和文件標記為 「公開」 和 「受限」。
+
+On a recent update, a new classification type of “Private” was added.
+在最近的更新中，新增了一個分類 「私人」。
+
+Which of the following would be the MOST likely reason for this addition?
+下列哪一個最可能是新增這個分類的原因？
+
+The Answer: C. Expanded privacy compliance
+答案：C. 擴大隱私合規性
+
+The labeling of data as private is often associated with compliance and confidentiality concerns.
+將資料標記為 私人（Private） 通常與合規要求與保密性相關。
+
+例如，遵循 GDPR、CCPA 等隱私法規，敏感資料需要明確標註和限制存取。
+
+錯誤選項說明
+
+A. Minimized attack surface
+A. 減少攻擊面 —— 錯誤。資料分類對系統的潛在攻擊面影響很小，並非新增「Private」分類的主要原因。
+
+B. Simplified categorization
+B. 簡化分類 —— 錯誤。新增分類增加了分類層級，反而不是簡化。
+
+D. Decreased search time
+D. 減少搜尋時間 —— 錯誤。新增分類未必能減少搜尋時間。
+
+🔑 補充（專業術語）
+
+Data Classification（資料分類）：
+
+定義：依據敏感性、機密性或合規需求對資料進行分類。
+
+常見分類：
+
+Public（公開）：可自由存取
+
+Restricted（受限）：僅限特定使用者存取
+
+Private（私人）：涉及個人或敏感資料，需嚴格保護
+
+Privacy Compliance（隱私合規性）：
+
+遵循資料保護法規，如：
+
+GDPR（歐盟一般資料保護規範）
+
+CCPA（加州消費者隱私法案）
+
+資料標記與存取控制是合規的重要措施
+=========================================================================================================
+Data Custodian（資料管理者）：
+
+角色：負責資料的安全與存取控制。
+
+工作內容：
+
+設定和管理存取權限
+
+定期審查使用者權限
+
+監控資料安全事件
+
+配合資料擁有者的策略落實安全措施
+
+Data Owner（資料擁有者）：
+
+角色：對資料擁有決策權與責任。
+
+工作內容：決定誰可以使用資料、資料保護政策、合規要求。
+
+Data Processor（資料處理者）：
+
+角色：依據規則處理資料，例如操作資料庫、生成報表。
+
+Data Subject（資料主體）：
+
+角色：資料所屬的個人或實體，例如顧客或使用者。
+=========================================================================================================
+SCAP（安全內容自動化協定）專注於跨多個資安工具標準化漏洞管理。
+這使得不同工具可以依照相同的安全標準進行識別與處理。
+典型應用：自動化漏洞掃描、驗證與補丁管理。
+=========================================================================================================
+B. Obfuscation
+B. 混淆 —— 錯誤。混淆是讓程式或資料難以被人類閱讀或理解的過程，不常用於在雜湊值中加入隨機資料。
+
+C. Key stretching
+C. 密鑰延伸 —— 錯誤。密鑰延伸是將密碼或金鑰重複運算多次以增加對暴力攻擊的防護，但本身不會加入隨機資料。
+
+D. Digital signature
+D. 數位簽章 —— 錯誤。數位簽章使用雜湊與非對稱加密提供資料完整性，不常用於儲存密碼。
+=========================================================================================================
+變更管理（Change Management）
+
+變更管理流程包含測試階段，可以協助識別與應用程式變更或升級相關的潛在問題。
+透過測試可以在補丁或升級前發現漏洞回歸（Regression）問題。
+=========================================================================================================
+SASE（安全存取服務邊緣）是一種次世代 VPN 技術，用於優化到雲端服務的安全通訊流程。
+適合行動裝置與遠端工作使用。
+提供統一的安全政策管理與資料保護。
+=========================================================================================================
+The Answer: C. Instant messaging
+答案：C. 即時通訊（Instant Messaging）
+
+Instant messaging is commonly used as an attack vector, and one way to help protect against malicious links delivered by instant messaging is a host-based firewall.
+即時通訊常被用作攻擊向量（Attack Vector），而主機型防火牆可以幫助防範透過即時通訊傳送的惡意連結。
+
+錯誤選項說明
+
+A. Default credentials
+A. 預設憑證 —— 錯誤。使用者通常會使用特定帳號登入，主機防火牆無法檢測是否使用預設帳號與密碼。
+
+B. Vishing
+B. 語音釣魚 —— 錯誤。Vishing 是透過電話或語音通訊進行的釣魚攻擊，主機防火牆無法防範語音攻擊。
+
+D. On-path
+D. 中間人攻擊 —— 錯誤。On-path 攻擊指第三方在通訊路徑中攔截或篡改訊息，受害者通常不知情，主機防火牆無法偵測此類攻擊。
+=========================================================================================================
+Buffer Overflow（緩衝區溢位）：
+
+定義：當程式輸入資料超過預先配置的緩衝區容量，導致記憶體被覆寫。
+
+風險：可造成系統崩潰、資料損壞，甚至允許攻擊者執行任意程式碼。
+
+典型場景：API 呼叫、網路服務、應用程式輸入欄位等。
+=========================================================================================================
+The Answer: D. Enumeration
+答案：D. 枚舉（Enumeration）
+
+Enumeration describes the detailed listing of all parts in a particular device.
+**枚舉（Enumeration）**指的是對特定裝置的所有零件進行詳細列舉。
+
+For a computer, this could include the CPU type, memory, storage drive details, keyboard model, and more.
+對於電腦來說，可能包括 CPU 型號、記憶體大小、儲存裝置細節、鍵盤型號等等。
+
+. Sanitization
+B. 資料清理 —— 錯誤。資料清理是指刪除儲存媒體上的資料，讓裝置可以安全再次使用。例如進行逐扇區格式化（sector-by-sector format）清理硬碟。
+=========================================================================================================
+A company is installing a new application in a public cloud.
+一家公司正在公有雲（Public Cloud）中安裝一個新應用程式。
+Which of the following determines the assignment of data security in this cloud infrastructure?
+以下哪一項用來決定這個雲端基礎架構中資料安全責任的分配？
+
+The Answer: C. Responsibility matrix
+答案：C. 責任矩陣（Responsibility Matrix）
+雲端責任矩陣通常由雲端服務提供者發布，用以記錄所有雲端服務中的責任分配。
+例如，對於 IaaS（基礎設施即服務）的實施，客戶需要負責的項目會與 SaaS（軟體即服務）不同。
+
+A. Playbook
+A. 操作手冊 —— 錯誤。操作手冊提供在管理組織流程與程序時的條件步驟，例如病毒感染後的復原流程，但不決定責任分配。
+
+B. Audit committee
+B. 審計委員會 —— 錯誤。審計委員會負責監督組織的風險管理活動，例如驗證責任矩陣中記錄的安全措施，但不直接決定安全責任分配。
+
+D. Right-to-audit clause
+D. 審計權條款 —— 錯誤。審計權條款通常包含在第三方合約中，用來規範定期審計的條件與流程，並非用來分配資料安全責任。
+
+🔑 補充（專業術語）
+Responsibility Matrix（責任矩陣）：
+也稱為 RACI Matrix（Responsible, Accountable, Consulted, Informed）。
+用於雲端環境中明確劃分責任：誰負責（Customer / Provider）、誰負最終責任、誰需諮詢或通知。
+在雲端安全中，常用來明確 IaaS、PaaS、SaaS 的責任分界：
+
+服務型態	客戶責任	供應商責任
+IaaS	OS、應用程式、資料	基礎硬體、網路
+PaaS	應用程式、資料	OS、硬體、網路
+SaaS	資料	應用程式、OS、硬體、網路
+
+Playbook（操作手冊）：流程與步驟指南，不決定責任。
+Audit Committee（審計委員會）：監督組織內的風險與合規行為。
+Right-to-audit Clause（審計權條款）：合約中規範第三方審計權利。
+✅ 正確答案：C. Responsibility matrix —— 它用來明確劃分雲端安全責任，是雲端安全管理的核心工具。
+=========================================================================================================
+An organization is implementing a security model where all application requests must be validated at a policy enforcement point.
+一個組織正在實施一種安全模型，其中所有應用程式請求都必須在策略執行點（Policy Enforcement Point）進行驗證。
+
+Which of the following would BEST describe this model?
+以下哪一項最能描述這個模型？
+
+B. 零信任（Zero Trust）
+零信任描述了一種模型，其中沒有任何東西是天生被信任的，所有存取都必須經過驗證。
+
+Zero Trust（零信任）：
+核心理念：「永不信任，始終驗證」
+任何內部或外部請求都必須驗證身份、授權、並檢查安全狀態。
+
+常用概念：
+Policy Enforcement Point (PEP)：策略執行點，對每個請求進行檢查。
+Continuous verification：持續驗證使用者和裝置狀態。
+PKI（Public Key Infrastructure）：
+用於加密、簽章、驗證身份，不直接定義存取策略。
+DAC（Discretionary Access Control）：
+存取控制依據擁有者決定。
+Federation（聯合認證）：
+用於跨組織認證與單點登入（SSO），與零信任的中央驗證點不同。
+=========================================================================================================
+答案：B. 減輕（Mitigate）
+**減輕（Mitigation）**是一種降低威脅程度的策略。
+這通常透過新增安全系統與監控來完成，例如安裝 NGFW（下一代防火牆）。
+=========================================================================================================
+**網路釣魚活動（Phishing campaign）**是一個內部流程，用來測試使用者群體的安全習慣。
+來自非公司控制伺服器且帶有連結的電子郵件，可能是資訊部門為了進行釣魚測試活動而發送的郵件。
+
+🔑 補充說明
+Phishing campaign（釣魚活動）：企業常用的一種教育與測試手段，透過模擬攻擊（假郵件、假連結），觀察使用者是否會點擊或提供敏感資訊，進而加強資安意識。
+Internal process（內部流程）：這種活動通常由 IT 或資安團隊執行，並不是真正的外部攻擊，但會模擬真實攻擊手法。
+Server not under company control：為了測試真實性，有時連結會指向非公司內部伺服器，但其目的是教育與評估，而非真正竊取資料。
+簡單說：這段描述的是 企業內部進行的釣魚測試活動，目的不是攻擊，而是評估使用者對釣魚郵件的應對能力。
+=========================================================================================================
+Open permissions（開放權限）：指資源（如檔案、資料庫、雲端儲存桶 S3 bucket 等）被設為「任何人可讀寫」的狀態。這是最常見的雲端資安錯誤之一。
+=========================================================================================================
+A company's security policy requires that login access should only be available 
+if a person is physically within the same building as the server.
+一間公司的安全政策要求：只有在使用者身 physically 處於與伺服器相同的建築物內時，才允許登入存取。
+
+The Answer: B. Biometric scanner
+答案：B. 生物辨識掃描器。
+生物辨識掃描器需要人員親自到場才能進行身份驗證。
+
+A. USB security key
+A. USB 安全金鑰 —— 錯誤。安全金鑰可以用來存放憑證，常用於使用者或應用程式的驗證。但它無法證明該金鑰的持有人身在伺服器所在的建築物內。
+
+PIN：屬於知識型驗證（something you know），無法驗證地點。
+SMS：屬於擁有型驗證（something you have），同樣無法確定物理存在。
+✅ 正確答案：B. Biometric scanner —— 因為只有生物辨識需要「人必須實體到場」才可完成驗證，符合題目要求。
+=========================================================================================================
+A Linux administrator is downloading an updated version of her Linux distribution.
+一位 Linux 系統管理員正在下載她的 Linux 發行版的更新版本。
+The download site shows a link to the ISO and a SHA256 hash value.
+下載網站顯示一個 ISO 連結以及一個 SHA256 雜湊值（hash value）。
+Which of these would describe the use of this hash value?
+以下哪一項描述了這個雜湊值的用途？
+
+The Answer: A. Verifies that the file was not corrupted(損壞的) during the file transfer
+答案：A。驗證檔案在傳輸過程中未被損毀。
+檔案下載後，管理員可以計算該檔案的 SHA256 雜湊值，並確認它是否與網站上公布的數值相符。
+
+C. Authenticates the site as an official ISO distribution site
+C. 驗證網站為官方 ISO 發行站 —— 錯誤。雖然從可信網站下載很重要，但網站上公布雜湊值本身不表示該網站已被認證（雜湊值可能被竄改）。
+
+ISO（映像檔）：通常指光碟映像檔（.iso），可燒錄或掛載為虛擬光碟。
+
+完整性 vs. 來源驗證（authenticity）：雜湊值能驗證檔案在傳輸中是否被破壞或意外損壞（完整性），但不一定能保證來源真實。
+若攻擊者能同時替換下載檔案與網站上公布的雜湊值，兩者仍會配對成功但檔案已被篡改。要驗證來源，
+應使用發行者的數位簽章（例如 GPG/PGP 簽名）、從多個官方管道比對雜湊值，或確保透過受信任的 HTTPS 與憑證取得雜湊值。
+=========================================================================================================
 A company's website has been compromised(妥協，和解) and the website content has been replaced with a political message.
 翻譯：某公司的網站遭到入侵，網站內容被替換成 政治訊息。
 
