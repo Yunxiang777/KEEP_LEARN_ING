@@ -14,6 +14,36 @@
 ================================================================
 ================================================================
 ================================================================
+那如果有人說 asp.net 8，web api，我怎麼知道他是 core 還是 framework
+這是一個關鍵問題 👌
+其實判斷方法很簡單，只要看到 .NET 5、.NET 6、.NET 7、.NET 8...，就一定是 Core 架構（雖然名稱裡不再寫 Core）。
+
+為什麼？
+
+.NET Framework：最後一版是 4.8.1，微軟已經停止繼續更新大版本。
+
+.NET Core：從 .NET 5 (2020) 開始，微軟把「Core」字拿掉，改叫 .NET X。
+
+例如 .NET 5、.NET 6、.NET 7、.NET 8 都屬於「ASP.NET Core」家族。
+
+但官方名稱會寫成 ASP.NET Core on .NET 8。
+
+所以你的例子：
+
+如果有人說：「ASP.NET 8 Web API」
+👉 一定是指 ASP.NET Core Web API (跑在 .NET 8)。
+👉 不可能是舊的 .NET Framework，因為它沒有 8 這個版本。
+
+判斷速查表
+名稱	代表什麼
+ASP (Classic)	1996 年的老 ASP，副檔名 .asp
+ASP.NET (.NET Framework 2.0 ~ 4.8.1)	舊世代，只能 Windows + IIS
+ASP.NET Core (.NET Core 1.0 ~ 3.1)	新架構，跨平台，高效能
+ASP.NET Core on .NET 5+ (.NET 5, 6, 7, 8...)	現在主流，名字只叫「.NET」，但本質上就是 ASP.NET Core
+
+✅ 總結：
+只要有人說 ASP.NET 8 Web API，就是 ASP.NET Core Web API on .NET 8。
+👉 舊的 ASP.NET Framework 停在 4.8.1，不會出現「8」。
 ================================================================
 ASP 是什麼？
 ASP 全名：Active Server Pages
