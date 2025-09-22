@@ -12,7 +12,84 @@
 ================================================================
 ================================================================
 ================================================================
+怎樣算是「完美的 RESTful API」？
+
+符合下列條件：
+
+資源 URL 清晰且語意化：不用動詞，而是名詞。
+
+HTTP 方法正確使用：GET 查詢、POST 建立、PUT/PATCH 更新、DELETE 刪除。
+
+使用適當的 HTTP 狀態碼：
+
+200 OK（成功查詢）
+
+201 Created（成功建立）
+
+204 No Content（刪除成功，不需回應內容）
+
+400 Bad Request（請求格式錯誤）
+
+401 Unauthorized（未認證）
+
+404 Not Found（資源不存在）
+
+500 Internal Server Error（伺服器錯誤）
+
+無狀態：每個請求獨立，驗證用 Token。
+
+一致的資料格式：例如統一回傳 JSON，錯誤格式統一：
+
+{ "error": "UserNotFound", "message": "User with ID 123 not found" }
 ================================================================
+1. REST 是什麼？
+
+REST（Representational State Transfer）
+是 Roy Fielding 博士在 2000 年提出的一種 Web API 設計風格，不是一個標準或協定。
+
+它的核心概念是：
+
+資源（Resource） → 用 URI 來標識，例如 /users/1
+
+動作（Action） → 用 HTTP 方法 來表達，例如 GET、POST、PUT、DELETE
+
+狀態轉移（State Transfer） → 客戶端透過 HTTP 請求改變或查詢資源的狀態
+
+2. RESTful API 的設計原則
+
+一個 API 要稱得上 RESTful，通常需要遵循以下原則：
+
+(1) 資源導向（Resource-Oriented）
+
+每個 資源 都要有唯一的 URL。
+✅ /users/123 代表 ID 為 123 的使用者。
+❌ /getUserById?id=123（不夠 RESTful，因為動作藏在 URL）。
+
+(2) 使用 HTTP 方法表示動作
+
+GET /users → 取得所有使用者
+
+GET /users/123 → 取得 ID=123 的使用者
+
+POST /users → 建立新使用者
+
+PUT /users/123 → 更新 ID=123 的使用者（整個物件）
+
+PATCH /users/123 → 更新 ID=123 的部分欄位
+
+DELETE /users/123 → 刪除 ID=123 的使用者
+
+(3) 無狀態（Stateless）
+
+伺服器 不應保存用戶端的會話狀態。
+
+每個請求都應該包含必要的驗證資訊（例如 JWT Token）。
+
+(4) 統一介面（Uniform Interface）
+
+資源表現形式（Representation）應統一，例如回傳 JSON 或 XML。
+
+資源 URL 應該清晰一致，例如 /orders/123/items。
 ================================================================
 那如果有人說 asp.net 8，web api，我怎麼知道他是 core 還是 framework
 這是一個關鍵問題 👌
