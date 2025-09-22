@@ -5,6 +5,51 @@
 ================================================================
 ================================================================
 ================================================================
+1️⃣ Entity Framework Core (EF Core) 是什麼？
+
+EF Core 是 .NET 的 ORM（Object-Relational Mapper）
+
+功能：
+
+把資料表映射成 C# 類別
+
+可以用 物件操作資料庫，不必直接寫 SQL
+
+支援多種資料庫（SQL Server、PostgreSQL、MySQL、SQLite…）
+
+核心概念：
+
+DbContext → 對應資料庫連線和操作
+
+DbSet<TEntity> → 對應資料表
+
+LINQ → 查詢資料表，就像查集合一樣
+
+範例：
+
+// 定義資料模型
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+// 定義 DbContext
+public class AppDbContext : DbContext
+{
+    public DbSet<User> Users { get; set; }
+}
+
+// 使用 LINQ 查詢資料
+using (var db = new AppDbContext())
+{
+    var user = db.Users
+                 .Where(u => u.Name == "Alice")
+                 .FirstOrDefault(); // 會自動生成 SQL
+}
+
+
+EF Core 會自動產生 SQL 查詢，並使用 參數化查詢，減少 SQL Injection 風險。
 ================================================================
 1️⃣ LINQ 是什麼？
 
