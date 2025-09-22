@@ -8,6 +8,51 @@
 ================================================================
 ================================================================
 ================================================================
+1️⃣ 跨平台 (Cross-Platform) 定義
+
+跨平台指的是：
+
+軟體或程式可以在 不同作業系統上運行，不依賴特定 OS 或環境。
+
+例子：
+
+Windows
+
+Linux
+
+macOS
+
+特點：
+
+同一份程式碼可以在不同 OS 上執行
+
+可以用同樣方式編譯與部署
+
+2️⃣ IIS 的限制
+
+IIS = Internet Information Services
+
+Windows 專用的 Web Server
+
+只能在 Windows 上運行
+
+無法部署到 Linux / macOS → 所以不跨平台
+
+3️⃣ Kestrel 的跨平台特性
+
+Kestrel 是 ASP.NET Core 內建 Web Server
+
+支援 Windows / Linux / macOS
+
+不依賴 IIS 或 Windows 專有 API
+
+可以直接當 Web Server 使用，也可以放在 反向代理（Reverse Proxy）後面：
+
+Nginx (Linux)
+
+Apache (Linux)
+
+IIS (Windows)
 ================================================================
 Visual Studio 建立 ASP.NET Core Web API 專案時，因為 ASP.NET Core 是 跨平台的，所以它不依賴 IIS 或 Windows 專屬 Web Server
 1️⃣ ASP.NET Core 預設 Server：Kestrel
