@@ -9,6 +9,22 @@
 ================================================================
 ================================================================
 ================================================================
+Visual Studio 建立 ASP.NET Core Web API 專案時，因為 ASP.NET Core 是 跨平台的，所以它不依賴 IIS 或 Windows 專屬 Web Server
+1️⃣ ASP.NET Core 預設 Server：Kestrel
+
+Kestrel 是 ASP.NET Core 內建的跨平台 Web Server。
+
+特點：
+
+跨平台：Windows、Linux、macOS 都能跑
+
+高效能，適合直接對外服務（Production）或配合反向代理（例如 Nginx / IIS）
+
+支援 HTTP/HTTPS
+
+在 Visual Studio 建立的 Web API 專案中：
+
+dotnet run 或 F5 啟動時，專案就會用 Kestrel 來監聽指定的端口（例如 5000 / 5001，或你看到的 5165 / 7150）。
 ================================================================
 <Nullable>disable</Nullable> => 警告提示
 <ImplicitUsings>enable</ImplicitUsings> => using 從預設載入改成強制
