@@ -13,6 +13,43 @@
 ===================================================================
 ===================================================================
 ===================================================================
+1. Package Manager Console 是什麼
+
+Package Manager Console 是 Visual Studio 內建的一個 PowerShell 視窗。
+
+主要用來透過命令行操作 NuGet 套件管理器 (NuGet Package Manager)。
+
+換句話說，它是 Visual Studio 的命令列版 NuGet 工具。
+
+2. 它的用途
+
+你可以在 Package Manager Console 直接輸入 NuGet 指令來：
+
+安裝套件
+
+Install-Package Newtonsoft.Json
+
+
+更新套件
+
+Update-Package Newtonsoft.Json
+
+
+移除套件
+
+Uninstall-Package Newtonsoft.Json
+
+
+查詢套件資訊
+
+Get-Package
+
+
+這些指令背後做的事情，就是修改你專案裡的：
+
+packages.config 或 *.csproj 檔案（記錄套件相依性）
+
+下載實際的 DLL / 套件檔案到專案中
 ===================================================================
 C# 的 Stack<T>
 這個是 .NET 提供的泛型資料結構。
