@@ -17,9 +17,24 @@ namespace WebApplication1.Controllers
         }
         // GET: api/<NewsController>
         [HttpGet]
-        public IEnumerable<News> Get()
+        public IEnumerable<object> Get()
         {
-            return _webContext.News;
+            var result = from a in _webContext.News
+                         select new
+                         {
+                             a.NewsId,
+                             a.Title,
+                             a.Content,
+                             a.StartDateTime,
+                             a.EndDateTime,
+                             a.Click,
+                             a.UpdateDateTime,
+                             a.UpdateEmploeeId,
+                             a.insertDateTime,
+                             a.InsertEmploeeId,
+                             a.Enable
+                         };
+            return result;
         }
 
         // GET api/<NewsController>/5
