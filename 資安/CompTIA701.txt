@@ -1182,126 +1182,51 @@ D. Define a removable media block rule in the UTM
 D. 在統一威脅管理（UTM, Unified Threat Management）中定義可移除媒體的封鎖規則
 UTM（統一威脅管理）主要用來監控網路流量，通常不會管理個別電腦的儲存裝置選項。
 =========================================================================================================
-A system administrator receives a text alert
-一名系統管理員收到一則簡訊警示
-when access rights are changed on a database containing private customer information.
-當一個包含客戶隱私資訊的資料庫，其存取權限被更動時。
-Which of the following would describe this alert?
-以下哪一個最能描述這種警示？
-
-正確答案：C. 自動化（Automation）
+自動化（Automation）
 自動化能確保合規性檢查能夠定期執行，而不需要人工介入。
 當系統配置的變更導致組織不再符合合規要求時，自動化能特別有效地即時發送警示。
 
-A. 維護時段（Maintenance window）
+維護時段（Maintenance window）
 維護時段是指與變更控制流程相關的排程時間。
 在維護時段內，系統與服務通常會有有限的可用性。
 
-B. 確認與認可（Attestation and acknowledgment）
+確認與認可（Attestation and acknowledgment）
 在合規流程中，確認與認可是對正式合規文件進行最終驗證的程序。
 由自動化程序產生的警示，並不能算作確認與認可。
 
-D. 外部稽核（External audit）
+外部稽核（External audit）
 外部稽核是驗證合規流程的一個重要工具，
 但監控系統的自動化警示並不屬於外部稽核的一部分。
 =========================================================================================================
-A city is building an ambulance service network for emergency medical dispatching.
-一個城市正在建置一個救護車服務網路，用於緊急醫療調度。
-Which of the following should have the highest priority?
-以下哪一個應該被視為最高優先順序？
-
-正確答案：C. 系統可用性（System availability）
+系統可用性（System availability）
 對緊急服務的請求通常至關重要，因此當有人撥打電話時，調度系統必須始終保持可用。
 
-A. 系統整合成本（Integration costs）
+系統整合成本（Integration costs）
 當人命受到威脅時，成本通常不是系統整合中最重要的考量。
 
-B. 修補程式可用性（Patch availability）
+修補程式可用性（Patch availability）
 雖然讓系統持續更新修補程式很重要，但更重要的是確保拯救生命的服務能隨時提供給需要的人。
 
-D. 電力使用量（Power usage）
+電力使用量（Power usage）
 在建置關鍵的醫療與緊急服務基礎設施時，電力使用量通常不是最重要的考量因素。
 =========================================================================================================
-A security administrator has examined a server recently compromised by an attacker,
-一名資安管理員檢查了一台最近被攻擊者入侵的伺服器，
-and has determined the system was exploited due to a known operating system vulnerability.
-並確認該系統是因為一個已知的作業系統漏洞而遭到利用。
-Which of the following would BEST describe this finding?
-以下哪一個選項最能描述這項發現？
-
-正確答案：A. 根本原因分析（Root cause analysis）
-根本原因分析的目標是解釋某事件的最終原因。
-一旦找出原因，就能更容易防範未來類似的攻擊。
-
-B. 電子取證（E-discovery）
+電子取證（E-discovery）
 電子取證是指電子文件的收集、準備、審查、解讀與呈現過程。
-電子取證本身並不涉及調查與判定攻擊的根本原因。
 
-C. 風險承受度（Risk appetite）
-風險承受度是指一個組織在採取行動降低風險之前，願意接受的風險程度。
-風險承受度並不是根本原因分析的一部分。
-
-D. 資料主體（Data subject）
+資料主體（Data subject）
 資料主體是指任何與已識別或可識別的自然人有關的資訊，
 特別是在描述或管理該自然人的個人隱私資訊時使用。
 =========================================================================================================
-Which of these threat actors would be MOST likely to attack systems for direct financial gain?
-
-The Answer: A. Organized crime
-正確答案：A. 有組織犯罪（Organized crime）
-有組織犯罪的攻擊者主要受到金錢驅動，他們的駭客行為通常以能夠快速轉換成財務利益的目標為中心。
-
-B. 黑客行動主義者（Hacktivist）
-黑客行動主義者專注於推動政治議程，而不是以金錢利益為主要目標。
-
-C. 國家級行為者（Nation state）
-國家級行為者通常已經擁有充足資金，他們的主要目標並非基於營收或收入。
-
-D. 影子 IT（Shadow IT）
-影子 IT 指的是組織內繞過既有 IT 部門，自行建立應用程式或基礎設施的做法。
-=========================================================================================================
-A company's email server has received an email from a third-party,
-→ 一家公司的電子郵件伺服器收到了來自第三方的電子郵件，
-but the origination server does not match the list of authorized devices.
-→ 但是發信的來源伺服器與授權設備清單不符。
-Which of the following would determine the disposition(處理方式) of this message?
-→ 下列哪一項可以決定這封郵件的處理方式（是否允許、阻擋或標記為垃圾郵件）？
-❍A. SPF❍B. NAC❍C. DMARC❍D. DKIM
-
-答案：C. DMARC
-DMARC（基於網域的郵件驗證、回報與一致性規範）可以指定垃圾郵件的處理方式。
-合法的來源郵件網域擁有者可以決定這些郵件是被 接受、放入 垃圾郵件夾，或 拒收。
-DMARC：一種電子郵件驗證技術，用來防止 假冒發信（Email Spoofing），同時告訴接收伺服器應該如何處理可疑郵件。
-
-A. SPF
-SPF（寄件者政策框架）是一個列出某個網域所有授權郵件伺服器的清單。
-所有合法郵件都應該從 SPF 配置中列出的伺服器之一發送。
+DMARC 一種電子郵件驗證技術，用來防止 假冒發信（Email Spoofing），同時告訴接收伺服器應該如何處理可疑郵件。
 SPF 主要用來 驗證郵件發信伺服器是否合法，但不決定垃圾郵件的最終處理方式。
-
-B. NAC
 NAC（網路存取控制）是一種限制網路存取權限的方法，只允許授權使用者接入網路。
-NAC 通常不會用來管理電子郵件的傳送。
-NAC 屬於網路層的存取控制技術，與郵件安全無直接關係。
-
-D. DKIM
-DKIM（網域簽名郵件）提供一種方式，用來驗證來自特定郵件伺服器的所有數位簽章郵件。
-DKIM 並不決定接收伺服器如何分類這些已簽章的郵件。
 DKIM 用來保證郵件內容未被篡改和確認發信者身份，但不決定垃圾郵件或阻擋策略。
 =========================================================================================================
-A company has hired a third-party to gather information about the company’s servers and data. 
-This third-party will not have direct access to the company's internal network, 
-but they can gather information from any other source. 
-Which of the following would BEST describe  this approach?
-❍A. Vulnerability scanning
-❍B. Passive reconnaissance
-❍C. Supply chain analysis
-❍D. Regulatory audit
-
-The Answer: B. Passive reconnaissance(偵察) - 被動偵察
+Passive reconnaissance(偵察) - 被動偵察
 被動偵察專注於從公開來源收集盡可能多的資訊，例如社群媒體、公司網站以及商業組織。
 不直接存取或攻擊目標系統，只利用公開資訊蒐集情報，像是 OSINT（Open Source Intelligence，開放來源情報）。
 
-A. 漏洞掃描（Vulnerability scanning）
+漏洞掃描（Vulnerability scanning）
 一些主動偵察測試會直接詢問系統，以確認漏洞是否存在。
 需要對目標系統直接互動，通常會觸發系統回應。
 
@@ -1314,27 +1239,6 @@ D. 法規稽核（Regulatory audit）
 法規稽核通常需要存取內部系統與資料。
 通常是合規檢查（compliance-遵守 check），需要內部資料，因此不是被動偵察。
 =========================================================================================================
-🔹 SSH 與 HTTP 的層級比較
-
-在 OSI 模型（7 層）：
-層級					主要功能						例子
-應用層				提供應用程式與使用者互動的協議	HTTP、HTTPS、SSH、FTP、SMTP
-傳輸層				負責資料可靠傳輸或快速傳輸		TCP、UDP
-網路層				負責尋路與封包傳送				IP
-資料鏈路層 / 物理層	實際在網路上傳送位元			Ethernet、Wi-Fi 等
-=========================================================================================================
-•Block HTTP sessions between the Web Server and the Database Server
-10.1.1.2 > 10.2.1.20，TCP，80，Block
-•Allow the Storage Server to transfer files to the Video Server over HTTPS
-10.2.1.33 > 10.1.1.7，TCP，443，Allow
-•Allow the Management Server to use a secure terminal on the File Server
-10.2.1.47 > 10.1.1.3 TCP，22，Allow
-=========================================================================================================
-During the login process, your phone receives a text message with a one-time passcode => Something you have
-You enter your PIN to make a deposit(訂金) into an ATM => Something you know
-You can use your fingerprint to unlock the door to the data center => Something you are
-Your login will not work unless you are connected to the VPN => Somewhere you are
-
 1. Something you have（你擁有的東西）
 定義：使用者必須持有的物理或電子物件來驗證身份。
 範例：智慧卡（smart card）、OTP 令牌（token）、手機收到的驗證碼、USB 安全金鑰（YubiKey）。
@@ -1351,47 +1255,21 @@ Your login will not work unless you are connected to the VPN => Somewhere you ar
 定義：根據使用者的地理位置或裝置位置來驗證身份。
 範例：GPS 定位、IP 位址檢查、Wi-Fi 網路位置、VPN 登入限制。
 
-💡 補充：
 多因素認證（MFA, Multi-Factor Authentication）就是要求 至少兩種不同類型的因素，
 例如「Something you have + Something you know」或「Something you know + Something you are」，大幅提升安全性。
 =========================================================================================================
-A guard checks the identification of all visitors / 檢查每個訪客的身分證 => Operational
-All returns must be approved by a Vice President(副總) => Managerial
-A generator is used during a power outage(停電) => Physical
-Building doors can be unlocked with an access card => Physical
-System logs are transferred automatically to a SIEM => Technical
-
 Operational：人員每天執行的程序
 Managerial：政策、授權、策略決策
 Physical：保護建築、設備、人員
 Technical：依靠技術或系統自動執行的控制
 
-✅ 總結：
-Control categories describe the type of security applied to a task or event.
-控制類別描述了應用於某項任務或事件的安全類型。
-
-Operational controls are often implemented by people instead of systems.
 操作性控制（Operational controls）通常由人員執行，而非系統自動化完成。
-
-Security guards and awareness programs are examples of an operational control.
 保全人員和資安意識訓練計畫（awareness programs）都是操作性控制的範例。
-
-Managerial controls are administrative controls associated with security design and implementation.
 管理性控制（Managerial controls）是與安全設計與實施相關的管理性控制（administrative controls）。
-
-A set of policies and procedures would be an example of a managerial control.
 一套政策與作業程序（policies and procedures）就是管理性控制的範例。
-
-Physical controls are used to limit physical access.
 實體控制（Physical controls）用於限制物理存取。
-
-Badge readers, fences, and guard shacks are categorized as physical controls.
 門禁讀卡器（badge readers）、圍欄（fences）以及保全崗亭（guard shacks）都屬於實體控制。
-
-Technical controls are implemented using systems.
 技術控制（Technical controls）是透過系統來實施的控制措施。
-
-Operating system controls, firewalls, and automated processes are considered technical controls.
 作業系統控制（Operating system controls）、防火牆（firewalls）以及自動化流程（automated processes）都被視為技術控制。
 =========================================================================================================
 Outside Building => Parking and Visitor drop-off(下車)
@@ -1403,17 +1281,6 @@ DataCenterDoor(資料中心大門) => Entrance frominside building(從大樓內�
 ServerAdministration => Authentication toserver consolein the data center(管理者登入驗證)
 	=> Authentication token (令牌)
 =========================================================================================================
-Attacker obtains bank account number  and birth date by calling the victim?
-	=> Vishing (與音釣魚)
-Attacker accesses a database directly  from a web browser
-	=> Injection (資料庫注入)
-Attacker intercepts all communication between a client and a web server
-	=> On-path (中間人攻擊)
-Multiple attackers overwhelm a web server
-	=> DDoS (癱瘓攻擊)
-Attacker obtains a list of all login credentials used  over the last 24 hours
-	=> Keylogger (間諜攻擊)
-	
 On-path (MITM)：攔截並可能篡改雙方通訊。
 RFID cloning：複製 RFID 晶片資料以冒用身份。
 Keylogger：記錄鍵入資訊（密碼、帳號等）以竊取資料。
