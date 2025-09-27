@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>網路技術隨筆</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.8; margin: 40px; }
+    h1, h2, h3 { color: #2c3e50; }
+    ul { margin-left: 20px; }
+    pre { background: #f4f4f4; padding: 10px; border-radius: 6px; overflow-x: auto; }
+    .section { margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <h1>網路技術隨筆</h1>
+
+  <div class="section">
+    <h2>一、IP 與路由表衝突</h2>
+    <p>當電腦要連線到一個 IP (例如 192.168.0.24)，會依照 <strong>路由表 (routing table)</strong> 來決定路徑：</p>
+    <ul>
+      <li>先比對子網路 (subnet mask)：判斷目標 IP 屬於哪個網段。</li>
+      <li>再依照路由表決定走向：可能送到本地網卡 (LAN)，或透過 VPN tunnel。</li>
+    </ul>
+    <h3>本地與 VPN 衝突案例</h3>
+    <ul>
+      <li>本地 LAN：192.168.0.0/24</li>
+      <li>公司 VPN：192.168.0.0/24</li>
+      <li>結果：電腦無法分辨兩邊，通常本地路由會優先，連不到公司的同 IP。</li>
+    </ul>
+    <h3>解決方式</h3>
+    <ul>
+      <li>更換 VPN 端網段（常見 10.x.x.x 或 172.16.x.x）。</li>
+      <li>VPN 軟體設定 Split tunneling / Full tunnel。</li>
+      <li>使用 NAT-T，由 VPN 伺服器轉換 IP，避免衝突。</li>
+    </ul>
+    <p><strong>結論：</strong>若本地與公司內網有相同 IP，必須靠 VPN 的路由設定或 NAT 解決。</p>
+  </div>
+
+  <div class="section">
+    <h2>二、私有 IP</h2>
+    <ul>
+      <li>私有 IP 只能在 LAN 內使用，不能在 Internet 上路由。</li>
+      <li>透過 NAT（Network Address Translation）讓多台設備共用一個公有 IP 上網。</li>
+    </ul>
+    <h3>RFC 1918 定義的私有 IP 範圍</h3>
+    <table border="1" cellpadding="6" cellspacing="0">
+      <tr><th>類別</th><th>範圍</th><th>數量</th><th>用途</th></tr>
+      <tr><td>A</td><td>10.0.0.0 ~ 10.255.255.255</td><td>約 1677 萬</td><td>大型企業、雲端資料中心</td></tr>
+      <tr><td>B</td><td>172.16.0.0 ~ 172.31.255.255</td><td>約 100 萬</td><td>中大型網路</td></tr>
+      <tr><td>C</td><td>192.168.0.0 ~ 192.168.255.255</td><td>約 6.5 萬</td><td>家用網路、SOHO</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>三、FTP 指令</h2>
+    <p><strong>ftp</strong> 是 Windows/Linux/macOS 內建的 FTP client，用來與 FTP server 建立控制連線（TCP port 21）。</p>
+    <ul>
+      <li>常用指令：ls、get、put。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>四、Window Size</h2>
+    <p>在 TCP/IP 傳輸中，<strong>Window Size</strong> 表示一次封包允許的導向大小（接收端能處理的資料量）。</p>
+  </div>
+
+  <div class="section">
+    <h2>五、常見埠號 (Well-known Ports)</h2>
+    <pre>
+qotd     17/tcp    quote of the day
+qotd     17/udp    quote of the day
+chargen  19/tcp    character generator
+chargen  19/udp    character generator
+ftp-data 20/tcp    FTP data
+ftp      21/tcp    FTP control
+ssh      22/tcp    SSH
+telnet   23/tcp    Telnet
+    </pre>
+  </div>
+
+  <div class="section">
+    <h2>六、IPv6 基本概念與轉換</h2>
+    <ul>
+      <li>IPv6 長度：128 位元 ≈ 3.4 × 10³⁸ 個位址。</li>
+      <li>每 16 位元一組，以 16 進位表示。</li>
+      <li>二進位範例：</li>
+    </ul>
+    <pre>
+0010000000000001 0000000000001100 0000000000000000 0000000000000000
+0000000000000000 0000000000000000 0000000000000000 0000000000000001
+</pre>
+    <ul>
+      <li>分組每 16 位元：0010000000000001 . 0000000000001100 . 0000000000000000 ...</li>
+      <li>轉成 16 進位：2001 : 0c00 : 0000 : 0000 : 0000 : 0000 : 0000 : 0001</li>
+      <li>簡化規則：前導 0 可省略，連續 0000 可用 :: 表示 → 2001:c00::1</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>七、IPv4 基本概念與轉換</h2>
+    <ul>
+      <li>IPv4 長度：32 位元。</li>
+      <li>二進位範例：11000000101010000000000000000001</li>
+      <li>每 8 位元為一組 → 11000000.10101000.00000000.00000001</li>
+      <li>轉成十進位 → 192.168.0.1</li>
+      <li>二進位轉 16 進位示例：10101100 → 4 位一組 → 1010 1100 → AC</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>八、ARP 指令</h2>
+    <p><strong>arp -a</strong>：顯示 ARP 快取，用來查看本地端 IP 與 MAC 的對應。</p>
+  </div>
+
+</body>
+</html>
