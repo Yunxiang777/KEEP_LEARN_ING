@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>網路協定與基礎知識完整指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .toc {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+        .toc h2 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        .toc ul {
+            list-style: none;
+            columns: 2;
+            gap: 20px;
+        }
+        .toc li {
+            margin-bottom: 8px;
+            break-inside: avoid;
+        }
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .toc a:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(5px);
+        }
+        .section {
+            margin-bottom: 40px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid transparent;
+            background-image: linear-gradient(white, white), linear-gradient(45deg, #667eea, #764ba2);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        h3 {
+            color: #34495e;
+            margin: 20px 0 15px 0;
+            font-size: 1.4em;
+            position: relative;
+            padding-left: 20px;
+        }
+        h3::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+        .definition {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #2196f3;
+            position: relative;
+        }
+        .definition::before {
+            content: '💡';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.2em;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .comparison-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .comparison-table tr:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            position: relative;
+        }
+        .code-block::before {
+            content: 'CODE';
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.7em;
+            color: #718096;
+        }
+        .warning {
+            background: linear-gradient(135deg, #fff3cd, #ffeeba);
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+        }
+        .warning::before {
+            content: '⚠️';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        .tip {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border: 1px solid #28a745;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+        }
+        .tip::before {
+            content: '✅';
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        .layer-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .layer {
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        .layer:hover {
+            transform: translateX(10px);
+        }
+        .layer-7 { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
+        .layer-6 { background: linear-gradient(135deg, #4ecdc4, #7bddd8); }
+        .layer-5 { background: linear-gradient(135deg, #45b7d1, #6cc4d8); }
+        .layer-4 { background: linear-gradient(135deg, #96ceb4, #a8d5ba); }
+        .layer-3 { background: linear-gradient(135deg, #feca57, #ffd460); }
+        .layer-2 { background: linear-gradient(135deg, #ff9ff3, #f368e0); }
+        .layer-1 { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        .protocol-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .flow-step {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+            position: relative;
+            font-weight: 500;
+        }
+        .flow-step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 1.5em;
+        }
+        @media (max-width: 768px) {
+            .toc ul { columns: 1; }
+            .protocol-flow { flex-direction: column; }
+            .flow-step:not(:last-child)::after {
+                content: '↓';
+                right: 50%;
+                bottom: -15px;
+                top: auto;
+                transform: translateX(50%);
+            }
+            h1 { font-size: 2em; }
+        }
+        .search-box {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-input {
+            width: 300px;
+            padding: 12px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 網路協定與基礎知識完整指南</h1>
+        
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜尋內容...">
+        </div>
+
+        <div class="toc">
+            <h2>📋 目錄</h2>
+            <ul>
+                <li><a href="#basic-concepts">基礎概念</a></li>
+                <li><a href="#osi-model">OSI 七層模型</a></li>
+                <li><a href="#tcp-ip">TCP/IP 協定族</a></li>
+                <li><a href="#http-https">HTTP/HTTPS 協定</a></li>
+                <li><a href="#network-addressing">網路位址系統</a></li>
+                <li><a href="#dns-system">DNS 系統</a></li>
+                <li><a href="#email-protocols">電子郵件協定</a></li>
+                <li><a href="#network-tools">網路工具與指令</a></li>
+                <li><a href="#security">網路安全</a></li>
+                <li><a href="#troubleshooting">故障排除</a></li>
+            </ul>
+        </div>
+
+        <div class="section" id="basic-concepts">
+            <h2>🚀 基礎概念</h2>
+            
+            <h3>HTTP vs HTTPS</h3>
+            <div class="definition">
+                <strong>HTTP:</strong> HyperText Transfer Protocol 超文本傳輸協定<br>
+                <strong>HTTPS:</strong> HyperText Transfer Protocol Secure 超文本傳輸安全協定 (SSL/TLS 加密)
+            </div>
+            
+            <div class="tip">
+                <strong>網址組成:</strong> 通訊協定://主機名稱(Hostname)/路徑
+            </div>
+
+            <h3>Client vs Server</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>類型</th>
+                    <th>功能</th>
+                    <th>舉例</th>
+                </tr>
+                <tr>
+                    <td><strong>Client（客戶端）</strong></td>
+                    <td>主動發出請求的一方</td>
+                    <td>瀏覽器、手機APP</td>
+                </tr>
+                <tr>
+                    <td><strong>Server（伺服器）</strong></td>
+                    <td>等待並回應請求的一方</td>
+                    <td>Web Server、資料庫伺服器</td>
+                </tr>
+            </table>
+
+            <h3>常見伺服器類型</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>類型</th>
+                    <th>功能</th>
+                    <th>預設埠口</th>
+                    <th>常用軟體</th>
+                </tr>
+                <tr>
+                    <td>Web Server</td>
+                    <td>提供網站內容</td>
+                    <td>80 (HTTP), 443 (HTTPS)</td>
+                    <td>Apache, Nginx, IIS</td>
+                </tr>
+                <tr>
+                    <td>DNS Server</td>
+                    <td>域名解析</td>
+                    <td>53</td>
+                    <td>BIND, Unbound</td>
+                </tr>
+                <tr>
+                    <td>Mail Server</td>
+                    <td>電子郵件服務</td>
+                    <td>25 (SMTP), 143 (IMAP)</td>
+                    <td>Postfix, Dovecot</td>
+                </tr>
+                <tr>
+                    <td>SSH Server</td>
+                    <td>遠端登入</td>
+                    <td>22</td>
+                    <td>OpenSSH</td>
+                </tr>
+                <tr>
+                    <td>DHCP Server</td>
+                    <td>自動分配IP</td>
+                    <td>67/68</td>
+                    <td>ISC DHCP, dnsmasq</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section" id="osi-model">
+            <h2>📚 OSI 七層模型 vs TCP/IP 四層模型</h2>
+            
+            <div class="definition">
+                <strong>OSI:</strong> Open Systems Interconnection（開放式系統互連）<br>
+                由國際標準化組織（ISO）提出，目的是標準化網路協定設計。
+            </div>
+
+            <h3>為什麼要有分層模型？</h3>
+            <div class="tip">
+                因為要有標準 → 有了標準大家生產依照標準 → 國際通用網路
+            </div>
+
+            <div class="layer-diagram">
+                <div class="layer layer-7">第7層 - 應用層 (Application) | HTTP, FTP, SMTP</div>
+                <div class="layer layer-6">第6層 - 表示層 (Presentation) | 加密, 壓縮, 格式轉換</div>
+                <div class="layer layer-5">第5層 - 會話層 (Session) | 建立/管理連線</div>
+                <div class="layer layer-4">第4層 - 傳輸層 (Transport) | TCP, UDP</div>
+                <div class="layer layer-3">第3層 - 網路層 (Network) | IP, ICMP, 路由</div>
+                <div class="layer layer-2">第2層 - 資料鏈結層 (Data Link) | MAC, Ethernet</div>
+                <div class="layer layer-1">第1層 - 實體層 (Physical) | 網路線, 電壓, Wi-Fi</div>
+            </div>
+
+            <h3>OSI vs TCP/IP 對照</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>OSI 七層</th>
+                    <th>TCP/IP 四層</th>
+                    <th>功能說明</th>
+                    <th>協定範例</th>
+                </tr>
+                <tr>
+                    <td>應用層 + 表示層 + 會話層</td>
+                    <td>應用層</td>
+                    <td>使用者介面與應用程式</td>
+                    <td>HTTP, FTP, SMTP</td>
+                </tr>
+                <tr>
+                    <td>傳輸層</td>
+                    <td>傳輸層</td>
+                    <td>可靠傳輸與錯誤控制</td>
+                    <td>TCP, UDP</td>
+                </tr>
+                <tr>
+                    <td>網路層</td>
+                    <td>網路層</td>
+                    <td>路由與封包傳送</td>
+                    <td>IP, ICMP</td>
+                </tr>
+                <tr>
+                    <td>資料鏈結層 + 實體層</td>
+                    <td>網路介面層</td>
+                    <td>實體傳輸</td>
+                    <td>Ethernet, Wi-Fi</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section" id="tcp-ip">
+            <h2>🔗 TCP/IP 協定族</h2>
+            
+            <h3>TCP vs UDP</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>特性</th>
+                    <th>TCP</th>
+                    <th>UDP</th>
+                </tr>
+                <tr>
+                    <td>連線方式</td>
+                    <td>需要建立連線</td>
+                    <td>無連線</td>
+                </tr>
+                <tr>
+                    <td>可靠性</td>
+                    <td>保證送達、順序正確</td>
+                    <td>不保證送達</td>
+                </tr>
+                <tr>
+                    <td>速度</td>
+                    <td>較慢（有確認機制）</td>
+                    <td>較快（無確認機制）</td>
+                </tr>
+                <tr>
+                    <td>適用場景</td>
+                    <td>網頁、檔案傳輸</td>
+                    <td>即時通訊、線上遊戲</td>
+                </tr>
+            </table>
+
+            <h3>TCP 三次握手</h3>
+            <div class="protocol-flow">
+                <div class="flow-step">1. Client → Server<br>SYN=1, Seq=x</div>
+                <div class="flow-step">2. Server → Client<br>SYN+ACK, Ack=x+1</div>
+                <div class="flow-step">3. Client → Server<br>ACK=1, Ack=y+1</div>
+            </div>
+
+            <div class="tip">
+                <strong>白話解釋：</strong><br>
+                1. 我要跟你聊天<br>
+                2. 好，我也想跟你聊天<br>
+                3. 那我們開始吧
+            </div>
+
+            <h3>TCP 四次揮手</h3>
+            <div class="protocol-flow">
+                <div class="flow-step">1. Client → Server<br>FIN=1</div>
+                <div class="flow-step">2. Server → Client<br>ACK=1</div>
+                <div class="flow-step">3. Server → Client<br>FIN=1</div>
+                <div class="flow-step">4. Client → Server<br>ACK=1</div>
+            </div>
+
+            <h3>IP 協定</h3>
+            <div class="definition">
+                IP (Internet Protocol) 是網路層的核心協定，負責：
+                <ul>
+                    <li>地址指定：封包要去哪裡</li>
+                    <li>路由尋找：幫封包找路</li>
+                    <li>封包切割：資料太大時分割傳送</li>
+                </ul>
+            </div>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>版本</th>
+                    <th>IPv4</th>
+                    <th>IPv6</th>
+                </tr>
+                <tr>
+                    <td>地址長度</td>
+                    <td>32位元 (192.168.1.1)</td>
+                    <td>128位元 (2001:db8::1)</td>
+                </tr>
+                <tr>
+                    <td>地址數量</td>
+                    <td>約42億個</td>
+                    <td>幾乎無限</td>
+                </tr>
+                <tr>
+                    <td>使用狀況</td>
+                    <td>主流使用中</td>
+                    <td>越來越普及</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section" id="http-https">
+            <h2>🌐 HTTP/HTTPS 協定</h2>
+            
+            <h3>Referer Header</h3>
+            <div class="definition">
+                當你從 A 網頁點擊連結到 B 網頁時，瀏覽器會在請求中自動附帶 Referer，內容是 A 的網址。
+            </div>
+
+            <div class="code-block">
+GET /page2.html HTTP/1.1
+Host: another-site.com
+Referer: https://example.com/page1.html
+User-Agent: Mozilla/5.0 ...
+            </div>
+
+            <h3>Referer 的用途</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>用途</th>
+                    <th>說明</th>
+                </tr>
+                <tr>
+                    <td>追蹤來源</td>
+                    <td>廣告、網站分析工具了解使用者來源</td>
+                </tr>
+                <tr>
+                    <td>安全檢查</td>
+                    <td>防止 CSRF 攻擊</td>
+                </tr>
+                <tr>
+                    <td>記錄分析</td>
+                    <td>網站後台分析流量來源</td>
+                </tr>
+            </table>
+
+            <div class="warning">
+                <strong>注意：</strong> Referer 可以被偽造或關閉！不能完全信任此欄位。
+            </div>
+
+            <h3>Webhook vs 一般 POST</h3>
+            <div class="definition">
+                <strong>Webhook:</strong> 事件驅動的 HTTP 回調機制，系統主動通知其他系統。
+            </div>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>特點</th>
+                    <th>一般POST請求</th>
+                    <th>Webhook</th>
+                </tr>
+                <tr>
+                    <td>觸發方式</td>
+                    <td>客戶端主動發起</td>
+                    <td>服務端事件觸發</td>
+                </tr>
+                <tr>
+                    <td>請求方向</td>
+                    <td>客戶端 → 服務端</td>
+                    <td>服務端 → 客戶端</td>
+                </tr>
+                <tr>
+                    <td>時機</td>
+                    <td>隨時可發送</td>
+                    <td>特定事件發生時</td>
+                </tr>
+                <tr>
+                    <td>頻率</td>
+                    <td>按需發送</td>
+                    <td>事件驅動，無法預測</td>
+                </tr>
+            </table>
+
+            <h3>SNI (Server Name Indication)</h3>
+            <div class="definition">
+                SNI 是 HTTPS 連線時，瀏覽器告訴伺服器「我要連的是哪個網域名稱」的機制。
+            </div>
+
+            <div class="tip">
+                為什麼需要 SNI？因為多個網站可能共用一個 IP，伺服器需要知道要提供哪個網站的憑證。
+            </div>
+        </div>
+
+        <div class="section" id="network-addressing">
+            <h2>📍 網路位址系統</h2>
+            
+            <h3>IP 位址與子網路遮罩</h3>
+            <div class="definition">
+                <strong>IPv4 位址：</strong> 192.168.0.11<br>
+                <strong>子網路遮罩：</strong> 255.255.255.0<br>
+                <strong>預設閘道：</strong> 192.168.0.1
+            </div>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>子網路遮罩</th>
+                    <th>網路/主機劃分</th>
+                    <th>可容納主機數</th>
+                </tr>
+                <tr>
+                    <td>255.255.255.0</td>
+                    <td>前3組是網路，最後1組是主機</td>
+                    <td>254台</td>
+                </tr>
+                <tr>
+                    <td>255.255.0.0</td>
+                    <td>前2組是網路，後2組是主機</td>
+                    <td>65,534台</td>
+                </tr>
+                <tr>
+                    <td>255.0.0.0</td>
+                    <td>前1組是網路，後3組是主機</td>
+                    <td>16,777,214台</td>
+                </tr>
+            </table>
+
+            <h3>MAC 位址與 ARP 協定</h3>
+            <div class="definition">
+                <strong>ARP:</strong> Address Resolution Protocol（位址解析協定）<br>
+                用途：將 IP 位址轉換成 MAC 位址
+            </div>
+
+            <h3>ARP 運作流程</h3>
+            <div class="protocol-flow">
+                <div class="flow-step">1. 查詢 ARP 快取</div>
+                <div class="flow-step">2. 發送 ARP 請求<br>(廣播)</div>
+                <div class="flow-step">3. 目標回應<br>ARP 回覆</div>
+                <div class="flow-step">4. 記錄到快取</div>
+            </div>
+
+            <div class="warning">
+                <strong>安全風險：</strong> ARP 可能遭受 ARP Spoofing/Poisoning 攻擊
+            </div>
+
+            <h3>localhost vs 127.0.0.1</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>項目</th>
+                    <th>localhost</th>
+                    <th>127.0.0.1</th>
+                </tr>
+                <tr>
+                    <td>類型</td>
+                    <td>主機名稱</td>
+                    <td>IP 位址</td>
+                </tr>
+                <tr>
+                    <td>需要DNS解析？</td>
+                    <td>是</td>
+                    <td>否</td>
+                </tr>
+                <tr>
+                    <td>可能被修改？</td>
+                    <td>可以（修改hosts檔案）</td>
+                    <td>固定</td>
+                </tr>
+            </table>
+
+            <h3>IPv4 vs IPv6 的 Loopback</h3>
+            <div class="tip">
+                <strong>IPv4:</strong> 127.0.0.1<br>
+                <strong>IPv6:</strong> ::1<br>
+                這兩者不是轉換關係，而是各自協定中的 loopback 保留位址。
+            </div>
+        </div>
+
+        <div class="section" id="dns-system">
+            <h2>🔍 DNS 系統</h2>
+            
+            <h3>DNS 解析流程</h3>
+            <div class="protocol-flow">
+                <div class="flow-step">1. 瀏覽器快取</div>
+                <div class="flow-step">2. 作業系統快取</div>
+                <div class="flow-step">3. 路由器 DNS Relay</div>
+                <div class="flow-step">4. 外部 DNS Server</div>
+            </div>
+
+            <h3>DNS 快取位置</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>快取位置</th>
+                    <th>查詢順序</th>
+                    <th>速度</th>
+                    <th>範例</th>
+                </tr>
+                <tr>
+                    <td>瀏覽器</td>
+                    <td>第1層</td>
+                    <td>最快</td>
+                    <td>Chrome, Firefox 內建</td>
+                </tr>
+                <tr>
+                    <td>作業系統</td>
+                    <td>第2層</td>
+                    <td>快</td>
+                    <td>Windows DNS Resolver</td>
+                </tr>
+                <tr>
+                    <td>路由器</td>
+                    <td>第3層</td>
+                    <td>中等</td>
+                    <td>家用 Router DNS Relay</td>
+                </tr>
+                <tr>
+                    <td>ISP/公共DNS</td>
+                    <td>第4層</td>
+                    <td>較慢</td>
+                    <td>Google DNS (8.8.8.8)</td>
+                </tr>
+            </table>
+
+            <h3>ISP (Internet Service Provider)</h3>
+            <div class="definition">
+                網際網路服務提供者，讓你可以上網的公司。
+            </div>
+
+            <div class="tip">
+                <strong>台灣常見ISP:</strong> 中華電信、遠傳電信、台灣大哥大等
+            </div>
+
+            <h3>DNS 相關指令</h3>
+            <div class="code-block">
+# 查看 Windows DNS 快取
+ipconfig /displaydns
+
+# 清除 Windows DNS 快取  
+ipconfig /flushdns
+
+# Chrome 的 DNS 快取
+chrome://net-internals/#dns
+            </div>
+        </div>
+
+        <div class="section" id="email-protocols">
+            <h2>📧 電子郵件協定</h2>
+            
+            <h3>為什麼需要專用的 SMTP？</h3>
+            <div class="definition">
+                Email 不是一般資料，而是有特殊需求的通訊方式：
+                <ul>
+                    <li>有收件人/寄件人</li>
+                    <li>有主旨、信體、附件</li>
+                    <li>需要驗證來源（防詐）</li>
+                    <li>需要跨網域傳遞</li>
+                </ul>
+            </div>
+
+            <h3>Email 相關 RFC 標準</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>RFC 編號</th>
+                    <th>標準名稱</th>
+                    <th>功能</th>
+                </tr>
+                <tr>
+                    <td>RFC 5321</td>
+                    <td>SMTP 協定</td>
+                    <td>郵件傳送</td>
+                </tr>
+                <tr>
+                    <td>RFC 5322</td>
+                    <td>Email 訊息格式</td>
+                    <td>主旨、收件人、信體格式</td>
+                </tr>
+                <tr>
+                    <td>RFC 2045-2049</td>
+                    <td>MIME</td>
+                    <td>附件、內容編碼</td>
+                </tr>
+                <tr>
+                    <td>RFC 7208/6376/7489</td>
+                    <td>SPF/DKIM/DMARC</td>
+                    <td>寄件驗證、防詐</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section" id="network-tools">
+            <h2>🔧 網路工具與指令</h2>
+            
+            <h3>Ping 指令</h3>
+            <div class="definition">
+                Ping 是使用 ICMP 協定來測試網路連通性的工具。
+            </div>
+
+            <div class="tip">
+                <strong>ICMP:</strong> Internet Control Message Protocol（網際網路控制訊息協定）<br>
+                用於網路狀況檢查，不是用來傳資料的。
+            </div>
+
+            <h3>為什麼 ICMP 沒有 Port？</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>層級</th>
+                    <th>協定範例</th>
+                    <th>是否有Port</th>
+                    <th>處理方式</th>
+                </tr>
+                <tr>
+                    <td>應用層 (Layer 7)</td>
+                    <td>HTTP, SMTP</td>
+                    <td>✅ 有</td>
+                    <td>應用程式處理</td>
+                </tr>
+                <tr>
+                    <td>傳輸層 (Layer 4)</td>
+                    <td>TCP, UDP</td>
+                    <td>✅ 有</td>
+                    <td>根據Port分配</td>
+                </tr>
+                <tr>
+                    <td>網路層 (Layer 3)</td>
+                    <td>IP, ICMP</td>
+                    <td>❌ 沒有</td>
+                    <td>作業系統核心處理</td>
+                </tr>
+                <tr>
+                    <td>資料鏈結層 (Layer 2)</td>
+                    <td>Ethernet</td>
+                    <td>❌ 沒有</td>
+                    <td>硬體/驅動處理</td>
+                </tr>
+            </table>
+
+            <h3>Telnet vs SSH</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>特性</th>
+                    <th>Telnet</th>
+                    <th>SSH</th>
+                </tr>
+                <tr>
+                    <td>預設埠口</td>
+                    <td>23</td>
+                    <td>22</td>
+                </tr>
+                <tr>
+                    <td>加密</td>
+                    <td>❌ 明文傳輸</td>
+                    <td>✅ 加密傳輸</td>
+                </tr>
+                <tr>
+                    <td>安全性</td>
+                    <td>不安全</td>
+                    <td>安全</td>
+                </tr>
+                <tr>
+                    <td>使用建議</td>
+                    <td>已不建議使用</td>
+                    <td>建議使用</td>
+                </tr>
+            </table>
+
+            <h3>curl vs Telnet</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>功能</th>
+                    <th>curl</th>
+                    <th>telnet</th>
+                </tr>
+                <tr>
+                    <td>用途</td>
+                    <td>發送 HTTP/HTTPS 請求</td>
+                    <td>建立 TCP 連線</td>
+                </tr>
+                <tr>
+                    <td>支援協定</td>
+                    <td>HTTP, FTP, SMTP 等多種</td>
+                    <td>單純 TCP</td>
+                </tr>
+                <tr>
+                    <td>自動化程度</td>
+                    <td>自動送完整請求</td>
+                    <td>需手動輸入</td>
+                </tr>
+                <tr>
+                    <td>HTTPS支援</td>
+                    <td>✅ 完整支援</td>
+                    <td>❌ 不支援</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+# curl 範例
+curl https://example.com
+curl -X POST -d 'name=John' https://api.example.com
+curl -H "User-Agent: Custom" https://example.com
+
+# 特殊用法：指定 SNI
+curl https://142.250.204.46 --resolve www.youtube.com:443:142.250.204.46
+            </div>
+        </div>
+
+        <div class="section" id="security">
+            <h2>🔒 網路安全</h2>
+            
+            <h3>本機傳輸安全性</h3>
+            <div class="definition">
+                <strong>Loopback 介面：</strong> 電腦內部的虛擬網路介面，讓電腦自己和自己通訊。
+            </div>
+
+            <div class="tip">
+                即使是本機傳輸，HTTP 依然是明文！只有 HTTPS 才會加密。
+            </div>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>傳輸方式</th>
+                    <th>是否加密</th>
+                    <th>安全性</th>
+                    <th>說明</th>
+                </tr>
+                <tr>
+                    <td>http://localhost</td>
+                    <td>❌ 明文</td>
+                    <td>低</td>
+                    <td>即使在本機也是明文</td>
+                </tr>
+                <tr>
+                    <td>https://localhost</td>
+                    <td>✅ 加密</td>
+                    <td>高</td>
+                    <td>需要 SSL 憑證</td>
+                </tr>
+            </table>
+
+            <h3>常見網路攻擊</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>攻擊類型</th>
+                    <th>攻擊方式</th>
+                    <th>防護方法</th>
+                </tr>
+                <tr>
+                    <td>ARP Spoofing</td>
+                    <td>偽造 MAC 位址</td>
+                    <td>使用靜態 ARP 表</td>
+                </tr>
+                <tr>
+                    <td>CSRF</td>
+                    <td>跨站請求偽造</td>
+                    <td>檢查 Referer、使用 CSRF Token</td>
+                </tr>
+                <tr>
+                    <td>中間人攻擊</td>
+                    <td>攔截通訊</td>
+                    <td>使用 HTTPS、驗證憑證</td>
+                </tr>
+            </table>
+
+            <div class="warning">
+                <strong>重要提醒：</strong> Referer 可以被偽造，不能完全依賴它來做安全檢查！
+            </div>
+
+            <h3>HTTPS 憑證驗證</h3>
+            <div class="definition">
+                HTTPS 透過憑證 + 網域名稱來保證安全。直接輸入 IP 會造成憑證不匹配的問題。
+            </div>
+
+            <div class="tip">
+                為什麼直接輸入 IP 會不安全？因為憑證是針對網域名稱發放的，不是針對 IP。
+            </div>
+        </div>
+
+        <div class="section" id="troubleshooting">
+            <h2>🔍 故障排除與實用技巧</h2>
+            
+            <h3>網路連線檢查步驟</h3>
+            <div class="protocol-flow">
+                <div class="flow-step">1. ping localhost<br>(檢查本機)</div>
+                <div class="flow-step">2. ping 預設閘道<br>(檢查路由器)</div>
+                <div class="flow-step">3. ping 8.8.8.8<br>(檢查對外連線)</div>
+                <div class="flow-step">4. ping google.com<br>(檢查 DNS)</div>
+            </div>
+
+            <h3>常用網路指令</h3>
+            <div class="code-block">
+# Windows 網路檢查指令
+ipconfig /all          # 查看網路設定
+ipconfig /release       # 釋放 IP
+ipconfig /renew         # 更新 IP
+ipconfig /flushdns      # 清除 DNS 快取
+nslookup google.com     # DNS 查詢
+netstat -an            # 查看網路連線
+tracert google.com     # 追蹤路由
+
+# Linux/macOS 網路指令  
+ifconfig              # 查看網路介面
+ping -c 4 google.com   # ping 4 次
+dig google.com        # DNS 查詢
+netstat -tulpn        # 查看埠口使用狀況
+traceroute google.com # 追蹤路由
+            </div>
+
+            <h3>URI vs URL</h3>
+            <div class="definition">
+                <strong>URI:</strong> 統一識別碼（代號）- 用來識別資源<br>
+                <strong>URL:</strong> 統一位置碼（地址）- 用來定位資源
+            </div>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>概念</th>
+                    <th>URI</th>
+                    <th>URL</th>
+                </tr>
+                <tr>
+                    <td>功能</td>
+                    <td>識別「我是誰」</td>
+                    <td>定位「我在哪裡」</td>
+                </tr>
+                <tr>
+                    <td>範例</td>
+                    <td>mailto:user@example.com</td>
+                    <td>https://www.google.com</td>
+                </tr>
+                <tr>
+                    <td>可否直接訪問</td>
+                    <td>不一定</td>
+                    <td>可以</td>
+                </tr>
+                <tr>
+                    <td>關係</td>
+                    <td>URL 是 URI 的一種</td>
+                    <td>是 URI 的子集</td>
+                </tr>
+            </table>
+
+            <h3>TCP 資料分段與重組</h3>
+            <div class="definition">
+                HTTP 本身不負責分段，分段是 TCP 的工作。TCP 會自動將大資料分成符合 MTU 的片段傳送。
+            </div>
+
+            <h3>TCP 分段機制</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>挑戰</th>
+                    <th>TCP 解決方式</th>
+                </tr>
+                <tr>
+                    <td>封包順序錯亂</td>
+                    <td>依照 Sequence Number 重排</td>
+                </tr>
+                <tr>
+                    <td>封包丟失</td>
+                    <td>超時重傳機制 (RTO)</td>
+                </tr>
+                <tr>
+                    <td>封包重複</td>
+                    <td>依序號去重，忽略重複資料</td>
+                </tr>
+                <tr>
+                    <td>網路延遲</td>
+                    <td>緩衝區等待，完整後才交給應用層</td>
+                </tr>
+            </table>
+
+            <h3>網路架構組件</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>設備</th>
+                    <th>運作層級</th>
+                    <th>功能</th>
+                    <th>決策依據</th>
+                </tr>
+                <tr>
+                    <td>Hub（集線器）</td>
+                    <td>實體層</td>
+                    <td>廣播所有資料</td>
+                    <td>無智能</td>
+                </tr>
+                <tr>
+                    <td>Switch（交換器）</td>
+                    <td>資料鏈結層</td>
+                    <td>學習 MAC 位址表</td>
+                    <td>MAC 位址</td>
+                </tr>
+                <tr>
+                    <td>Router（路由器）</td>
+                    <td>網路層</td>
+                    <td>跨網段路由</td>
+                    <td>IP 位址</td>
+                </tr>
+            </table>
+
+            <h3>手機熱點原理</h3>
+            <div class="definition">
+                手機開熱點時同時扮演：
+                <ul>
+                    <li>Wi-Fi 基地台 (Access Point)</li>
+                    <li>DHCP Server（分配 IP）</li>
+                    <li>NAT Router（位址轉換）</li>
+                    <li>網路閘道（上網出口）</li>
+                </ul>
+            </div>
+
+            <h3>學習建議</h3>
+            <div class="tip">
+                <strong>資安學習重點：</strong><br>
+                學資安，Python 要強！Python 是資安人員的瑞士刀，適用於滲透測試、分析、寫 PoC 等各種場景。
+            </div>
+
+            <div class="warning">
+                <strong>Kali Linux 預設帳號密碼：</strong> kali / kali
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px;">
+            <h3>🎓 學習完成！</h3>
+            <p>此指南涵蓋了網路協定的核心概念，從基礎到進階應用。<br>
+            建議收藏此頁面，隨時回來複習重要概念！</p>
+            <p><strong>記住：</strong> 理論與實作並重，多動手實驗才能真正掌握網路知識！</p>
+        </div>
+    </div>
+
+    <script>
+        // 搜尋功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const sections = document.querySelectorAll('.section');
+            
+            sections.forEach(section => {
+                const content = section.textContent.toLowerCase();
+                if (content.includes(searchTerm) || searchTerm === '') {
+                    section.style.display = 'block';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+        });
+
+        // 平滑滾動
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 添加滾動動畫
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // 為所有section添加觀察
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+
+        // 返回頂部按鈕
+        window.addEventListener('scroll', () => {
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (!scrollBtn) {
+                const btn = document.createElement('button');
+                btn.id = 'scrollTopBtn';
+                btn.innerHTML = '⬆️';
+                btn.style.cssText = `
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                    color: white;
+                    border: none;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 1.5em;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                    transition: all 0.3s ease;
+                    z-index: 1000;
+                `;
+                btn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                document.body.appendChild(btn);
+            }
+            
+            const btn = document.getElementById('scrollTopBtn');
+            if (window.pageYOffset > 300) {
+                btn.style.opacity = '1';
+                btn.style.transform = 'scale(1)';
+            } else {
+                btn.style.opacity = '0';
+                btn.style.transform = 'scale(0.8)';
+            }
+        });
+    </script>
+</body>
+</html>

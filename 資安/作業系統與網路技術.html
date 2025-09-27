@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業系統與網路技術筆記整理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft JhengHei', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #2d3748;
+            border-left: 5px solid #667eea;
+            padding-left: 15px;
+            margin: 25px 0 15px 0;
+            font-size: 1.5rem;
+        }
+        
+        h3 {
+            color: #4a5568;
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+        }
+        
+        .section {
+            background: #f7fafc;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #f1f5f9;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #38b2ac;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        
+        .network-mode {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        
+        .mode-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .mode-card.nat { border-color: #48bb78; }
+        .mode-card.bridged { border-color: #ed8936; }
+        .mode-card.host-only { border-color: #e53e3e; }
+        
+        .status-yes { color: #48bb78; font-weight: bold; }
+        .status-no { color: #e53e3e; font-weight: bold; }
+        
+        ul {
+            margin: 10px 0 10px 20px;
+        }
+        
+        li {
+            margin: 5px 0;
+        }
+        
+        .toc {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .toc ul {
+            list-style: none;
+            margin: 0;
+        }
+        
+        .toc a {
+            color: #4a5568;
+            text-decoration: none;
+            padding: 5px 10px;
+            display: block;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .toc a:hover {
+            background: #cbd5e0;
+            color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 作業系統與網路技術筆記整理</h1>
+        
+        <div class="toc">
+            <h3>📋 目錄</h3>
+            <ul>
+                <li><a href="#os-kernel">作業系統與核心對照</a></li>
+                <li><a href="#unix-family">Unix 家族樹</a></li>
+                <li><a href="#vmware-network">VMware 網路配置</a></li>
+                <li><a href="#network-modes">網路模式比較</a></li>
+                <li><a href="#network-basics">網路基礎知識</a></li>
+                <li><a href="#security-tools">資安工具原理</a></li>
+            </ul>
+        </div>
+
+        <div class="section" id="os-kernel">
+            <h2><span class="icon">💻</span>作業系統與核心（Kernel）對照表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>作業系統名稱</th>
+                        <th>開發者／公司</th>
+                        <th>作業系統類型</th>
+                        <th>使用的核心</th>
+                        <th>特點</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Windows 10/11</td>
+                        <td>Microsoft 微軟</td>
+                        <td>專有系統</td>
+                        <td>Windows NT 核心</td>
+                        <td>圖形化、商業用、封閉原始碼</td>
+                    </tr>
+                    <tr>
+                        <td>Kali Linux</td>
+                        <td>Offensive Security</td>
+                        <td>Linux 發行版</td>
+                        <td>Linux Kernel</td>
+                        <td>資安用途，滲透工具多</td>
+                    </tr>
+                    <tr>
+                        <td>Ubuntu</td>
+                        <td>Canonical Ltd.</td>
+                        <td>Linux 發行版</td>
+                        <td>Linux Kernel</td>
+                        <td>通用開發、學習友善</td>
+                    </tr>
+                    <tr>
+                        <td>CentOS</td>
+                        <td>Red Hat（後轉社群）</td>
+                        <td>Linux 發行版</td>
+                        <td>Linux Kernel</td>
+                        <td>與 RHEL 相容，常用於伺服器</td>
+                    </tr>
+                    <tr>
+                        <td>macOS</td>
+                        <td>Apple</td>
+                        <td>專有系統</td>
+                        <td>XNU 核心（Unix & Mach）</td>
+                        <td>Unix 架構，高度整合硬體</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="highlight">
+                <h3>🔍 什麼是核心（Kernel）？</h3>
+                <p>Kernel 是作業系統的心臟，負責軟體和硬體溝通：</p>
+                <ul>
+                    <li>當你點滑鼠，會經過 kernel 通知瀏覽器</li>
+                    <li>執行程式時，kernel 分配記憶體和 CPU 資源</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="unix-family">
+            <h2><span class="icon">🌳</span>Unix 家族樹</h2>
+            <p><strong>Unix</strong> 誕生於 1969 年，由 AT&T 的 Bell Labs 開發，是一套設計哲學與系統架構。</p>
+            
+            <div class="code-block">
+Unix（祖先）
+├── BSD（伯克利大學發展）
+│   └── macOS（Apple 的作業系統）
+├── System V（商業版 Unix）
+│   └── AIX / HP-UX / Solaris（大型機或伺服器用）
+└── Linux（模仿 Unix 精神，但不是直接衍生）
+    ├── Ubuntu
+    ├── Kali
+    └── CentOS 等
+            </div>
+        </div>
+
+        <div class="section" id="vmware-network">
+            <h2><span class="icon">🔌</span>VMware 網路配置解析</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>介面名稱</th>
+                        <th>來源</th>
+                        <th>用途</th>
+                        <th>能否上網</th>
+                        <th>IP 範例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>VMnet1</td>
+                        <td>VMware 建立</td>
+                        <td>Host-only（主機與虛擬機溝通）</td>
+                        <td><span class="status-no">❌ 不能上網</span></td>
+                        <td>192.168.152.x</td>
+                    </tr>
+                    <tr>
+                        <td>VMnet8</td>
+                        <td>VMware 建立</td>
+                        <td>NAT 模式（虛擬機透過主機上網）</td>
+                        <td><span class="status-yes">✅ 能上網</span></td>
+                        <td>192.168.115.x</td>
+                    </tr>
+                    <tr>
+                        <td>Wi-Fi</td>
+                        <td>實體無線網卡</td>
+                        <td>目前連線的真正網路</td>
+                        <td><span class="status-yes">✅ 能上網</span></td>
+                        <td>192.168.0.x</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight">
+                <h3>🧠 NAT 模式原理</h3>
+                <p><strong>NAT = Network Address Translation（網路位址轉換）</strong></p>
+                <p>虛擬機把主機當作「小型路由器」：</p>
+                <ul>
+                    <li>虛擬機獲得私有 IP（如 192.168.115.x）</li>
+                    <li>主機幫它轉送對外請求到真實網路</li>
+                    <li>外部只看到主機 IP，不知道是虛擬機在請求</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="network-modes">
+            <h2><span class="icon">🌉</span>VMware 網路模式比較</h2>
+            
+            <div class="network-mode">
+                <div class="mode-card nat">
+                    <h3>NAT 模式</h3>
+                    <p><span class="status-yes">✅ 可上網</span></p>
+                    <p><span class="status-yes">✅ 主機可連虛擬機</span></p>
+                    <p>虛擬機透過主機共享上網</p>
+                </div>
+                
+                <div class="mode-card bridged">
+                    <h3>Bridged 橋接模式</h3>
+                    <p><span class="status-yes">✅ 可上網</span></p>
+                    <p><span class="status-yes">✅ 主機可連虛擬機</span></p>
+                    <p>虛擬機直接連實體網路</p>
+                </div>
+                
+                <div class="mode-card host-only">
+                    <h3>Host-only 模式</h3>
+                    <p><span class="status-no">❌ 不能上網</span></p>
+                    <p><span class="status-yes">✅ 主機可連虛擬機</span></p>
+                    <p>僅主機與虛擬機內部通訊</p>
+                </div>
+            </div>
+            
+            <div class="highlight">
+                <h3>🔧 橋接模式特點</h3>
+                <ul>
+                    <li>虛擬機獲得獨立 IP，就像真實電腦</li>
+                    <li>可直接存取網路上所有設備</li>
+                    <li>適合滲透測試和網路掃描</li>
+                    <li>安全風險較高（可被外部設備掃描）</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="network-basics">
+            <h2><span class="icon">🌐</span>網路基礎知識</h2>
+            
+            <h3>IPv4 與子網掩碼</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>概念</th>
+                        <th>說明</th>
+                        <th>範例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>IPv4 地址</td>
+                        <td>32 位元組成的電腦地址</td>
+                        <td>192.168.0.11</td>
+                    </tr>
+                    <tr>
+                        <td>子網掩碼</td>
+                        <td>區分網路部分與主機部分</td>
+                        <td>255.255.255.0</td>
+                    </tr>
+                    <tr>
+                        <td>CIDR 表示法</td>
+                        <td>用「/」表示網路位元數</td>
+                        <td>/24（前24位是網路位址）</td>
+                    </tr>
+                    <tr>
+                        <td>可用 IP 數量</td>
+                        <td>主機位元數能表示的設備數</td>
+                        <td>256 - 2 = 254 個</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight">
+                <h3>📊 為什麼要減 2？</h3>
+                <ul>
+                    <li><strong>192.168.142.0</strong> - 子網路位址（不分配給設備）</li>
+                    <li><strong>192.168.142.255</strong> - 廣播位址（不分配給設備）</li>
+                </ul>
+            </div>
+
+            <h3>Port 端口知識</h3>
+            <div class="highlight">
+                <p><strong>一台電腦最多可開 65535 個 port</strong></p>
+                <ul>
+                    <li>Port 是 16-bit 整數：2^16 = 65536 個（0~65535）</li>
+                    <li>0 號保留不用</li>
+                    <li>1~1023：知名端口（需 root 權限）</li>
+                    <li>1024~65535：動態/私人端口</li>
+                    <li>同一 IP:Port 組合只能被一個程式綁定</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="security-tools">
+            <h2><span class="icon">🔒</span>資安工具原理與應用</h2>
+            
+            <h3>Netdiscover - 網路探索工具</h3>
+            <div class="highlight">
+                <p><strong>原理：ARP 掃描（Address Resolution Protocol）</strong></p>
+                <ul>
+                    <li>利用 ARP 協定發送廣播請求</li>
+                    <li>詢問區網內所有設備的 IP 與 MAC 位址</li>
+                    <li>只能掃描同一子網內的設備（Layer 2 廣播）</li>
+                    <li>不需要目標開啟 ping 回應</li>
+                </ul>
+            </div>
+            
+            <div class="code-block">
+# 掃描整個網段
+sudo netdiscover -r 192.168.0.0/24
+            </div>
+
+            <h3>Nmap - 網路映射工具</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>指令</th>
+                        <th>功能</th>
+                        <th>說明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>nmap IP</td>
+                        <td>端口掃描</td>
+                        <td>掃描目標 IP 的開放端口</td>
+                    </tr>
+                    <tr>
+                        <td>nmap -O IP</td>
+                        <td>作業系統辨識</td>
+                        <td>推測目標的作業系統類型</td>
+                    </tr>
+                    <tr>
+                        <td>nmap -sV IP</td>
+                        <td>版本偵測</td>
+                        <td>偵測服務版本號</td>
+                    </tr>
+                    <tr>
+                        <td>nmap -O -sV IP</td>
+                        <td>綜合掃描</td>
+                        <td>完整的目標資訊收集</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="highlight">
+                <h3>🎯 Nmap 掃描技術</h3>
+                <ul>
+                    <li><strong>TCP SYN 掃描</strong>：半開掃描，速度快且隱蔽</li>
+                    <li><strong>TCP Connect 掃描</strong>：完整 TCP 連線</li>
+                    <li><strong>UDP 掃描</strong>：掃描 UDP 服務</li>
+                    <li><strong>OS 指紋辨識</strong>：分析 TCP/IP 堆疊特徵</li>
+                </ul>
+            </div>
+
+            <h3>滲透測試流程</h3>
+            <div class="code-block">
+1. netdiscover -r 192.168.0.0/24  # 發現目標
+2. nmap -O -sV 目標IP             # 收集詳細資訊
+3. 查找已知漏洞                    # 根據版本資訊搜尋
+4. 利用漏洞進行攻擊                # 執行滲透測試
+            </div>
+
+            <h3>其他工具</h3>
+            <ul>
+                <li><strong>Hashcat</strong> - 破解密碼哈希值、ZIP 加密檔案</li>
+                <li><strong>ARP 協定限制</strong> - 只能掃描本地子網，無法跨網段</li>
+                <li><strong>ICMP/TCP/UDP</strong> - 可透過路由器進行跨子網掃描</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">📝</span>實用筆記</h2>
+            <div class="highlight">
+                <h3>🔧 常見問題解決</h3>
+                <ul>
+                    <li><strong>虛擬機無法上網</strong> → 檢查網路模式，建議使用 NAT</li>
+                    <li><strong>要掃描實體網路</strong> → 使用 Bridged 橋接模式</li>
+                    <li><strong>VMnet8 沒有預設閘道</strong> → 正常現象，它本身就是閘道</li>
+                    <li><strong>進行滲透測試</strong> → 橋接模式 + netdiscover + nmap</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

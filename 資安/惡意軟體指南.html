@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CompTIA Security+ 惡意軟體完整指南</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #d63384;
+            text-align: center;
+            border-bottom: 3px solid #d63384;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #dc3545;
+            background: linear-gradient(135deg, #dc3545, #fd7e14);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #fd7e14;
+            border-left: 4px solid #fd7e14;
+            padding-left: 15px;
+            margin-top: 25px;
+        }
+        .cia-section {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid #2196f3;
+            margin: 20px 0;
+        }
+        .malware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .malware-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+        }
+        .malware-card h4 {
+            color: #28a745;
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffb400;
+        }
+        .danger-box {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #dc3545;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #28a745;
+        }
+        .info-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #17a2b8;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .attack-flow {
+            background: #fff;
+            border: 2px solid #dc3545;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .step-number {
+            background: #dc3545;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        .prevention-tips {
+            background: #e8f5e8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .toc > ul > li {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .toc ul ul li {
+            font-weight: normal;
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        .toc a {
+            text-decoration: none;
+            color: #495057;
+        }
+        .toc a:hover {
+            color: #dc3545;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CompTIA Security+ 惡意軟體完整學習指南</h1>
+        
+        <div class="toc">
+            <h3>目錄</h3>
+            <ul>
+                <li><a href="#cia">1. 資訊安全基礎 - CIA 三元素</a></li>
+                <li><a href="#malware-overview">2. 惡意軟體總覽</a></li>
+                <li><a href="#virus-worm">3. 病毒與蠕蟲</a></li>
+                <li><a href="#ransomware">4. 勒索軟體</a></li>
+                <li><a href="#trojan">5. 特洛伊木馬</a></li>
+                <li><a href="#rootkit">6. Rootkit 根套件</a></li>
+                <li><a href="#keylogger">7. 鍵盤側錄器</a></li>
+                <li><a href="#adware-spyware">8. 廣告軟體與間諜軟體</a></li>
+                <li><a href="#botnet">9. 殭屍網路</a></li>
+                <li><a href="#prevention">10. 防護措施</a></li>
+            </ul>
+        </div>
+
+        <section id="cia">
+            <h2>1. 資訊安全基礎 - CIA 三元素</h2>
+            <div class="cia-section">
+                <p>CIA 是資訊安全的核心概念，三者缺一不可：</p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>縮寫</th>
+                            <th>英文全名</th>
+                            <th>中文意思</th>
+                            <th>重點說明</th>
+                            <th>威脅範例</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>C</strong></td>
+                            <td>Confidentiality</td>
+                            <td>機密性</td>
+                            <td>防止資料被不該知道的人看到</td>
+                            <td>資料外洩、帳號密碼被駭</td>
+                        </tr>
+                        <tr>
+                            <td><strong>I</strong></td>
+                            <td>Integrity</td>
+                            <td>完整性</td>
+                            <td>確保資料沒被亂改或損壞</td>
+                            <td>網頁被改內容、成績被篡改</td>
+                        </tr>
+                        <tr>
+                            <td><strong>A</strong></td>
+                            <td>Availability</td>
+                            <td>可用性</td>
+                            <td>確保需要時，資料能正常使用</td>
+                            <td>DDoS 攻擊導致網站無法存取</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="malware-overview">
+            <h2>2. 惡意軟體總覽</h2>
+            
+            <div class="info-box">
+                <p><strong>定義：</strong>惡意軟體（Malware）是指在電腦或網路裝置上執行有害功能的軟體程式。</p>
+            </div>
+
+            <h3>惡意軟體的主要目的</h3>
+            <ul>
+                <li>蒐集按鍵記錄並傳送給駭客</li>
+                <li>使電腦成為殭屍網路的一部分</li>
+                <li>彈出廣告干擾使用者</li>
+                <li>加密或刪除重要資料</li>
+                <li>竊取個人隱私資訊</li>
+            </ul>
+
+            <h3>惡意軟體分類表</h3>
+            <div class="malware-grid">
+                <div class="malware-card">
+                    <h4>病毒 (Virus)</h4>
+                    <p>需要依賴人為行為才能散播，會附著在其他程式中執行。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>蠕蟲 (Worm)</h4>
+                    <p>不需要人為操作就可自我傳播，會自動從一台電腦擴散到另一台。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>特洛伊木馬 (Trojan)</h4>
+                    <p>偽裝成正常程式，實際內含惡意程式碼。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>Rootkit</h4>
+                    <p>深層隱藏於系統核心中，取得最高權限並難以偵測。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>勒索軟體 (Ransomware)</h4>
+                    <p>加密使用者資料，要求支付贖金才能解密。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>鍵盤側錄器 (Keylogger)</h4>
+                    <p>記錄使用者的鍵盤輸入，包括帳號密碼。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>廣告軟體 (Adware)</h4>
+                    <p>不斷跳出廣告，可能包含追蹤功能。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>間諜軟體 (Spyware)</h4>
+                    <p>悄悄監控使用者行為與資料。</p>
+                </div>
+                <div class="malware-card">
+                    <h4>殭屍網路 (Botnet)</h4>
+                    <p>控制多台被感染電腦進行大規模攻擊。</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="virus-worm">
+            <h2>3. 病毒與蠕蟲</h2>
+
+            <h3>電腦病毒 (Computer Virus)</h3>
+            <div class="info-box">
+                <p><strong>特性：</strong>就像人類病毒一樣，需要「宿主」才能傳播。必須依附在其他程式或檔案上，當使用者執行該程式時，病毒也會被啟動。</p>
+            </div>
+
+            <h4>病毒類型</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>類型</th>
+                        <th>特徵</th>
+                        <th>範例</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>應用程式型病毒</td>
+                        <td>附著在執行檔中，執行程式時啟動</td>
+                        <td>感染 .exe 檔案</td>
+                    </tr>
+                    <tr>
+                        <td>開機磁區病毒</td>
+                        <td>感染開機磁區，電腦啟動時就執行</td>
+                        <td>Master Boot Record 感染</td>
+                    </tr>
+                    <tr>
+                        <td>腳本病毒</td>
+                        <td>以腳本形式存在於系統或瀏覽器中</td>
+                        <td>JavaScript 惡意腳本</td>
+                    </tr>
+                    <tr>
+                        <td>巨集病毒</td>
+                        <td>藏在文書軟體的巨集功能中</td>
+                        <td>Word/Excel 巨集病毒</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>蠕蟲 (Worm)</h3>
+            <div class="danger-box">
+                <p><strong>高危險性：</strong>蠕蟲是一種能自動在系統間移動的病毒，不需要使用者執行任何動作。它利用網路漏洞快速傳播，一旦開始感染就很難控制。</p>
+            </div>
+
+            <h4>WannaCry 蠕蟲攻擊流程</h4>
+            <div class="attack-flow">
+                <h5>著名案例：WannaCry (WannaCrypt) 勒索蠕蟲</h5>
+                
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>初始感染：</strong>一台電腦已感染 WannaCry 蠕蟲並開始執行
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>漏洞掃描：</strong>掃描網路尋找其他存在 SMB v1 漏洞的 Windows 系統
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>漏洞利用：</strong>使用 EternalBlue 工具攻擊 SMB v1 漏洞（CVE-2017-0144）
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>後門安裝：</strong>安裝 DoublePulsar 後門程式取得系統控制權
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>載荷下載：</strong>從控制伺服器下載 WannaCry 主程式
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">6</div>
+                    <div>
+                        <strong>加密勒索：</strong>開始加密電腦資料並顯示勒索訊息
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">7</div>
+                    <div>
+                        <strong>繼續傳播：</strong>重複步驟 1-6，感染更多電腦
+                    </div>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <p><strong>技術細節：</strong></p>
+                <ul>
+                    <li><code>SMB v1</code>：Windows 檔案分享協定的第一版，存在嚴重安全漏洞</li>
+                    <li><code>EternalBlue</code>：NSA 開發的漏洞攻擊工具，後來被外洩</li>
+                    <li><code>DoublePulsar</code>：核心級後門程式，可執行任意惡意程式碼</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="ransomware">
+            <h2>4. 勒索軟體 (Ransomware)</h2>
+
+            <div class="danger-box">
+                <p><strong>商業模式：</strong>勒索軟體利用使用者對重要資料的依賴性來獲利。它會加密所有重要檔案，但保留作業系統正常運作，讓使用者能看到勒索訊息。</p>
+            </div>
+
+            <h3>勒索軟體分類</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>類型</th>
+                        <th>特徵</th>
+                        <th>危險程度</th>
+                        <th>應對方法</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>假勒索軟體</td>
+                        <td>只是顯示假的勒索訊息，沒有真正加密檔案</td>
+                        <td>低</td>
+                        <td>可請專業人員協助移除</td>
+                    </tr>
+                    <tr>
+                        <td>真勒索軟體<br/>(Crypto-malware)</td>
+                        <td>使用強加密技術真正加密所有資料檔案</td>
+                        <td>極高</td>
+                        <td>只能付贖金或從備份還原</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>勒索軟體攻擊流程</h3>
+            <ol>
+                <li><strong>入侵系統：</strong>通過漏洞、釣魚郵件或惡意網站感染電腦</li>
+                <li><strong>掃描資料：</strong>尋找重要的文件、照片、影片等使用者資料</li>
+                <li><strong>加密檔案：</strong>使用公開金鑰加密技術加密所有找到的檔案</li>
+                <li><strong>保留系統：</strong>不破壞作業系統，確保能顯示勒索訊息</li>
+                <li><strong>顯示勒索：</strong>要求使用者支付比特幣等加密貨幣獲取解密金鑰</li>
+            </ol>
+
+            <div class="warning-box">
+                <p><strong>為什麼勒索軟體如此成功？</strong></p>
+                <ul>
+                    <li>使用不可追蹤的支付方式（比特幣）</li>
+                    <li>採用軍用級加密技術，無法暴力破解</li>
+                    <li>針對使用者最珍貴的資產（個人資料）</li>
+                    <li>金額設定在使用者承受範圍內</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <p><strong>最佳防護：離線備份</strong></p>
+                <p>確保重要資料有離線備份，因為現代勒索軟體會主動尋找並加密線上備份系統。</p>
+            </div>
+        </section>
+
+        <section id="trojan">
+            <h2>5. 特洛伊木馬 (Trojan Horse)</h2>
+
+            <div class="info-box">
+                <p><strong>歷史典故：</strong>名稱來源於特洛伊戰爭中希臘軍隊使用的木馬計，偽裝成禮物實則暗藏士兵攻城。數位版本同樣偽裝成正常軟體，實際包含惡意程式碼。</p>
+            </div>
+
+            <h3>特洛伊木馬特性</h3>
+            <ul>
+                <li><strong>偽裝性：</strong>看起來像正常的應用程式或檔案</li>
+                <li><strong>誘騙性：</strong>引誘使用者主動執行</li>
+                <li><strong>權限取得：</strong>一旦執行就擁有與使用者相同的系統權限</li>
+                <li><strong>後門建立：</strong>為其他惡意軟體開啟進入系統的通道</li>
+            </ul>
+
+            <h3>後門 (Backdoor) 機制</h3>
+            <div class="attack-flow">
+                <p>特洛伊木馬的主要目的是建立後門，讓攻擊者能持續控制系統：</p>
+                
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>木馬執行：</strong>使用者被騙執行看似正常的程式
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>後門安裝：</strong>在系統中創建秘密通道
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>外部通訊：</strong>與攻擊者的伺服器建立連線
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>持續控制：</strong>攻擊者可遠端操作被感染的電腦
+                    </div>
+                </div>
+            </div>
+
+            <h3>遠端存取木馬 (RAT - Remote Access Trojan)</h3>
+            <div class="danger-box">
+                <p><strong>高危險性：</strong>RAT 讓攻擊者獲得完整的遠端控制權，就像坐在你的電腦前操作一樣。</p>
+            </div>
+
+            <h4>RAT 的主要功能</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>功能類別</th>
+                        <th>具體能力</th>
+                        <th>潛在危害</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>系統監控</td>
+                        <td>鍵盤側錄、螢幕截圖、攝影機/麥克風監控</td>
+                        <td>竊取密碼、隱私侵犯</td>
+                    </tr>
+                    <tr>
+                        <td>檔案操作</td>
+                        <td>瀏覽、複製、刪除、上傳/下載檔案</td>
+                        <td>資料竊取、重要檔案損失</td>
+                    </tr>
+                    <tr>
+                        <td>系統控制</td>
+                        <td>重開機、鎖定系統、執行程式</td>
+                        <td>系統破壞、阻斷服務</td>
+                    </tr>
+                    <tr>
+                        <td>網路活動</td>
+                        <td>代理伺服器、網路攻擊跳板</td>
+                        <td>法律責任、頻寬濫用</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h4>著名 RAT 工具：DarkComet</h4>
+            <div class="warning-box">
+                <p><strong>案例分析：</strong>DarkComet 原本是合法的遠端管理工具，但因為功能強大且免費，被廣泛用於惡意用途。開發者於 2012 年停止開發並公開反對其惡意使用。</p>
+                <ul>
+                    <li>具備完整的遠端桌面控制</li>
+                    <li>可錄音錄影、截圖</li>
+                    <li>內建鍵盤側錄功能</li>
+                    <li>曾被用於敘利亞內戰期間的監控活動</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="rootkit">
+            <h2>6. Rootkit 根套件</h2>
+
+            <div class="info-box">
+                <p><strong>命名由來：</strong>「Root」指 Linux/Unix 系統的最高權限使用者，「Kit」指工具組。Rootkit 就是讓攻擊者取得系統最高權限並隱藏存在的工具組。</p>
+            </div>
+
+            <h3>Rootkit 特性</h3>
+            <ul>
+                <li><strong>核心級運作：</strong>修改作業系統核心 (Kernel)，在最底層運行</li>
+                <li><strong>完全隱形：</strong>傳統防毒軟體無法偵測到</li>
+                <li><strong>系統整合：</strong>與作業系統緊密結合，難以移除</li>
+                <li><strong>持久存在：</strong>即使重開機也會繼續運作</li>
+            </ul>
+
+            <h3>Rootkit 的隱蔽機制</h3>
+            <div class="attack-flow">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>核心感染：</strong>將惡意程式碼植入作業系統核心
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>API 劫持：</strong>攔截系統呼叫，隱藏自己的存在
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>進程隱藏：</strong>在工作管理員中不顯示相關進程
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>檔案隱藏：</strong>隱藏相關檔案和資料夾
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">5</div>
+                    <div>
+                        <strong>防護其他惡意軟體：</strong>阻止移除其搭載的惡意程式
+                    </div>
+                </div>
+            </div>
+
+            <h3>著名案例：Zeus + Rootkit</h3>
+            <div class="danger-box">
+                <p><strong>銀行木馬進化：</strong>Zeus (Zbot) 原本是竊取銀行帳戶資訊的木馬，但容易被移除。後來結合 Rootkit 技術後，即使系統管理員也無法停止或刪除，大幅增加了移除難度。</p>
+                <ul>
+                    <li>監聽銀行網站登入資訊</li>
+                    <li>自動轉帳竊取金錢</li>
+                    <li>Rootkit 保護機制讓它無法被終止</li>
+                    <li>影響數百萬台電腦，造成數千萬美元損失</li>
+                </ul>
+            </div>
+
+            <h3>Rootkit 移除方法</h3>
+            <div class="warning-box">
+                <p><strong>移除困難：</strong>由於 Rootkit 深度整合於系統核心，需要專門的移除工具：</p>
+                <ul>
+                    <li>使用專門的 Rootkit 掃描工具</li>
+                    <li>從外部開機碟進行掃描</li>
+                    <li>使用支援 UEFI Secure Boot 的系統</li>
+                    <li>嚴重情況可能需要完全重新安裝系統</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="keylogger">
+            <h2>7. 鍵盤側錄器 (Keylogger)</h2>
+
+            <div class="danger-box">
+                <p><strong>高風險：</strong>鍵盤側錄器是最直接的資料竊取工具，能記錄使用者的所有鍵盤輸入，包括密碼、信用卡號、個人資訊等敏感資料。</p>
+            </div>
+
+            <h3>Keylogger 運作原理</h3>
+            <ul>
+                <li><strong>鍵盤攔截：</strong>在系統底層攔截所有鍵盤輸入</li>
+                <li><strong>明文記錄：</strong>繞過加密，直接記錄原始輸入</li>
+                <li><strong>隱密收集：</strong>使用者完全不知道輸入被記錄</li>
+                <li><strong>定期傳輸：</strong>將記錄檔案傳送給攻擊者</li>
+            </ul>
+
+            <h3>Keylogger 記錄內容</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>記錄類型</th>
+                        <th>內容範例</th>
+                        <th>潛在風險</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>鍵盤輸入</td>
+                        <td>密碼、訊息、搜尋關鍵字</td>
+                        <td>帳戶被盜用、隱私洩露</td>
+                    </tr>
+                    <tr>
+                        <td>剪貼簿內容</td>
+                        <td>複製的文字、連結、資料</td>
+                        <td>敏感資訊外洩</td>
+                    </tr>
+                    <tr>
+                        <td>螢幕截圖</td>
+                        <td>當前畫面、視窗標題</td>
+                        <td>視覺密碼破解、行為追蹤</td>
+                    </tr>
+                    <tr>
+                        <td>時間戳記</td>
+                        <td>操作時間、使用習慣</td>
+                        <td>行為模式分析</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>DarkComet RAT 中的 Keylogger 功能</h3>
+            <div class="info-box">
+                <p><strong>實際案例：</strong>DarkComet RAT 包含完整的鍵盤側錄功能</p>
+                <ul>
+                    <li>記錄所有按鍵，包括退格鍵和特殊鍵</li>
+                    <li>顯示目標視窗和應用程式名稱</li>
+                    <li>標記時間戳記方便分析</li>
+                    <li>自動將記錄檔案回傳給攻擊者</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="adware-spyware">
+            <h2>8. 廣告軟體與間諜軟體</h2>
+
+            <h3>廣告軟體 (Adware)</h3>
+            <div class="warning-box">
+                <p><strong>商業動機：</strong>網路廣告是很有利潤的生意，攻擊者透過強制顯示廣告來獲取收益。</p>
+            </div>
+
+            <h4>Adware 特性</h4>
+            <ul>
+                <li><strong>強制廣告：</strong>不斷彈出廣告視窗</li>
+                <li><strong>效能影響：</strong>占用系統資源，拖慢電腦速度</li>
+                <li><strong>搭便車安裝：</strong>與其他看似正常的軟體一起安裝</li>
+                <li><strong>難以移除：</strong>移除工具可能也是偽裝的 Adware</li>
+            </ul>
+
+            <h3>間諜軟體 (Spyware)</h3>
+            <div class="danger-box">
+                <p><strong>隱密監控：</strong>間諜軟體會悄悄監控使用者的一切網路活動和個人行為。</p>
+            </div>
+
+            <h4>Spyware 監控範圍</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>監控類別</th>
+                        <th>具體內容</th>
+                        <th>用途</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>網路瀏覽</td>
+                        <td>造訪的網站、搜尋記錄</td>
+                        <td>建立使用者輪廓、投放精準廣告</td>
+                    </tr>
+                    <tr>
+                        <td>購物行為</td>
+                        <td>電商網站、價格比較</td>
+                        <td>插入推廣代碼、賺取佣金</td>
+                    </tr>
+                    <tr>
+                        <td>個人資料</td>
+                        <td>姓名、地址、電話、信用卡</td>
+                        <td>身分盜用、詐騙</td>
+                    </tr>
+                    <tr>
+                        <td>系統資源</td>
+                        <td>CPU、頻寬、儲存空間</td>
+                        <td>挖礦、代理伺服器</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>為什麼 Adware/Spyware 如此普遍？</h3>
+            <div class="info-box">
+                <p><strong>經濟誘因：</strong></p>
+                <ul>
+                    <li><strong>規模經濟：</strong>感染數百萬台電腦就能產生巨大廣告收益</li>
+                    <li><strong>注意力經濟：</strong>使用者的眼球注意力對廣告商有價值</li>
+                    <li><strong>資源濫用：</strong>利用使用者的電腦資源挖掘加密貨幣</li>
+                    <li><strong>資料價值：</strong>個人資料和瀏覽習慣可以販售獲利</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="botnet">
+            <h2>9. 殭屍網路 (Botnet)</h2>
+
+            <div class="info-box">
+                <p><strong>定義：</strong>Botnet = Robot Network（機器人網路），是由大量被感染的電腦組成的網路，這些電腦可以被遠端統一控制來執行各種任務。</p>
+            </div>
+
+            <h3>Botnet 架構與運作</h3>
+            <div class="attack-flow">
+                <h4>殭屍網路的組成</h4>
+                
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div>
+                        <strong>Bot（殭屍電腦）：</strong>被感染的個別電腦，等待接收命令
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div>
+                        <strong>C&C 伺服器：</strong>指揮與控制中心，發送指令給所有 Bot
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div>
+                        <strong>Botmaster：</strong>控制整個殭屍網路的攻擊者
+                    </div>
+                </div>
+                
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div>
+                        <strong>通訊頻道：</strong>IRC、HTTP、P2P 等通訊方式
+                    </div>
+                </div>
+            </div>
+
+            <h3>Botnet 感染方式</h3>
+            <ul>
+                <li><strong>特洛伊木馬：</strong>透過假冒軟體或惡意連結感染</li>
+                <li><strong>系統漏洞：</strong>利用作業系統或應用程式漏洞自動感染</li>
+                <li><strong>社交工程：</strong>誘騙使用者點擊惡意連結或下載檔案</li>
+                <li><strong>蠕蟲傳播：</strong>通過網路自動感染其他電腦</li>
+            </ul>
+
+            <h3>著名案例：Zeus 殭屍網路</h3>
+            <div class="danger-box">
+                <p><strong>銀行劫匪：</strong>Zeus 是歷史上最成功的金融木馬之一</p>
+                <ul>
+                    <li><strong>目標：</strong>竊取網路銀行登入資訊</li>
+                    <li><strong>手法：</strong>等待使用者登入銀行網站，記錄帳號密碼</li>
+                    <li><strong>轉帳：</strong>利用竊取的資訊進行非法轉帳</li>
+                    <li><strong>洗錢：</strong>透過第三方帳戶將贓款轉給攻擊者</li>
+                    <li><strong>規模：</strong>感染數百萬台電腦，損失數千萬美元</li>
+                </ul>
+            </div>
+
+            <h4>Zeus 如何繞過銀行安全措施</h4>
+            <div class="warning-box">
+                <p><strong>技術手段：</strong></p>
+                <ul>
+                    <li><strong>Web Inject：</strong>即時修改銀行網頁內容</li>
+                    <li><strong>社交工程：</strong>偽造「安全驗證」頁面</li>
+                    <li><strong>即時攻擊：</strong>在使用者登入時同步進行轉帳</li>
+                    <li><strong>OTP 繞過：</strong>誘導使用者在攻擊者轉帳時輸入驗證碼</li>
+                </ul>
+            </div>
+
+            <h3>Botnet 的商業用途</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>服務類型</th>
+                        <th>用途說明</th>
+                        <th>市場價格</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>DDoS 攻擊</td>
+                        <td>癱瘓目標網站或服務</td>
+                        <td>每小時 $5-50</td>
+                    </tr>
+                    <tr>
+                        <td>垃圾郵件</td>
+                        <td>發送大量廣告或釣魚郵件</td>
+                        <td>每千封 $1-5</td>
+                    </tr>
+                    <tr>
+                        <td>點擊詐騙</td>
+                        <td>虛假點擊網路廣告獲利</td>
+                        <td>每千次點擊 $1-10</td>
+                    </tr>
+                    <tr>
+                        <td>加密貨幣挖礦</td>
+                        <td>利用他人電腦挖礦</td>
+                        <td>持續性收入</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>即時威脅監控</h3>
+            <div class="info-box">
+                <p><strong>全球監控：</strong>可以透過威脅情報平台觀察即時的殭屍網路活動：</p>
+                <ul>
+                    <li>CheckPoint Threat Map: https://threatmap.checkpoint.com/</li>
+                    <li>Kaspersky Cyberthreat Real-time Map</li>
+                    <li>FireEye Cyber Threat Map</li>
+                </ul>
+                <p>這些平台顯示全球範圍內正在進行的網路攻擊，包括殭屍網路活動。</p>
+            </div>
+        </section>
+
+        <section id="prevention">
+            <h2>10. 防護措施與最佳實務</h2>
+
+            <div class="prevention-tips">
+                <h3>多層防護策略</h3>
+                
+                <h4>1. 系統層面防護</h4>
+                <ul>
+                    <li><strong>及時更新：</strong>保持作業系統和所有應用程式為最新版本</li>
+                    <li><strong>安全修補：</strong>立即安裝安全性更新</li>
+                    <li><strong>最小權限：</strong>使用一般使用者帳戶，避免以管理員身分日常操作</li>
+                    <li><strong>UEFI Secure Boot：</strong>使用支援安全開機的現代電腦</li>
+                </ul>
+
+                <h4>2. 防毒軟體防護</h4>
+                <ul>
+                    <li><strong>即時防護：</strong>開啟即時掃描和防護功能</li>
+                    <li><strong>定期更新：</strong>每日更新病毒定義檔（建議每小時檢查）</li>
+                    <li><strong>完整掃描：</strong>定期進行全系統深度掃描</li>
+                    <li><strong>專用工具：</strong>使用 Malwarebytes 等專業反惡意軟體工具</li>
+                </ul>
+
+                <h4>3. 網路安全防護</h4>
+                <ul>
+                    <li><strong>防火牆：</strong>開啟並正確設定防火牆</li>
+                    <li><strong>IPS/IDS：</strong>使用入侵防禦/偵測系統</li>
+                    <li><strong>流量監控：</strong>監控異常的網路連線</li>
+                    <li><strong>DNS 過濾：</strong>使用安全的 DNS 服務</li>
+                </ul>
+
+                <h4>4. 使用者行為防護</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>風險行為</th>
+                            <th>安全做法</th>
+                            <th>額外建議</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>點擊郵件連結</td>
+                            <td>手動輸入網址到瀏覽器</td>
+                            <td>驗證發件者身分</td>
+                        </tr>
+                        <tr>
+                            <td>下載軟體</td>
+                            <td>只從官方網站下載</td>
+                            <td>檢查數位簽章</td>
+                        </tr>
+                        <tr>
+                            <td>開啟附件</td>
+                            <td>掃描後再開啟</td>
+                            <td>特別注意 Office 巨集</td>
+                        </tr>
+                        <tr>
+                            <td>使用 USB</td>
+                            <td>停用自動執行功能</td>
+                            <td>掃描後再使用</td>
+                        </tr>
+                    </tbody>
+                    </table>
+
+                <h4>5. 資料保護策略</h4>
+                <div class="success-box">
+                    <p><strong>3-2-1 備份原則：</strong></p>
+                    <ul>
+                        <li><strong>3 份副本：</strong>原始資料 + 2 份備份</li>
+                        <li><strong>2 種媒體：</strong>使用不同類型的儲存媒體</li>
+                        <li><strong>1 份離線：</strong>至少一份備份保持離線狀態</li>
+                    </ul>
+                    <p><strong>重點：</strong>離線備份是對抗勒索軟體的最後防線！</p>
+                </div>
+
+                <h4>6. 事件應變計畫</h4>
+                <div class="warning-box">
+                    <p><strong>發現感染時的處理步驟：</strong></p>
+                    <ol>
+                        <li><strong>隔離系統：</strong>立即斷開網路連線</li>
+                        <li><strong>評估損害：</strong>確認感染範圍和影響</li>
+                        <li><strong>專業清除：</strong>使用專門工具或求助專家</li>
+                        <li><strong>系統重建：</strong>嚴重情況下考慮重新安裝系統</li>
+                        <li><strong>資料復原：</strong>從備份還原重要資料</li>
+                        <li><strong>檢討改進：</strong>分析感染原因並加強防護</li>
+                    </ol>
+                </div>
+
+                <h4>7. 企業額外防護措施</h4>
+                <ul>
+                    <li><strong>員工訓練：</strong>定期進行資安意識教育</li>
+                    <li><strong>權限管理：</strong>實施最小權限原則</li>
+                    <li><strong>網路分段：</strong>隔離關鍵系統和一般網路</li>
+                    <li><strong>威脅情報：</strong>訂閱威脅情報服務</li>
+                    <li><strong>滲透測試：</strong>定期進行安全性評估</li>
+                    <li><strong>應變計畫：</strong>制定詳細的資安事件應變程序</li>
+                </ul>
+            </div>
+
+            <div class="success-box">
+                <h4>總結：資安防護的重要原則</h4>
+                <ul>
+                    <li><strong>多層防護：</strong>不依賴單一防護措施</li>
+                    <li><strong>持續更新：</strong>保持所有軟體最新狀態</li>
+                    <li><strong>使用者教育：</strong>提高安全意識最為重要</li>
+                    <li><strong>定期備份：</strong>備份是最後的安全網</li>
+                    <li><strong>監控警覺：</strong>注意異常行為和系統變化</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer style="margin-top: 50px; padding-top: 20px; border-top: 2px solid #dee2e6; text-align: center; color: #6c757d;">
+            <p>本文件整理自 Professor Messer 的 CompTIA Security+ SY0-501 課程內容</p>
+            <p>最後更新：2024年 | 適用於 CompTIA Security+ 認證考試準備</p>
+        </footer>
+    </div>
+</body>
+</html>
