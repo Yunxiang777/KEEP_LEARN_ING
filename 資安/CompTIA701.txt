@@ -554,30 +554,6 @@ Misconfiguration（設定錯誤）：設備或系統未正確配置，導致安�
 翻譯：答案：C. 復原（Recovery）
 翻譯：資料外洩事件後的復原可能採取分階段方式，可能需要數個月才能完成。
 分階段復原（Phased recovery）：先恢復最關鍵的系統，再逐步恢復次要系統，以降低業務中斷風險。
-
-原文：A. Lessons learned
-翻譯：A. 經驗回顧（Lessons learned）
-事件結束後，回顧事件處理流程有助於學習與改進，以便下次更有效應對。
-
-原文：B. Containment
-翻譯：B. 隔離（Containment）
-在事件發生期間，將受感染的系統與其他網路分離是有用的，以防止威脅擴散。
-
-原文：D. Analysis
-翻譯：D. 分析（Analysis）
-分析階段可以包含日誌檔與警示的分析，這些資料來源可以幫助偵測潛在攻擊或提供攻擊正在進行的證據。
-=========================================================================================================
-An attacker has discovered a way to disable a server by sending specially crafted packets from many remote devices to the operating system.
-翻譯：攻擊者發現一種方法，透過從多個遠端設備發送特製封包到作業系統，使伺服器無法運作。
-特製封包（specially crafted packets）：經過設計，能觸發系統漏洞或異常行為的網路封包。
-作業系統（Operating System, OS）：管理硬體與軟體資源的系統核心。
-
-原文：When the packet is received, the system crashes and must be rebooted to restore normal operations.
-翻譯：當系統接收到封包時，會當機，必須重新啟動才能恢復正常運作。
-補充：這種行為會造成服務中斷（Service outage），對企業運作造成影響。
-
-原文：Which of the following would BEST describe this attack?
-翻譯：下列哪一項最能描述這種攻擊？
 =========================================================================================================
 A technician is applying a series of patches to fifty web servers during a scheduled maintenance window.
 翻譯：一名技術人員正在排定的維護時段內，對五十台 Web 伺服器套用一系列補丁。
@@ -592,18 +568,6 @@ A technician is applying a series of patches to fifty web servers during a sched
 翻譯：答案：B. 依照回退計畫（Backout plan）中的步驟進行
 回退計畫（Backout plan）：在變更控制流程中，如果發現無法修復的錯誤，可將系統回復到變更前的設定或狀態的計畫。
 翻譯：變更控制流程中的回退計畫提供了如何在變更過程中發現無法修復的錯誤時，回復至先前設定的資訊。
-
-原文：A. Contact the stakeholders regarding the outage
-翻譯：A. 通知利害關係人有關停機事件
-利害關係人通常不需要在維護時段中收到每個步驟的詳細通知。變更的最終結果可以在維護完成後再告知利害關係人。
-
-原文：C. Test the upgrade process in the lab
-翻譯：C. 在實驗室測試升級流程
-變更控制流程中的測試階段應在維護時段開始前完成。一旦維護時段開始，就太晚無法在實驗室進行額外測試。
-
-原文：D. Evaluate the impact analysis associated with the change
-翻譯：D. 評估與變更相關的影響分析
-影響分析用來評估提出變更的風險。這份分析通常在變更控制核准前完成，在維護時段中用來排錯並不太有用。
 =========================================================================================================
 Which of the following is used to describe how cautious(謹慎) an organization might be to taking a specific risk?
 翻譯：下列哪一個用來描述組織對承擔特定風險的謹慎程度？
@@ -724,18 +688,6 @@ Which of the following would describe this access control model?
 The Answer: A. Discretionary
 答案：A. 自主存取控制（Discretionary）
 自主存取控制常用於多種作業系統，這種模型允許資源的擁有者決定誰可以存取該資源。
-
-B. Mandatory
-B. 強制存取控制
-強制存取控制根據物件被分配的安全等級來決定存取權限。只有擁有該物件等級或更高等級的使用者才能存取該資源。
-
-C. Attribute-based
-C. 屬性存取控制
-屬性存取控制會結合多種不同的參數，來判斷使用者是否有權存取某個資源。
-
-D. Role-based
-D. 角色存取控制
-角色存取控制會根據使用者的角色來分配權利與權限。這些角色通常是由群組分配的。
 =========================================================================================================
 company's VPN service performs a posture assessment during the login process.
 一家公司的 VPN 服務在使用者登入時會執行姿態評估（posture assessment）。
@@ -772,10 +724,6 @@ Which of the following use cases would apply to this process?
 答案：A. 升級流程（Escalation）
 自動化系統可以偵測安全事件，並將與安全相關的工單自動升級到事件響應團隊，無需額外的人力介入。
 
-B. Guard rails
-B. 安全護欄
-安全護欄通常由應用程式開發人員使用，用來對使用者輸入和行為提供自動化驗證。IT 支援團隊不會使用安全護欄來處理安全事件。
-
 C. Continuous integration
 C. 持續整合
 持續整合（CI）與測試提供了一種自動化方式，持續開發、測試與部署程式碼。IT 支援中心不會使用 CI 流程來處理安全事件。
@@ -810,9 +758,6 @@ MDM（行動裝置管理系統）提供一個集中管理所有行動裝置的�
 A. Segmentation
 A. 資料分割
 資料分割指的是將使用者資料與公司資料分開，但要實施所有安全政策仍需要透過 MDM 來管理。
-
-C. COPE
-COPE（企業擁有、允許個人使用）的裝置通常由公司購買，並允許同時用於商務與個人用途。但使用 COPE 裝置本身並不提供裝置的政策管理功能。
 =========================================================================================================
 A company would like to minimize database corruption(腐敗) if power is lost to a server.
 一家公司希望在伺服器斷電時，將資料庫損毀的風險降到最低。
@@ -826,7 +771,6 @@ The Answer: C. Journaling
 A company stores some employee information in encrypted form, but other public details are stored as plaintext.
 一家公司將部分員工資訊以加密形式儲存，但其他公開資訊則以明文形式儲存。
 
-The Answer: B. Record
 答案：B. 紀錄級加密（Record）
 紀錄級加密通常用於資料庫中，針對資料庫的個別欄位進行加密。這種方式可以讓資料庫中的部分資訊以明文儲存，而其他資訊則以加密形式儲存。
 =========================================================================================================
@@ -835,13 +779,8 @@ A company would like to examine the credentials of each individual(個人) enter
 Which of the following would BEST facilitate(促進) this requirement?
 以下哪一個選項最能滿足這項需求？
 
-The Answer: A. Access control vestibule
 答案：A. 出入口管制前室（Access control vestibule）
 出入口管制前室是一個專門設計來限制人員流動的房間。它通常用於高安全區域，每個人都必須先經過評估與批准，才能進入下一個區域。
-
-B. Video surveillance
-B. 影片監控
-雖然影片監控可以協助監控建築物或房間的進出，但它無法驗證每位訪客的憑證。
 
 C. Pressure sensors
 C. 壓力感測器
@@ -856,18 +795,6 @@ A business manager is documenting a set of steps for processing orders if the pr
 
 答案：B. 營運持續性（Continuity of operations）
 擁有一組替代流程來應對任何中斷或問題總是有幫助的。營運持續性計畫（COOP）可確保當這些問題發生時，企業仍能持續運作。
-
-A. Platform diversity(多樣性)
-A. 平台多樣性
-使用不同的作業系統與平台，可以減少單一作業系統相關問題的風險，但若主要網路連線中斷，這並不能提供任何解決方法。
-
-C. Cold site recovery
-C. 冷備援站點復原
-冷備援站點需要時間建置，進行災難復原的切換成本與時間都很高。等到冷備援站點啟用時，主要的網際網路連線可能早已恢復，且其他替代方案也可能已經被部署。
-
-D. Tabletop exercise
-D. 桌上推演演練
-桌上推演通常是一場會議，讓復原小組或災難復原團隊成員討論一個災難情境，而不是實際的替代流程。
 =========================================================================================================
 An internal audit has discovered four servers that have not been updated in over a year, 
 and it will take two weeks to test and deploy the latest patches.
@@ -878,17 +805,9 @@ Which of the following would be the best way to quickly respond to this situatio
 答案：C. 將伺服器移到受保護的網段
 將伺服器分段到專屬的受保護網路，可以增加額外的安全控制，同時仍維持系統的上線時間與可用性。
 
-A. Purchase cybersecurity insurance
-A. 購買網路安全保險
-網路安全保險可以幫助在重大攻擊期間處理財務問題，但它無法在這兩週內協助降低潛在的漏洞風險。
-
 B. Implement an exception for all data center services
 B. 對所有資料中心服務實施例外處理
 安全例外應該是少數情況，並且只針對少數系統。若對不在漏洞範圍內的系統建立廣泛的安全例外，會帶來高風險。
-
-D. Hire a third-party to perform an extensive audit
-D. 聘請第三方進行全面稽核
-稽核需要時間，而聘請第三方進行稽核需要更久。在第三方稽核開始進行時，這些有問題的系統可能已經完成測試與修補。
 =========================================================================================================
 What kind of security control is associated with a login banner?
 登入橫幅（login banner）屬於哪一種類型的安全控制？
@@ -928,37 +847,15 @@ On one of the time clocks, this file system error occurs during the startup proc
 答案：C. 競爭狀態（Race condition）
 競爭狀態是指兩個程序幾乎同時發生，並導致不可預期結果的情況。
 檔案系統的問題通常可以在重新開機前修復，但這裡系統卻在修復完成之前就先重啟。這就造成了一個競爭狀態，導致系統持續重啟。
-
-A. Memory injection
-A. 記憶體注入
-記憶體注入通常被惡意軟體利用，用來將程式碼加入現有程序的記憶體中。本題的問題與檔案系統錯誤有關，並不是惡意資料注入。
-
-B. Resource consumption
-B. 資源消耗
-如果打卡機的儲存空間或記憶體耗盡，系統很可能會無法使用。但在這個例子中，問題並不是因為缺乏資源所造成的。
-
-D. Malicious update
-D. 惡意更新
-惡意更新是指在軟體更新時安裝了不需要或未授權的程式碼。許多攻擊者會在軟體更新過程中，透過更新檔植入自己的惡意程式碼。
 =========================================================================================================
 Which of the following would explain why a company would automatically add a digital signature to each outgoing email message?
 以下哪一個選項最能解釋，為什麼一家公司會在每封寄出的電子郵件中自動加上數位簽章？
 
-❍A. 機密性（Confidentiality）
 ❍B. 完整性（Integrity）
-❍C. 驗證（Authentication）
 ❍D. 可用性（Availability）
 
 答案：B. 完整性（Integrity）
 完整性是指資料的可信度。數位簽章能讓收件者確認，自簽章建立後，資料並未被更改。
-
-A. Confidentiality
-A. 機密性
-機密性描述的是資料的隱私性。透過 VPN 加密傳輸流量，或對隨身碟中儲存的檔案進行加密，都是資料機密性的例子。
-
-C. Authentication
-C. 驗證
-驗證指的是確認個人或系統身份的過程。帳號與密碼是常見的驗證方法，但數位簽章並不常用於身份驗證。
 
 D. Availability
 可用性是指授權使用者能夠存取資料的能力。數位簽章並不會提供與資料可用性相關的功能。
@@ -1006,21 +903,15 @@ The Answer: A. Federation
 正確答案：A. 聯合認證（Federation）
 聯合認證允許一個組織的成員使用另一個組織的帳號與密碼進行身份驗證。
 
-The incorrect answers:
-以下是錯誤的選項：
-
 B. 802.1X
 802.1X 是一種有用的認證協議，但它需要額外功能才能跨多個使用者資料庫進行驗證。
 
 C. EAP（Extensible Authentication Protocol，可擴充認證協議）
 EAP 是一種常用於網路存取控制的認證框架。
-單獨的 EAP 無法提供跨第三方資料庫驗證所需的聯合認證功能。
 
 D. SSO
 D. 單一登入（Single Sign-On, SSO）
 SSO 是指使用一次登入即可存取多個不同網路服務的過程。
-
-Obtaining login credentials from a third-party access database does not describe the process used by SSO.
 從第三方存取資料庫取得登入憑證並不是 SSO 的運作流程。
 
 核心概念
@@ -1122,43 +1013,14 @@ G. 在驗證伺服器上啟用時間限制
 加入基於地理位置的政策，可防止資料被從國外直接存取。
 將所有裝置的日誌資訊保存，並從單一資料庫生成稽核報告，可以透過 SIEM（安全資訊與事件管理系統）來實作。
 加入工作時間檢查，可以即時通報任何在非工作時間發生的資料存取。
-----------------------------------------------------------------------------
-B. Require government-issued identification during the onboarding process
-B. 在新進人員加入時要求政府核發的身分證明
-要求正確身分驗證固然是好做法，但這不在題目列出的需求中。
-
-C. Add additional password complexity for accounts that access data
-C. 為存取資料的帳號增加密碼複雜度
-增加密碼複雜度也是良好實務，但不屬於題目提供的需求。
-
-D. Conduct monthly permission auditing
-D. 每月執行權限稽核
-題目中並未要求持續稽核，但持續稽核仍是重要的安全考量。
-
-F. Archive the encryption keys of all disabled accounts
-F. 將所有停用帳號的加密金鑰存檔
-即使帳號被停用，仍可能有加密資料需要稍後復原。存檔這些加密金鑰可以在帳號停用後仍取得該資料。
 =========================================================================================================
 A company creates a standard set of government reports each calendar quarter.
 一家公司在每個會計季度都會製作一組標準化的政府報告。
 Which of the following would describe this type of data?
 以下哪一個最能描述這種類型的資料？
 
-The Answer: D. Regulated
 正確答案：D. 受規範的資料（Regulated）
 為政府用途製作的報告與資訊，受到法律規範，需依法律規定披露特定類型的資料。
-
-A. 使用中資料（Data in use）
-使用中資料是指正在系統記憶體中被處理的資訊，例如系統 RAM、CPU 暫存器或 CPU 快取。
-政府報告是靜態文件，並非正在積極處理的資料。
-
-B. 混淆資料（Obfuscated）
-混淆資料是指將可理解的資料修改成非常難以理解的形式。
-政府報告中的資訊相對容易理解，因此不會被視為混淆資料。
-
-C. Trade secrets
-C. 商業機密（Trade secrets）
-商業機密是公司在日常業務流程中使用的私密細節，這些機密資訊不會與其他組織或公司分享。
 =========================================================================================================
 A security administrator is concerned about the potential for data exfiltration using external storage drives.
 一名資安管理員擔心透過外部儲存裝置進行資料外洩的可能性。
