@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>電話與網路技術整理</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.8; margin: 40px; }
+    h1, h2, h3 { color: #2c3e50; }
+    ul { margin-left: 20px; }
+    .section { margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <h1>電話與網路技術整理</h1>
+
+  <div class="section">
+    <h2>一、雙絞線與電話線</h2>
+    <ul>
+      <li>電話線與網路線本質上都是<strong>銅線雙絞線</strong>。</li>
+      <li>早期家用電話（PSTN）就是使用雙絞線來傳送<strong>類比訊號</strong>。</li>
+      <li>網路線（如 Cat5、Cat6）也是雙絞線，但結構更嚴謹，支援更高頻寬與速率。</li>
+      <li>現代家用電話若走 VoIP，已改用<strong>數位訊號</strong>，通常接到路由器或光纖數據機。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>二、類比訊號與數位訊號</h2>
+    <ul>
+      <li>類比訊號：連續變化，例如聲音波形、溫度感測器輸出的電壓。</li>
+      <li>數位訊號：以 0 與 1 的離散形式存在，適合電腦處理與網路傳輸。</li>
+      <li>電話網路演進：<br>
+        <strong>PSTN</strong>（類比電話） → <strong>DSL 技術</strong>（在同一雙絞線上跑數位網路） → <strong>VoIP / 光纖</strong>（完全數位化）。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>三、DSL 技術</h2>
+    <ul>
+      <li><strong>DSL（Digital Subscriber Line）</strong>：利用現有電話雙絞線傳輸數位訊號上網。</li>
+      <li><strong>ADSL</strong>：非對稱，下載頻寬大於上傳，常用於家用網路。</li>
+      <li><strong>VDSL</strong>：速率更快，但傳輸距離較短，常用於大樓或光纖到樓下再接銅線到戶。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>四、光纖上網</h2>
+    <ul>
+      <li>光纖利用<strong>光訊號</strong>傳輸，速度快、距離長、抗干擾。</li>
+      <li>常見架構：<strong>FTTH（光纖到戶）</strong> 或 <strong>FTTB（光纖到樓）</strong>。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>五、Cable 上網與有線電視</h2>
+    <ul>
+      <li><strong>Cable 上網</strong>：利用有線電視的同軸電纜，透過 Cable Modem 提供網路。</li>
+      <li><strong>傳統有線電視</strong>：
+        <ul>
+          <li>使用同軸電纜傳送多頻道訊號。</li>
+          <li>訊號來源路徑：家戶電視 → 大樓配線箱 → 有線電視業者機房（Headend） → 各電視台。</li>
+          <li>屬於<strong>廣播式傳輸</strong>，所有頻道同時送出，用戶選頻率收看。</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>六、MOD / IPTV</h2>
+    <ul>
+      <li><strong>MOD（Multimedia on Demand）</strong>：中華電信的 IPTV 品牌，本質上就是電視透過網路傳送。</li>
+      <li>使用<strong>網路線 / 光纖</strong>，而非同軸。</li>
+      <li>屬於<strong>點播式傳輸</strong>：用戶選擇什麼節目，伺服器才傳送該串流。</li>
+      <li>與電腦上網相同，都是基於 IP 封包，不同的是傳輸內容（網頁資料 vs. 影音串流）。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>七、總結</h2>
+    <ul>
+      <li>電話與網路的基礎媒介：最初都是<strong>銅線雙絞線</strong>，現代逐步過渡到<strong>光纖</strong>。</li>
+      <li>類比 → 數位的轉換，使得電話與網路融合（如 VoIP、IPTV）。</li>
+      <li>傳統有線電視與 MOD 最大不同：<br>
+        有線電視（同軸、廣播式） vs. MOD（網路、點播式）。</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>我的首頁</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background-color: #f9f9f9;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    input[type="text"] {
+      width: 60%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .category {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .category h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    .category ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .category li {
+      margin: 8px 0;
+    }
+    .category a {
+      color: #007acc;
+      text-decoration: none;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>我的首頁</h1>
+    <input type="text" id="searchBox" placeholder="搜尋...">
+  </header>
+
+  <main class="categories">
+    <div class="category">
+      <h2>網路</h2>
+      <ul>
+        <li><a href="./網路/電話與網路.html">電話與網路</a></li>
+        <li><a href="page2.html">關於文件</a></li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>分類 B</h2>
+      <ul>
+        <li><a href="page3.html">教學資源</a></li>
+        <li><a href="page4.html">工具下載</a></li>
+      </ul>
+    </div>
+
+    <div class="category">
+      <h2>分類 C</h2>
+      <ul>
+        <li><a href="page5.html">聯絡資訊</a></li>
+        <li><a href="page6.html">其他連結</a></li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    const searchBox = document.getElementById('searchBox');
+    const categories = document.querySelectorAll('.category');
+
+    searchBox.addEventListener('input', () => {
+      const keyword = searchBox.value.trim().toLowerCase();
+
+      categories.forEach(category => {
+        let hasMatch = false;
+        const items = category.querySelectorAll('li');
+
+        items.forEach(item => {
+          const text = item.textContent.toLowerCase();
+          if (keyword && !text.includes(keyword)) {
+            item.classList.add('hidden');
+          } else {
+            item.classList.remove('hidden');
+            if (keyword && text.includes(keyword)) {
+              hasMatch = true;
+            }
+          }
+        });
+
+        // 如果整個分類都沒有符合，整個分類隱藏
+        if (keyword && !hasMatch) {
+          category.classList.add('hidden');
+        } else {
+          category.classList.remove('hidden');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
