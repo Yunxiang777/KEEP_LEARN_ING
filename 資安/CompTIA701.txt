@@ -15,8 +15,63 @@
 =========================================================================================================
 =========================================================================================================
 =========================================================================================================
+: A. Tokenization
+翻譯：答案：A。代碼化（Tokenization）
+
+英文原文：Tokenization replaces sensitive data with a non-sensitive placeholder. Tokenization is commonly used for NFC (Near-Field Communication) payment systems, and sends a single-use token across the network instead of the actual credit card information.
+翻譯：代碼化會將敏感資料替換成一個「非敏感」的佔位符。代碼化常應用於 NFC（近場通訊）支付系統，會在網路上傳送一次性代碼（token），而不是實際的信用卡資料。
+補充（專業說明）：
+
+Tokenization：由支付平台（如 Apple Pay、Google Pay、Samsung Pay）產生一組 一次性代碼，代替真實信用卡號。
+
+即使攔截到 token，也無法重複使用或還原出真正卡號，符合 PCI DSS（Payment Card Industry Data Security Standard） 的安全規範。
+
+適合行動支付、線上支付等場景。
+雜湊會將資料轉換成固定長度的「指紋」值（digest），但雜湊主要用於驗證完整性或密碼儲存，不適合用於傳輸信用卡號。
+C. Steganography
+翻譯：C。隱寫術
+說明：隱寫術是把資訊藏在其他媒體（例如圖片、音訊或影片）裡，不是支付交易常用的技術
 =========================================================================================================
+Resource consumption 可以指 CPU、RAM、磁碟或網路資源的過度使用。
+
+在這裡是「磁碟空間耗盡」，導致資料庫無法正常寫入資料或建立臨時檔案，因此效能下降甚至服務中斷。
+
+翻譯：A。緩衝區溢位
+解釋：緩衝區溢位是一種程式設計漏洞，攻擊者能操控記憶體內容
+
+Resource consumption（資源消耗）：指系統資源（CPU、RAM、Disk、Network）被用光，導致效能下降。這裡的狀況是「磁碟空間耗盡」。
+
+Buffer overflow：與程式記憶體漏洞相關。
+
+SQL injection：與資料庫查詢安全漏洞相關。
+
+Race condition：與多程序執行順序錯誤有關。
 =========================================================================================================
+IPsec（Internet Protocol Security，網際協定安全）通常用來在裝置或地點之間建立經過保護的 VPN（虛擬私人網路）隧道。
+說明（專業補充）：
+
+IPsec 是一組在網路層（OSI 第 3 層）運作的協定，提供機密性（encryption）、封包完整性（integrity）與來源驗證（authentication）。
+
+常見元件包括：ESP（Encapsulating Security Payload，提供加密與/或完整性）與 AH（Authentication Header，提供完整性與來源驗證但不加密）。
+
+鍵協商通常使用 IKE（Internet Key Exchange）。
+
+有兩種模式：transport mode（只保護封包的 payload）與 tunnel mode（封裝整個封包，適合站對站 VPN）。
+
+實務上用於站對站 VPN（兩個網路閘道器互相建立隧道）或遠端存取 VPN（用戶端到閘道器）。
+
+SCAP（Security Content Automation Protocol，安全內容自動化協定）用作多種資安工具之間共通的協定。
+說明（專業補充）：SCAP 常用於自動化的漏洞掃描、合規檢查、基準比較（例如 CIS 基準）、以及安全報表格式標準化。它是用於安全內容與資料交換的標準，不是用來建立加密通道或 VPN 隧道。
+網路存取控制（NAC）描述裝置連接到網路時的身份驗證與授權程序。
+說明（專業補充）：NAC 常見技術包含 802.1X（基於端口的認證）、RADIUS、主機健康檢查（host posture check）、以及分流到隔離網段等。目的在於在裝置接入階段確保合規性與最小權限，而不是在站對站層級建立加密隧道。
+
+英文原文：NAC is not used to connect two sites over an encrypted channel
+翻譯：NAC 並不會用來透過加密通道連接兩個站點。
+說明：再次強調 NAC 與建立站對站加密連線無關。
+
+簡短總結
+
+若目標是「在兩個遠端地點之間保護所有通訊」，最佳選擇是 IPsec，因為它在網路層提供加密、完整性與認證，並且支援建立站對站（site-to-site）或遠端存取（remote-access）VPN 隧道。其他選項（SCAP、screened subnet、NAC）分別用於安全自動化、公開服務隔離、以及存取驗證，並非用於建立站對站加密通道。
 =========================================================================================================
 1. OCSP（線上憑證狀態協定）是什麼？
 
