@@ -282,3 +282,75 @@ Payload 解開：
 
 Payload 是可讀的（Base64），簽章才是安全的核心。
 
+🔑 為什麼叫 JWT (JSON Web Token)？
+
+JSON → 它的內容（Header, Payload）都是用 JSON 格式描述的。
+
+Web → 它是為了網路傳輸設計的（HTTP API 常用）。
+
+Token → 它是一種憑證，用來讓伺服器識別使用者。
+
+所以組合起來就是：
+👉 「一種基於 JSON 格式的 Web 授權憑證」。
+
+🛡️ 那還有什麼其他 Token 方式？
+
+當然有！JWT 只是其中一種，常見的 Token 機制有：
+
+1. Session Token (傳統方式)
+
+使用者登入後，伺服器建立一個 Session（存在記憶體 / Redis / 資料庫）。
+
+伺服器回傳一個 Session ID 給瀏覽器，通常存在 Cookie。
+
+瀏覽器每次請求自動帶上 Cookie，伺服器用 Session ID 找到使用者資料。
+
+✅ 優點：簡單、伺服器能隨時強制登出使用者。
+
+❌ 缺點：伺服器要保存狀態（不適合分散式 / 多台伺服器）。
+
+2. Opaque Token (不透明 Token)
+
+Token 是一個隨機字串（例如 UUID）。
+
+本身不能解讀，伺服器要去資料庫查詢 Token 對應的使用者。
+
+像 OAuth 2.0 很多實作（例如 Facebook access_token）就是這種。
+
+✅ 優點：安全，因為外部拿到 Token 看不出資料。
+
+❌ 缺點：每次驗證都要查資料庫，增加負擔。
+
+3. JWT (自包含 Token, Self-contained Token)
+
+Token 裡面直接包含了使用者資訊（Payload）。
+
+不需要查資料庫，只要驗證簽章，就能知道 Token 有效 + 使用者是誰。
+
+✅ 優點：無狀態，適合分散式系統 (微服務、Serverless)。
+
+❌ 缺點：一旦簽發出去，除非用黑名單，否則 Token 在過期前都有效。
+
+4. OAuth 2.0 / OpenID Connect Token
+
+一種「授權框架」，會用到 Access Token 和 Refresh Token。
+
+Access Token → 常常就是 JWT 或 Opaque Token。
+
+Refresh Token → 用來換新的 Access Token。
+
+✅ 優點：業界標準（Google, GitHub, Facebook 登入都用這個）。
+
+⚡ 總結
+
+JWT = JSON 格式的 Web Token，最大特色是「自包含 + 簽章驗證」。
+
+其他 Token 方式：
+
+Session Token（Cookie-based）
+
+Opaque Token（隨機字串）
+
+OAuth2 Token（Access + Refresh）
+
+各種方式都有優缺點，取決於系統需求。
