@@ -1,0 +1,284 @@
+🔐 1. 使用者登入
+
+前端送出登入請求 (例如 React / Vue 發送 API)：
+
+POST /api/users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123456"
+}
+
+🖥 2. 後端驗證帳號密碼
+
+後端 (ASP.NET Core) 收到後做：
+
+去資料庫找 Email 為 test@example.com 的 User。
+
+檢查密碼是否正確 (實務上會存 哈希過的密碼，例如 BCrypt)。
+
+如果正確 → 產生 JWT Token。
+
+🔑 3. 後端產生 JWT Token
+
+假設資料：
+
+userId = "abc-123"
+
+email = "test@example.com"
+
+secretKey = "MySuperSecretKey"
+
+過期時間 = 1 小時
+
+(1) 建立 Header
+{ "alg": "HS256", "typ": "JWT" }
+
+
+Base64Url 編碼後：
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+
+(2) 建立 Payload
+{
+  "sub": "abc-123",
+  "email": "test@example.com",
+  "exp": 1712345678
+}
+
+
+Base64Url 編碼後：
+
+eyJzdWIiOiJhYmMtMTIzIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzEyMzQ1Njc4fQ
+
+(3) 建立簽章
+
+把兩段連起來：
+
+data = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMtMTIzIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzEyMzQ1Njc4fQ"
+
+
+用 HMAC-SHA256 + secretKey 算出雜湊：
+
+signature = HMACSHA256(data, "MySuperSecretKey")
+
+
+結果再 Base64Url 編碼，假設：
+
+abc123xyz987
+
+(4) 最終 Token
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMtMTIzIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzEyMzQ1Njc4fQ.abc123xyz987
+
+📩 4. 後端回傳給前端
+
+登入成功的 API 回應：
+
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....abc123xyz987"
+}
+
+📦 5. 前端儲存 Token
+
+前端（瀏覽器 / App）收到後，通常會存到：
+
+localStorage → 永久保存，除非清除瀏覽器資料。
+
+sessionStorage → 只在瀏覽器分頁存在。
+
+App → 通常存 SQLite 或 Secure Storage。
+
+例子 (前端 JS)：
+
+localStorage.setItem("jwt", token);
+
+🚀 6. 前端帶著 Token 呼叫受保護 API
+
+假設要呼叫「取得個人資料」的 API：
+
+GET /api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....abc123xyz987
+
+🛡 7. 後端驗證 Token
+
+後端做這些事：
+
+拿到 Token，拆成三段 (Header, Payload, Signature)。
+
+用同樣的 secretKey 重新計算簽章。
+
+比對「算出來的簽章」 == 「Token 帶來的簽章」。
+
+如果一致，而且 exp 還沒過期 → Token 有效。
+
+從 Payload 讀出 sub = abc-123 → 知道是哪個使用者。
+
+✅ 8. 後端回傳資料
+
+假設 User = "test@example.com
+"，回傳：
+
+{
+  "id": "abc-123",
+  "email": "test@example.com",
+  "name": "Test User"
+}
+
+🔄 總結流程：
+
+登入 → 前端送帳密給後端
+
+產生 Token → 後端驗證成功後，簽章 JWT，回傳給前端
+
+儲存 Token → 前端存 localStorage / sessionStorage
+
+攜帶 Token → 每次 API 請求，在 Authorization: Bearer <token> 傳給後端
+
+驗證簽章 → 後端用 secretKey 驗證 Token 沒被竄改，且沒過期
+
+授權成功 → 回傳資料
+
+要不要我直接用 C# (ASP.NET Core) 幫你寫一個最小範例 Login API，包含 產生 JWT + 回傳 + 驗證，你可以直接跑？
+
+你說：
+用 HMAC-SHA256 + secretKey 算出雜湊： => 出來的是亂數麼? 我如果拿到可以反解譯麼? 
+你這段也跳太多了
+🛡 7. 後端驗證 Token
+
+後端做這些事：
+
+拿到 Token，拆成三段 (Header, Payload, Signature)。
+
+用同樣的 secretKey 重新計算簽章。
+
+比對「算出來的簽章」 == 「Token 帶來的簽章」。
+
+如果一致，而且 exp 還沒過期 → Token 有效。
+
+從 Payload 讀出 sub = abc-123 → 知道是哪個使用者。
+ChatGPT 說：
+
+太棒了 🚀 你抓到重點了！我來幫你 慢慢拆解，不要跳太快。
+
+🧩 先回答你的問題
+
+用 HMAC-SHA256 + secretKey 算出雜湊： => 出來的是亂數麼? 我如果拿到可以反解譯麼?
+
+出來的不是亂數
+
+HMAC-SHA256 是一種「雜湊演算法 (Hash)」，同樣的輸入 + 同樣的 secretKey，永遠會得到一樣的結果。
+
+例如：
+
+HMACSHA256("hello", "key") => abc123...
+HMACSHA256("hello", "key") => abc123...  (一樣)
+
+
+不能反解譯
+
+雜湊是 單向函數，就像「果汁機」：丟進去水果只能變成果汁，無法反推出原本的水果。
+
+所以別人拿到簽章 (Signature) 這段字串，不能反推出 payload 或 secretKey。
+
+安全性來源
+
+因為只有伺服器知道 secretKey，攻擊者就算改了 Payload（例如把 "role":"user" 改成 "role":"admin"），也算不出正確的簽章，伺服器一驗證就會失敗。
+
+🔎 那「驗證 Token」到底是怎麼跑的？
+
+假設 Token 是：
+
+aaa.bbb.ccc
+
+
+aaa = Header (Base64Url)
+
+bbb = Payload (Base64Url)
+
+ccc = Signature (Base64Url)
+
+後端驗證流程 (逐步)：
+
+拆三段
+
+headerBase64 = aaa
+payloadBase64 = bbb
+signatureFromToken = ccc
+
+
+重新算簽章
+
+expectedSignature = HMACSHA256(headerBase64 + "." + payloadBase64, secretKey)
+
+
+比對簽章
+
+if (expectedSignature == signatureFromToken) {
+    // Token 沒被竄改
+} else {
+    // Token 無效 (可能被偽造)
+}
+
+
+檢查過期時間
+
+解開 Payload（Base64 解碼 JSON）：
+
+{
+  "sub": "abc-123",
+  "email": "test@example.com",
+  "exp": 1712345678
+}
+
+
+檢查 exp 是否大於現在時間。
+
+如果過期 → Token 無效。
+
+讀取使用者資訊
+
+如果驗證成功 → 從 Payload 取 sub = abc-123，就知道是哪個使用者。
+
+🔑 舉個實際例子
+
+Token：
+
+aaa.bbb.ccc
+
+
+Payload 解開：
+
+{
+  "sub": "abc-123",
+  "role": "user",
+  "exp": 1712345678
+}
+
+
+攻擊者改 Payload：
+
+{
+  "sub": "abc-123",
+  "role": "admin",
+  "exp": 1712345678
+}
+
+
+然後重新編碼 → 變成 aaa.fakebbb.ccc。
+
+⚠️ 問題來了：他沒有伺服器的 secretKey，所以算不出合法的簽章。
+
+他算出來的 signatureFake ≠ ccc
+
+後端驗證失敗 → Token 無效。
+
+✅ 所以結論：
+
+簽章是單向的，不能反解。
+
+伺服器驗證方式：重新算一遍簽章 → 跟 Token 裡的比對。
+
+Payload 是可讀的（Base64），簽章才是安全的核心。
+
