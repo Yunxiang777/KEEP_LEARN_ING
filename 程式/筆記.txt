@@ -1,3 +1,88 @@
+1. AppDbContext 這段程式碼是什麼？
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    public DbSet<User> Users { get; set; }
+    public DbSet<Note> Notes { get; set; }
+}
+
+
+這是一個 Entity Framework Core (EF Core) 的資料庫上下文 (DbContext)。
+它的用途是：把 資料表 與 C# 類別 (Model) 做對應，讓你可以用 C# 物件來存取資料庫，而不用自己寫 SQL。
+
+DbContext：EF Core 提供的基底類別，代表跟資料庫的連線與操作環境。
+
+DbSet<User> Users：代表一個「Users」資料表，每個 User 物件對應到資料表中的一筆紀錄。
+
+DbSet<Note> Notes：代表「Notes」資料表。
+
+舉例：你可以寫
+
+var users = await _context.Users.ToListAsync();
+
+
+它會自動轉成 SQL：
+
+SELECT * FROM Users;
+
+2. IConfiguration _config 是什麼？
+
+在你的 UsersController 裡面有這一段：
+
+private readonly IConfiguration _config;
+public UsersController(AppDbContext context, IConfiguration config)
+{
+    _context = context;
+    _config = config;
+}
+
+
+👉 IConfiguration 是 ASP.NET Core 內建的設定存取介面。
+它可以讀取 appsettings.json、環境變數、使用者祕密、Azure Key Vault 等等。
+
+
+
+舉例：假設你的 appsettings.json 有
+
+"Jwt": {
+  "SecretKey": "12345678901234567890123456789012",
+  "Issuer": "myApp",
+  "Audience": "myUsers"
+}
+
+
+在程式裡你可以用 _config["Jwt:SecretKey"] 讀出字串 "12345678901234567890123456789012"。
+這就是你用來產生 JWT 的金鑰。
+
+總結：IConfiguration 就是 ASP.NET Core 幫你準備的「設定讀取器」。
+
+3. 409 Conflict 是什麼？
+
+在 CreateUser 這段：
+
+if (exists)
+{
+    return Conflict(ApiResponse<User>.Fail("Email 已被註冊"));
+}
+
+
+這裡的 Conflict(...) 代表 HTTP 狀態碼 409 Conflict。
+
+HTTP 409 Conflict = 請求和伺服器目前的狀態有衝突。
+
+在這裡的意思是：「這個 Email 已經存在，新增會造成衝突。」
+
+這比單純用 400 Bad Request 更精確，因為 400 表示「用戶輸入錯誤」，但 409 則是「用戶輸入沒錯，但和現有資料衝突」。
+
+✅ 總結：
+
+AppDbContext = EF Core 資料庫操作的入口，DbSet 代表資料表。
+
+IConfiguration = ASP.NET Core 的設定存取服務，可以讀 appsettings.json 等。
+
+409 Conflict = 一個 HTTP 狀態碼，代表請求與伺服器狀態衝突（例如新增重複資料）。
+
 🔐 1. 使用者登入
 
 前端送出登入請求 (例如 React / Vue 發送 API)：
