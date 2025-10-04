@@ -7,6 +7,35 @@
 ===========================================================================================================
 ===========================================================================================================
 ===========================================================================================================
+一、Oracle Database「版本代號」 (Release Naming)
+
+Oracle 在不同時代用不同字母來代表產品特性：
+
+版本	代號含義	範例
+V (Version)	最早的版本命名，V2（1979 年，世界第一個商業 SQL RDBMS）	Oracle V2
+i (Internet)	支援 Internet 應用（Java, XML, Web 技術）	Oracle 8i, 9i
+g (Grid)	支援 Grid Computing（網格運算）	Oracle 10g, 11g
+c (Cloud)	支援 Cloud Computing（雲端、多租戶架構 CDB/PDB）	Oracle 12c
+數字年號化	直接用年份表示版本	Oracle 18c (2018), 19c (2019, LTS), 21c (2021)
+
+👉 目前企業最常用的是 Oracle 19c（長期支援版，最穩定）。
+
+🔹 二、Oracle Database「產品版本」 (Editions)
+
+不同版本（Edition）功能差異，決定了你能用的功能和授權模式：
+
+Edition	簡稱	功能 & 適用情境
+Enterprise Edition	EE	功能最完整（RAC, Partition, 高可用性, 高階安全性），大企業核心系統使用，授權最貴
+Standard Edition / Standard Edition 2	SE / SE2	功能較少（不支援 RAC、部分高階功能），限制 CPU 數，適合中小企業
+Express Edition	XE	免費，功能有限制（2 CPU, 2GB RAM, 12GB DB 限制），用於學習/測試/小型應用
+Personal Edition	PE	幾乎等同 EE，但僅限單機，適合開發人員本機開發
+Lite Edition	–	早期才有，後來停用
+
+✅ 總結一句話：
+
+「V/i/g/c」是版本代號 → 說明當時 Oracle 的設計方向（Internet、Grid、Cloud...）。
+
+「EE/SE/XE...」是產品版本 → 決定你能用的功能多少、授權模式，以及成本。
 ===========================================================================================================
 關聯式資料庫（Relational Database, RDB） 是目前最常見的資料庫模型，例如 MySQL、PostgreSQL、SQL Server、Oracle 等。它的核心概念是用 表格（Table） 來儲存資料，並透過「關聯（Relation）」連結不同的表格。
 
