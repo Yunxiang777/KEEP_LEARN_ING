@@ -1,9 +1,152 @@
-===========================================================================================================
-===========================================================================================================
-===========================================================================================================
-===========================================================================================================
-===========================================================================================================
-===========================================================================================================
+這個「SQL 的模式（Schema）」在資料庫世界裡是一個非常核心、但常被混淆的概念。
+我們一步一步拆解說明它的意思、用途與實際例子👇
+
+🧠 一、簡單定義
+
+在 Oracle 或任何 SQL 資料庫中，
+
+Schema（模式）就是「資料庫物件的邏輯容器」。
+
+也可以理解成：
+
+🧩 一個「使用者帳號」擁有的一整套資料表、索引、檢視表、程序等的集合。
+
+📘 一句話解釋：
+
+Schema = 一個使用者擁有的資料物件集合。
+
+🔹 二、模式（Schema）裡面有哪些東西？
+
+一個 Schema 不是一個單一檔案，而是一組「物件集合」，
+例如：
+
+物件類型	說明	範例
+Table（資料表）	儲存資料的主要結構	EMPLOYEES、DEPARTMENTS
+View（檢視表）	查詢的邏輯視圖	EMPLOYEE_VIEW
+Index（索引）	加速查詢的結構	EMP_ID_IDX
+Sequence（序列）	產生流水號	EMP_SEQ
+Synonym（同義詞）	給物件取別名	EMP_ALIAS
+Procedure / Function / Package	PL/SQL 程式邏輯	HR_PKG.GET_SALARY
+Trigger（觸發器）	自動化事件程式	AUDIT_TRIGGER
+
+📦 所有這些物件都屬於某個「Schema」。
+
+🔹 三、Schema 與使用者（User）的關係
+
+在 Oracle 中：
+
+一個「User」對應一個「Schema」。
+
+例如：
+
+CREATE USER hr IDENTIFIED BY hr_password;
+
+
+這會同時建立：
+
+一個使用者帳號（User）
+
+一個同名的模式（Schema），名稱為 HR
+
+當這個使用者登入後，他建立的所有資料表、程序、索引…
+都會自動放進 HR Schema 裡。
+
+也就是說：
+
+🧩 HR 是一個使用者，也是他的 Schema 名稱。
+
+🔹 四、Schema 名稱在 SQL 裡的作用
+
+你可以用「Schema 名稱」明確指定物件的位置。
+
+例如：
+
+SELECT * FROM hr.employees;
+
+
+這代表：
+
+在 hr 這個模式（Schema）裡
+
+取出 employees 這張表的資料
+
+如果你是 hr 這個使用者登入，就可以簡寫成：
+
+SELECT * FROM employees;
+
+🔹 五、不同使用者、不同 Schema 的情況
+
+舉個例子：
+
+使用者	Schema	擁有的資料表
+HR	HR	HR.EMPLOYEES
+SCOTT	SCOTT	SCOTT.EMP
+SALES	SALES	SALES.CUSTOMERS
+
+假設 HR 想查 SCOTT 的表：
+
+SELECT * FROM scott.emp;
+
+
+但前提是：SCOTT 必須先授權 HR 有讀取權限：
+
+GRANT SELECT ON scott.emp TO hr;
+
+🔹 六、Schema ≠ Database
+
+很多初學者會搞混「Schema」跟「Database」，
+這兩者其實是不同層級的概念：
+
+比較項目	Schema	Database
+範圍	資料庫中的邏輯子集合	一整個資料庫實例
+功能	管理一組物件	管理所有 Schema
+關係	一個 Database 可以有多個 Schema	一個 Schema 屬於一個 Database
+例子（Oracle）	HR, SCOTT, SALES	ORCL
+例子（MySQL）	（MySQL 把 Schema ≈ Database）	—
+
+📌 在 Oracle 裡：Schema 是 Database 的一部分。
+📌 在 MySQL 裡：Schema 幾乎等於 Database（名稱不同但概念類似）。
+
+🔹 七、常見的模式相關 SQL 指令
+指令	用途
+CREATE USER user_name IDENTIFIED BY password;	建立新使用者（同時建立同名 Schema）
+CREATE SCHEMA AUTHORIZATION user_name;	明確建立 Schema（Oracle 自動化後較少用）
+ALTER USER user_name DEFAULT TABLESPACE data_ts;	指定 Schema 的儲存位置
+DROP USER user_name CASCADE;	刪除使用者及其 Schema
+GRANT SELECT ON hr.employees TO scott;	授權其他 Schema 存取
+🔹 八、實際例子（HR 模式）
+
+Oracle 安裝時常會附帶一個示範帳號：
+
+User: HR
+Password: HR
+
+
+這個 HR 就是：
+
+一個 User
+
+一個 Schema
+
+裡面有 tables（EMPLOYEES、DEPARTMENTS）
+
+以及一些 foreign key、view、procedure 等物件
+
+✅ 九、總結重點表格
+概念	說明
+Schema 是什麼	儲存資料表、索引、程序等物件的邏輯容器
+誰擁有 Schema	通常是某個使用者（User）
+一個 User 對應一個 Schema	名稱相同，例如 User = HR ⇒ Schema = HR
+如何指定 Schema	使用語法 schema_name.object_name
+與 Database 的關係	Database 包含多個 Schema
+Oracle vs MySQL	Oracle：Schema ⊂ Database；MySQL：Schema ≈ Database
+
+💡 口訣記法：
+
+🔸「Database 是城市」
+🔸「Schema 是城市裡的社區」
+🔸「Table、View、Index 是社區裡的房子」
+🔸「User 是這個社區的擁有人」
 這是 Oracle 資料庫中「記憶體架構」的核心概念之一。
 我們來完整說明 SGA 和 PGA 的差別、作用、以及它們之間的關係👇
 
