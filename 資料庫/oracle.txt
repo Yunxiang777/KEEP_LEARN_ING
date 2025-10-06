@@ -4,7 +4,292 @@
 ===========================================================================================================
 ===========================================================================================================
 ===========================================================================================================
+這是 Oracle 資料庫中「記憶體架構」的核心概念之一。
+我們來完整說明 SGA 和 PGA 的差別、作用、以及它們之間的關係👇
+
+🧠 一、整體概念：Oracle 記憶體分成兩大類
+
+在 Oracle Database 中，主要有兩個記憶體區域：
+
+區域	全名	範圍	主要用途
+SGA	System Global Area	🧩「全系統共用」	儲存共用資料（資料塊、SQL、快取）
+PGA	Program Global Area	👤「每個背景或使用者進程私有」	儲存該連線的執行狀態與暫存資料
+
+簡單來說：
+
+SGA 是全體使用者共享的記憶體空間
+PGA 是每個 Session（連線）自己的私人記憶體空間
+
+🔹 二、SGA（System Global Area）
+📘 定義：
+
+SGA 是整個資料庫實例（Instance）共享的記憶體區域，由所有使用者共用。
+
+🧩 組成部分：
+
+SGA 由多個子區構成，每個負責不同用途👇
+
+子區域	功能說明
+Database Buffer Cache	暫存最近讀取的資料塊（Data Block）
+Shared Pool	儲存 SQL、PL/SQL、資料字典、解析結果
+Redo Log Buffer	暫存交易的修改記錄（Redo Entries）
+Large Pool	給大型作業用（如 RMAN 備份、平行查詢）
+Java Pool	給 Java 程式執行使用（若資料庫執行 Java code）
+Streams Pool	Oracle Streams 複製用記憶體
+In-Memory Column Store	（選配）將資料以欄式格式儲存以加速分析
+🧮 設定方式：
+
+可手動設定各區大小，也可由 Oracle 自動管理：
+
+手動模式：DB_CACHE_SIZE, SHARED_POOL_SIZE, LARGE_POOL_SIZE, …
+
+自動模式：使用 ASMM (Automatic Shared Memory Management)
+
+ALTER SYSTEM SET SGA_TARGET=2G;
+ALTER SYSTEM SET SGA_MAX_SIZE=4G;
+
+🧱 特性：
+
+所有使用者共享
+
+由 Oracle Instance 啟動時建立
+
+關閉 Instance 時釋放
+
+位於伺服器 RAM 中
+
+🔹 三、PGA（Program Global Area）
+📘 定義：
+
+PGA 是每個使用者或伺服器進程的「私有記憶體區域」，
+用來處理該使用者的執行上下文、排序作業、暫存資料等。
+
+🧩 主要用途：
+子區域	功能說明
+Sort Area	排序作業暫存區（ORDER BY、GROUP BY 等）
+Hash Area	用於 Hash Join、Hash Aggregation 等運算
+Session Information	儲存使用者的變數、狀態、登入資訊
+Cursor State	儲存目前執行的 SQL 游標狀態
+Stack Space	執行 PL/SQL 函數呼叫時的堆疊空間
+🧮 設定方式：
+
+可以手動或自動管理：
+
+手動設定：SORT_AREA_SIZE, HASH_AREA_SIZE 等
+
+自動管理（建議方式）：Automatic PGA Management
+
+ALTER SYSTEM SET PGA_AGGREGATE_TARGET=1G;
+
+
+Oracle 會根據系統負載與查詢需求動態分配 PGA 給各個 Session。
+
+🧱 特性：
+
+每個使用者 Session 獨立
+
+不與其他 Session 共享
+
+在 Session 結束時釋放
+
+無需明確清除（Oracle 自動管理）
+
+🔹 四、SGA vs. PGA 比較總表
+項目	SGA	PGA
+全名	System Global Area	Program Global Area
+範圍	共享（所有使用者共用）	私有（每個 Session 獨立）
+建立時間	Instance 啟動時	Session 建立時
+釋放時間	Instance 關閉時	Session 結束時
+管理模式	ASMM / AMM	Automatic PGA Management
+內容	Buffer Cache、Shared Pool、Redo Buffer 等	Sort、Hash、Session 狀態、變數等
+主要用途	儲存共用資料與 SQL 結構	執行個別查詢與臨時資料處理
+對效能的影響	影響所有使用者的存取效率	影響個別查詢的運算效率
+🔹 五、實際例子（幫你連起來）
+
+假設使用者執行以下查詢：
+
+SELECT * FROM employees WHERE department_id = 10 ORDER BY salary;
+
+
+Oracle 的內部流程如下：
+
+1️⃣ SQL 被送進來 → Shared Pool 檢查是否有相同 SQL（若有則重用）
+2️⃣ 若無 → 解析、編譯 SQL（存在 Shared Pool 中）
+3️⃣ 從 Database Buffer Cache 檢查資料塊是否已存在
+
+若有：直接讀取
+
+若無：從磁碟讀取並放入 Buffer Cache
+4️⃣ 查詢結果需要排序 → 在該使用者的 PGA (Sort Area) 中進行
+5️⃣ 結束後結果回傳給使用者
+6️⃣ Session 結束 → PGA 釋放，但 SGA 仍保留以供其他使用者共用
+
+✅ 六、圖像化理解（簡化示意）
+                ┌───────────────────────────┐
+                │        Oracle Instance     │
+                │        （資料庫執行中）    │
+                ├───────────────────────────┤
+                │           SGA（共用）      │
+                │ ┌───────────────────────┐ │
+                │ │ Database Buffer Cache │ │
+                │ │ Shared Pool           │ │
+                │ │ Redo Log Buffer       │ │
+                │ └───────────────────────┘ │
+                ├───────────────────────────┤
+                │        多個 PGA（私有）    │
+                │ ┌─────┐  ┌─────┐  ┌─────┐ │
+                │ │PGA-1│  │PGA-2│  │PGA-3│ │ ← 各使用者 Session
+                │ └─────┘  └─────┘  └─────┘ │
+                └───────────────────────────┘
+
+🔹 七、延伸：AMM（Automatic Memory Management）
+
+Oracle 10g 之後可以讓系統同時自動管理 SGA + PGA：
+
+ALTER SYSTEM SET MEMORY_TARGET=4G;
+
+
+Oracle 會自動在 SGA 與 PGA 之間動態分配記憶體（例如 SGA 用 3G，PGA 用 1G），
+以達到最佳效能。
+
+🔸 總結重點（口訣版）
+記憶體區域	用途	範圍	管理方式
+SGA	儲存共用資料（快取、SQL 結構）	全域共用	ASMM 或手動設定
+PGA	儲存使用者 Session 的暫存與執行狀態	各 Session 獨立	Automatic PGA Manag
 ===========================================================================================================
+🧠 一、整體原則：Oracle Cache 不會主動清空，而是「動態替換」
+
+Oracle 的快取機制遵循一個核心概念：
+
+🧩「記憶體永遠用滿，直到有新的資料需要空間，再把舊的、較少使用的資料替換掉。」
+
+也就是說：
+
+它不會閒著記憶體空空的。
+
+也不會定時清空所有快取。
+
+而是依據「使用頻率」、「最近存取時間」等條件，動態釋放或替換快取中的資料。
+
+這種策略類似於 LRU（Least Recently Used） 或 LRU + Touch Count 改良算法。
+
+🔹 二、各類快取的釋放時機
+1️⃣ Database Buffer Cache
+
+📍 暫存資料塊（Data Blocks）
+📤 釋放條件：
+
+有新資料塊要載入時，但 Buffer Cache 已滿。
+
+Oracle 會依照 LRU（最久未使用） 清除舊資料塊。
+
+若被清除的資料塊已修改（Dirty Buffer），會先寫回資料檔（Datafile）再釋放。
+
+📌 另外會清空的情況：
+
+資料庫重啟（SGA 重置）
+
+ALTER SYSTEM FLUSH BUFFER_CACHE（手動清除快取）
+
+2️⃣ Shared Pool
+
+📍 包含 SQL、PL/SQL、資料字典等資訊
+📤 釋放條件：
+
+當 Shared Pool 不足以放入新的 SQL/PLSQL 結構時，Oracle 會釋放最久未使用的內容。
+
+SQL 游標（Cursor）長時間未使用會被 aged out。
+
+若應用程式頻繁產生不一樣的 SQL（例如字串拼接變數），會導致 Shared Pool 不斷替換（造成「硬解析」 overhead）。
+
+📌 清空方式：
+
+ALTER SYSTEM FLUSH SHARED_POOL;
+
+或資料庫重啟。
+
+3️⃣ Redo Log Buffer
+
+📍 暫存交易紀錄（Redo Entries）
+📤 釋放條件（非常頻繁）：
+
+每 3 秒自動寫出一次（由 LGWR 進程處理）
+
+或當 Redo Log Buffer 滿時
+
+或當交易提交（COMMIT）時
+
+或當有「記憶體壓力」時
+
+這個 Buffer 的壽命很短，是最常被清空的快取。
+
+4️⃣ In-Memory Column Store
+
+📍 儲存欄式資料以供快速分析（OLAP）
+📤 釋放條件：
+
+當記憶體不足時（Oracle 會根據 priority 替換不常用資料）
+
+或手動移除 In-Memory 內容（ALTER TABLE ... NO INMEMORY）
+
+或資料庫重啟時
+
+這個屬於「可配置」記憶體區域，不常被動清空。
+
+5️⃣ 硬體層快取（Storage Cache / Flash Cache）
+
+📍 位於儲存設備層（SSD 或儲存控制器）
+📤 釋放條件：
+
+當硬體控制器的快取滿時
+
+根據裝置演算法（多為 LRU 或 LFU）自動釋放
+
+或裝置重啟、錯誤重建時被清空
+
+這一層通常由儲存系統自行管理，不由 Oracle 控制。
+
+🔹 三、資料庫重啟時的情況
+
+當你執行：
+
+SHUTDOWN IMMEDIATE;
+STARTUP;
+
+
+時：
+
+快取區	是否會清空
+Database Buffer Cache	✅ 是
+Shared Pool	✅ 是
+Redo Log Buffer	✅ 是
+In-Memory Column Store	⚙️ 通常是（視設定）
+Storage Cache	⚙️ 視硬體控制器設計，有的會保留、有的會清空
+🔹 四、手動釋放指令（管理員操作）
+動作	SQL 指令
+清除資料塊快取	ALTER SYSTEM FLUSH BUFFER_CACHE;
+清除 Shared Pool	ALTER SYSTEM FLUSH SHARED_POOL;
+同時清除兩者	ALTER SYSTEM FLUSH SHARED_POOL; ALTER SYSTEM FLUSH BUFFER_CACHE;
+
+⚠️ 注意：這些指令會影響效能（因為強制清空快取），通常只在測試或性能分析時使用。
+
+🔹 五、記憶體壓力下的釋放機制
+
+若系統整體記憶體不足：
+
+Oracle 的 Automatic Memory Management (AMM) 或 Automatic Shared Memory Management (ASMM) 會動態調整各快取區的大小。
+
+例如縮小 Buffer Cache，擴大 Shared Pool。
+
+舊資料塊會被逐步釋放，以釋出 RAM。
+
+✅ 總結重點
+快取類型	釋放時機	清空條件
+Database Buffer Cache	新資料塊需要空間（LRU 替換）	資料庫重啟、手動 FLUSH
+Shared Pool	空間不足、未使用 SQL 被替換	重啟、手動 FLUSH
+Redo Log Buffer	滿、3 秒、COMMIT	自動週期性清空
+In-Memory Column Store	記憶體不足、低優先資料	重啟或手動移除
+Storage Cache	裝置快取滿	硬體控制器決定
 ===========================================================================================================
 Oracle實例概念明確，一個實例 => 操作Database
 一個database，可以安裝多個實例 => 每個實例之間互不干擾(比如說: 在同一個db，建一個user叫:leon，另一個實例也可以叫:leon，兩個互不干擾~)
