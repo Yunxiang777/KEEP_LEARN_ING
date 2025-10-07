@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>學習筆記</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        h2 {
+            margin-top: 30px;
+            color: #333;
+        }
+        h3 {
+            margin-top: 20px;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        .note {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>資料庫與開發工具學習筆記</h1>
+
+    <h2>一、Oracle Database</h2>
+
+    <h3>1. Schema（模式）</h3>
+    <div class="note">
+        Schema = 一個使用者擁有的資料物件集合<br>
+        一個 User 對應一個 Schema（名稱相同）
+    </div>
+    <table>
+        <tr>
+            <th>物件類型</th>
+            <th>說明</th>
+        </tr>
+        <tr><td>Table</td><td>儲存資料的主要結構</td></tr>
+        <tr><td>View</td><td>查詢的邏輯視圖</td></tr>
+        <tr><td>Index</td><td>加速查詢的結構</td></tr>
+        <tr><td>Sequence</td><td>產生流水號</td></tr>
+        <tr><td>Procedure/Function</td><td>PL/SQL 程式邏輯</td></tr>
+    </table>
+
+    <h3>2. SGA vs PGA</h3>
+    <table>
+        <tr>
+            <th>項目</th>
+            <th>SGA</th>
+            <th>PGA</th>
+        </tr>
+        <tr>
+            <td>範圍</td>
+            <td>全域共享</td>
+            <td>每個 Session 獨立</td>
+        </tr>
+        <tr>
+            <td>建立時間</td>
+            <td>Instance 啟動時</td>
+            <td>Session 建立時</td>
+        </tr>
+        <tr>
+            <td>內容</td>
+            <td>Buffer Cache, Shared Pool, Redo Buffer</td>
+            <td>Sort, Hash, Session 狀態</td>
+        </tr>
+    </table>
+
+    <h3>3. Cache 釋放時機</h3>
+    <table>
+        <tr>
+            <th>快取類型</th>
+            <th>釋放時機</th>
+        </tr>
+        <tr><td>Database Buffer Cache</td><td>新資料塊需要空間時（LRU）</td></tr>
+        <tr><td>Shared Pool</td><td>空間不足、未使用 SQL 被替換</td></tr>
+        <tr><td>Redo Log Buffer</td><td>滿、3秒、COMMIT 時</td></tr>
+    </table>
+
+    <h3>4. Oracle 架構層級</h3>
+    <div class="note">
+        Instance → Database → Tablespace → Datafile<br>
+        邏輯：Database, Tablespace, Schema, Table<br>
+        物理：Datafile
+    </div>
+
+    <h3>5. Segment 類型</h3>
+    <table>
+        <tr>
+            <th>段類型</th>
+            <th>作用</th>
+        </tr>
+        <tr><td>Data Segment</td><td>存放資料表的實際資料</td></tr>
+        <tr><td>Index Segment</td><td>存放索引結構</td></tr>
+        <tr><td>Temporary Segment</td><td>存放排序/查詢中間結果</td></tr>
+        <tr><td>Undo Segment</td><td>存放修改前舊值（支援回滾）</td></tr>
+    </table>
+
+    <h3>6. Oracle 版本</h3>
+    <table>
+        <tr>
+            <th>代號</th>
+            <th>含義</th>
+            <th>範例</th>
+        </tr>
+        <tr><td>i</td><td>Internet</td><td>Oracle 8i, 9i</td></tr>
+        <tr><td>g</td><td>Grid Computing</td><td>Oracle 10g, 11g</td></tr>
+        <tr><td>c</td><td>Cloud Computing</td><td>Oracle 12c, 19c</td></tr>
+    </table>
+    <table>
+        <tr>
+            <th>產品版本</th>
+            <th>說明</th>
+        </tr>
+        <tr><td>EE</td><td>功能最完整，企業使用</td></tr>
+        <tr><td>SE</td><td>功能較少，中小企業</td></tr>
+        <tr><td>XE</td><td>免費版，功能限制</td></tr>
+    </table>
+
+    <h2>二、資料庫基礎</h2>
+
+    <h3>1. RDBMS vs NoSQL</h3>
+    <table>
+        <tr>
+            <th>特性</th>
+            <th>RDBMS</th>
+            <th>NoSQL</th>
+        </tr>
+        <tr><td>結構</td><td>固定 Schema</td><td>彈性結構</td></tr>
+        <tr><td>擴展</td><td>垂直擴展</td><td>水平擴展</td></tr>
+        <tr><td>一致性</td><td>強一致性（ACID）</td><td>最終一致性（BASE）</td></tr>
+        <tr><td>適用</td><td>金融、ERP</td><td>大數據、高併發</td></tr>
+    </table>
+
+    <h3>2. ACID vs BASE</h3>
+    <table>
+        <tr>
+            <th>ACID</th>
+            <th>說明</th>
+        </tr>
+        <tr><td>Atomicity</td><td>全成功或全失敗</td></tr>
+        <tr><td>Consistency</td><td>資料永遠正確</td></tr>
+        <tr><td>Isolation</td><td>事務彼此不干擾</td></tr>
+        <tr><td>Durability</td><td>提交後永久保存</td></tr>
+    </table>
+    <table>
+        <tr>
+            <th>BASE</th>
+            <th>說明</th>
+        </tr>
+        <tr><td>Basically Available</td><td>系統永遠能回應</td></tr>
+        <tr><td>Soft State</td><td>狀態可暫時不一致</td></tr>
+        <tr><td>Eventually Consistent</td><td>最終會同步</td></tr>
+    </table>
+
+    <h3>3. SQL 分類</h3>
+    <table>
+        <tr>
+            <th>類型</th>
+            <th>用途</th>
+            <th>指令</th>
+        </tr>
+        <tr><td>DDL</td><td>定義結構</td><td>CREATE, ALTER, DROP</td></tr>
+        <tr><td>DML</td><td>操作資料</td><td>INSERT, UPDATE, DELETE, SELECT</td></tr>
+        <tr><td>TCL</td><td>控制事務</td><td>COMMIT, ROLLBACK</td></tr>
+    </table>
+
+    <h3>4. ER 圖</h3>
+    <table>
+        <tr>
+            <th>元素</th>
+            <th>圖形</th>
+            <th>代表</th>
+        </tr>
+        <tr><td>Entity</td><td>矩形</td><td>資料表</td></tr>
+        <tr><td>Attribute</td><td>橢圓</td><td>欄位</td></tr>
+        <tr><td>Relationship</td><td>菱形</td><td>關聯</td></tr>
+    </table>
+
+    <h2>三、Git 版本控制</h2>
+
+    <h3>1. 版本控制系統</h3>
+    <table>
+        <tr>
+            <th>類型</th>
+            <th>代表</th>
+            <th>特點</th>
+        </tr>
+        <tr><td>分散式</td><td>Git, GitHub, GitLab</td><td>每人都有完整副本</td></tr>
+        <tr><td>集中式</td><td>SVN, CVS</td><td>需連接中央伺服器</td></tr>
+    </table>
+
+    <h3>2. 常用指令</h3>
+    <pre>
+# 查看設定
+git config user.name
+git config --global user.name "名字"
+
+# 分支操作
+git branch feature/功能名稱
+git branch hotfix/修復名稱
+
+# 合併提交
+git rebase -i HEAD~3
+
+# 找回刪除提交
+git reflog
+git reset --hard 版本號
+
+# 中文檔名修正
+git config core.quotepath false
+    </pre>
+
+    <h3>3. 分支命名</h3>
+    <table>
+        <tr>
+            <th>前綴</th>
+            <th>用途</th>
+        </tr>
+        <tr><td>feature/</td><td>功能分支</td></tr>
+        <tr><td>hotfix/</td><td>修 bug</td></tr>
+        <tr><td>test/</td><td>測試</td></tr>
+        <tr><td>master</td><td>生產環境</td></tr>
+    </table>
+
+    <h2>四、Docker</h2>
+    <div class="note">
+        Docker 是 Linux 原生工具<br>
+        Windows 透過 WSL2 提供 Linux 環境來運行 Docker
+    </div>
+
+    <h3>CPU 架構</h3>
+    <table>
+        <tr>
+            <th>架構</th>
+            <th>說明</th>
+        </tr>
+        <tr><td>amd64</td><td>64位元 x86（Intel/AMD）</td></tr>
+        <tr><td>arm64</td><td>ARM 64位元（手機、M1/M2）</td></tr>
+    </table>
+
+    <h2>五、網路基礎</h2>
+
+    <h3>同網段 vs 不同網段</h3>
+    <div class="note">
+        同網段 = IP AND 子網路遮罩 → 網路位址相同
+    </div>
+    <table>
+        <tr>
+            <th>情況</th>
+            <th>處理</th>
+        </tr>
+        <tr><td>同網段</td><td>用 ARP 找 MAC，直接傳送</td></tr>
+        <tr><td>不同網段</td><td>交給路由器轉送</td></tr>
+    </table>
+
+    <h2>六、其他工具</h2>
+
+    <h3>Cisco Packet Tracer</h3>
+    <div class="note">
+        下載：https://www.netacad.com/resources/lab-downloads
+    </div>
+
+    <h3>GitLab 安裝</h3>
+    <div class="note">
+        RPM = Linux 套件管理系統（Red Hat 系列）
+    </div>
+
+    <h3>Personal Access Token</h3>
+    <div class="note">
+        用於取代密碼，安全存取 GitHub/GitLab
+    </div>
+
+    <h2>七、編碼</h2>
+    <h3>亂碼原因</h3>
+    <div class="note">
+        不同編碼的解碼器會把每個 byte 當作合法字元<br>
+        即使編碼錯誤，仍能對應到「某個符號」<br>
+        結果就是亂碼：每個 byte 被當作不同編碼規則解讀
+    </div>
+
+</body>
+</html>
