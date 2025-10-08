@@ -1290,3 +1290,95 @@ WHERE profile='APP_PROFILE';
 DBA_USERS 與 DBA_PROFILES 需要 DBA 權限才能完整查詢。
 
 如果只有一般使用者，可以用 USER_USERS / USER_PROFILES 查看自己。
+
+🧩 一、Oracle 事務基本概念
+
+事務（Transaction） 是一組 SQL 操作的集合，要麼全部成功，要麼全部失敗回滾。
+
+Oracle 保證 ACID：
+
+Atomicity（原子性）：全部成功或全部失敗
+
+Consistency（一致性）：資料庫從一個一致狀態轉換到另一個一致狀態
+
+Isolation（隔離性）：同時多個事務不會互相干擾
+
+Durability（持久性）：提交後資料不會消失
+
+🧠 二、如何知道 UPDATE 成功？
+1️⃣ 執行 UPDATE 後
+
+當你執行：
+
+UPDATE employees
+SET salary = 5000
+WHERE employee_id = 100;
+
+
+Oracle 會回傳 影響的行數（row count），通常用程式可以取得：
+
+SQL*Plus 會顯示：
+
+1 row updated.
+
+
+如果沒有匹配的資料，返回 0 row updated → 表示 UPDATE 沒有作用於任何資料。
+
+2️⃣ 不會自動 SELECT
+
+Oracle 不會自動去 SELECT 來驗證你的 UPDATE
+
+你看到的 row count 來自資料庫內部操作的統計，而不是「重新查詢後驗證值」
+
+3️⃣ 檢查 UPDATE 結果
+
+如果你想在程式裡確認 UPDATE 真正修改了資料，可以：
+
+UPDATE employees
+SET salary = 5000
+WHERE employee_id = 100;
+
+IF SQL%ROWCOUNT = 0 THEN
+    RAISE_APPLICATION_ERROR(-20001, '沒有找到符合條件的資料');
+END IF;
+
+
+SQL%ROWCOUNT → PL/SQL 提供的系統變數，表示上一次 DML（INSERT/UPDATE/DELETE）影響的行數
+
+🔹 三、事務的提交與回滾
+
+未提交前：
+
+你 UPDATE 的資料只有在你當前 session 可見（其他 session 看不到）
+
+如果出現錯誤或顯式 ROLLBACK，所有操作都會回到事務開始前的狀態
+
+提交後（COMMIT）：
+
+資料變更永久生效
+
+其他使用者才能看到
+
+🔹 四、實務建議
+
+確認 UPDATE 是否修改了資料
+
+用 SQL%ROWCOUNT 或程式語言對應 API（如 Java JDBC 的 executeUpdate() 回傳值）
+
+必要時額外 SELECT 驗證
+
+有些業務邏輯會再做一次 SELECT 確認重要欄位值
+
+事務邏輯設計
+
+多個 DML 操作放在同一個事務裡，要麼全部成功，要麼全部回滾
+
+💡 總結：
+
+Oracle 不會自動去 SELECT
+
+UPDATE 是否成功，是靠：
+
+SQL 執行結果影響的 row count
+
+事務提交（COMMIT）與回滾（ROLLBACK）機制
