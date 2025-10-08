@@ -428,3 +428,120 @@ PL/SQL / Stored Procedure	快速處理大資料集；減少應用層與 DB 往�
 
 PL/SQL 是資料庫內的「工程機械」，不是邏輯引擎。
 它在需要時非常強，但不該用來蓋整棟房子。
+
+你問的「Oracle 的異常」是 PL/SQL 裡的一個核心概念，我幫你整理得很清楚，順便區分 程序異常（Programmatic） 與 運行異常（Runtime），避免混淆。
+
+🧩 一、PL/SQL 的異常（Exception）是什麼？
+
+在 PL/SQL 中，異常（Exception） 是一種「程式執行中發生錯誤或非預期狀況」的事件。
+
+異常會 中斷程式正常流程，除非你用 EXCEPTION 區塊捕捉。
+
+類似其他程式語言的 try-catch 機制。
+
+⚙️ 二、異常的分類
+
+PL/SQL 的異常可以分為 系統異常（預定義） 與 自定義異常（使用者定義）：
+
+類型	說明	範例
+系統異常（預定義 Exception）	Oracle 預先定義好的錯誤	NO_DATA_FOUND、TOO_MANY_ROWS、ZERO_DIVIDE
+自定義異常（User-Defined Exception）	使用者自己定義，用於特殊業務邏輯檢查	ex_salary_too_low EXCEPTION;
+🧠 三、程序異常 vs 運行異常
+類型	說明	範例	捕捉方式
+程序異常（Programmatic Exception）	由程式邏輯主動觸發，用 RAISE	RAISE ex_salary_too_low;	EXCEPTION WHEN ex_salary_too_low THEN ...
+運行異常（Runtime Exception）	程式執行過程自動發生（如系統錯誤）	NO_DATA_FOUND、ZERO_DIVIDE	EXCEPTION WHEN NO_DATA_FOUND THEN ...
+
+💬 換句話說：
+
+程序異常 → 你自己「寫程式邏輯」決定什麼時候拋出。
+
+運行異常 → Oracle 自動檢測到錯誤時拋出。
+
+⚙️ 四、異常的基本使用範例
+DECLARE
+    v_salary NUMBER := 500;
+    ex_salary_too_low EXCEPTION; -- 自定義異常
+BEGIN
+    -- 程序檢查
+    IF v_salary < 1000 THEN
+        RAISE ex_salary_too_low;  -- 主動觸發程序異常
+    END IF;
+
+    -- 運行異常範例（除以零）
+    v_salary := v_salary / 0; -- 會自動觸發 ZERO_DIVIDE 運行異常
+
+EXCEPTION
+    WHEN ex_salary_too_low THEN
+        DBMS_OUTPUT.PUT_LINE('薪水太低，請調整');
+    WHEN ZERO_DIVIDE THEN
+        DBMS_OUTPUT.PUT_LINE('除以零錯誤');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('其他異常');
+END;
+
+🧩 五、異常的流程
+
+PL/SQL 執行程式塊
+
+遇到異常 → 停止當前流程
+
+跳到 EXCEPTION 區塊
+
+找到對應的 WHEN 分支執行
+
+若找不到 → 程式錯誤傳回給呼叫端
+
+🏷 六、實務建議
+
+程序異常 → 用於商業邏輯檢查，例如「薪資小於規定最低值」「訂單數量超過庫存」。
+
+運行異常 → 用於捕捉 SQL / 系統層面錯誤，例如「查不到資料」「除以零」「違反唯一鍵」。
+
+不要濫用 EXCEPTION → 能用 SQL 或條件判斷解決的，盡量不用拋異常，保持效能。
+
+✅ 總結一句話
+
+PL/SQL 的異常（Exception）分 程序異常（程式主動觸發）與 運行異常（系統自動拋出），它的作用是 捕捉錯誤並控制程式流程，讓資料庫程式更安全、可控。
+
+
+在 PL/SQL 裡，EXCEPTION 區塊的作用就跟其他程式語言的 try-catch 幾乎一樣，雖然語法不同，但概念是一樣的：
+
+🧩 對應關係
+PL/SQL	一般程式語言（如 Java / C#）
+BEGIN ... EXCEPTION ... END;	try { ... } catch { ... }
+RAISE	throw
+WHEN <exception>	catch (<exception>)
+WHEN OTHERS	catch (Exception e)（捕捉所有未處理的例外）
+⚙️ 範例比較
+🔹 PL/SQL
+DECLARE
+  v_num NUMBER := 10;
+BEGIN
+  -- 可能發生錯誤的程式
+  v_num := v_num / 0;  -- 會觸發 ZERO_DIVIDE
+
+EXCEPTION
+  WHEN ZERO_DIVIDE THEN
+    DBMS_OUTPUT.PUT_LINE('除以零錯誤！');
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('其他錯誤：' || SQLERRM);
+END;
+/
+
+🔹 Java
+try {
+    int num = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("除以零錯誤！");
+} catch (Exception e) {
+    System.out.println("其他錯誤：" + e.getMessage());
+}
+
+🧠 注意事項
+
+PL/SQL 必須有 EXCEPTION 區塊才能捕捉異常，否則錯誤會直接傳回呼叫端。
+
+WHEN OTHERS 可以捕捉所有未列出的異常，但要小心使用，避免吞掉重要錯誤。
+
+可以在 EXCEPTION 區塊裡再 RAISE，把異常傳回上層程式，像 Java 的 throw。
+
