@@ -1382,3 +1382,110 @@ UPDATE 是否成功，是靠：
 SQL 執行結果影響的 row count
 
 事務提交（COMMIT）與回滾（ROLLBACK）機制
+
+
+🧩 一、Oracle 鎖的概念
+
+鎖（Lock）是資料庫用來 控制同時存取資料的機制，避免資料被同時修改而發生不一致。
+
+鎖的核心目的是 保護資料完整性（Data Integrity）。
+
+1️⃣ 共享鎖（Shared Lock, S Lock）
+定義
+
+共享鎖（S Lock） 允許多個使用者同時讀取資料，但不能修改。
+
+也叫「讀鎖」，因為它保護資料被讀取時不被修改。
+
+特性
+
+多個 Session 可以同時持有同一資料的共享鎖
+
+共享鎖下，資料不能被其他 session 更新或刪除
+
+用於 SELECT … FOR SHARE 或快照讀取（快照隔離）
+
+例子
+SELECT * FROM employees
+WHERE employee_id = 100
+FOR SHARE;
+
+
+其他 session 可以同時讀，但不能 UPDATE 或 DELETE 這筆資料
+
+2️⃣ 獨佔鎖（Exclusive Lock, X Lock）
+定義
+
+獨佔鎖（X Lock） 是「寫鎖」，持有者可以修改資料，其他人不能讀也不能改。
+
+特性
+
+一筆資料同一時間只能有一個獨佔鎖
+
+狀態下，其他 session 不能讀（某些隔離級別下可以快照讀）或寫
+
+Oracle 自動加在 DML 操作上（INSERT / UPDATE / DELETE）
+
+例子
+UPDATE employees
+SET salary = 5000
+WHERE employee_id = 100;
+
+
+這筆資料會被加上獨佔鎖，直到 COMMIT 或 ROLLBACK
+
+3️⃣ 死鎖（Deadlock）
+定義
+
+死鎖是指兩個或以上的 session 互相等待對方釋放鎖，結果誰也不能前進。
+
+例子
+
+Session A 持有資料 X 的鎖，要更新資料 Y
+
+Session B 持有資料 Y 的鎖，要更新資料 X
+
+兩個 session 互相等待 → 形成死鎖
+
+Oracle 的處理
+
+Oracle 會自動偵測死鎖
+
+系統會終止其中一個 session，回滾它的事務，釋放鎖
+
+被回滾的 session 會收到錯誤訊息：
+
+ORA-00060: deadlock detected while waiting for resource
+
+🧠 四、鎖的總結
+類型	作用	同時可持有	可更新資料
+共享鎖 (S Lock)	保護資料被讀取	✅ 多個 session	❌ 不能修改
+獨佔鎖 (X Lock)	保護資料被修改	❌ 一個 session	✅ 可以修改
+死鎖 (Deadlock)	互相等待鎖，無法前進	❌ -	❌ -
+🔹 五、實務要點
+
+共享鎖 → 用在讀取大量資料、保證讀時資料不變
+
+獨佔鎖 → 用在寫入或修改資料時，Oracle 自動加鎖
+
+死鎖 → 稀有，但可能發生在：
+
+多個 Session 同時修改不同資料表或行
+
+資料操作順序不一致
+
+避免死鎖建議
+
+盡量保持修改資料的順序一致
+
+避免長時間持鎖
+
+讀取資料用快照隔離（READ COMMITTED 或 SERIALIZABLE）
+
+💡 簡單比喻：
+
+共享鎖（S Lock） → 大家一起看書，但不能改內容
+
+獨佔鎖（X Lock） → 只有一個人可以寫書，其他人看不了或寫不了
+
+死鎖 → 兩個人各拿了一本書，互相要對方的書，結果誰也寫不了
