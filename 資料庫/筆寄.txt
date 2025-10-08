@@ -545,3 +545,322 @@ WHEN OTHERS 可以捕捉所有未列出的異常，但要小心使用，避免�
 
 可以在 EXCEPTION 區塊裡再 RAISE，把異常傳回上層程式，像 Java 的 throw。
 
+🧩 一、存儲過程（Stored Procedure）
+1️⃣ 定義
+
+Stored Procedure 是在資料庫中事先編譯好的 PL/SQL 程式片段。
+
+用來封裝可重複使用的程式邏輯。
+
+可以接受輸入參數、輸出結果，也可以直接操作資料。
+
+2️⃣ 基本語法
+CREATE OR REPLACE PROCEDURE UpdateSalary(
+    p_emp_id IN NUMBER,
+    p_increase IN NUMBER
+)
+IS
+BEGIN
+    UPDATE employees
+    SET salary = salary + p_increase
+    WHERE employee_id = p_emp_id;
+
+    COMMIT;
+END;
+/
+
+說明
+
+p_emp_id IN NUMBER → 輸入參數
+
+p_increase IN NUMBER → 輸入參數
+
+UPDATE ... → 真正要執行的 SQL
+
+COMMIT → 提交資料庫操作
+
+3️⃣ 優點
+
+重複使用：多個應用程式可以呼叫同一個程序。
+
+封裝邏輯：把資料處理邏輯集中在資料庫端。
+
+效能：資料庫內執行，減少應用程式與 DB 的往返。
+
+4️⃣ 呼叫方式
+BEGIN
+    UpdateSalary(100, 500);  -- 員工 100 加薪 500
+END;
+/
+
+🧩 二、觸發器（Trigger）
+1️⃣ 定義
+
+Trigger 是一段 PL/SQL 程式，會在資料表或視圖上 自動觸發，依照某些事件執行。
+
+事件可以是：
+
+INSERT（新增）
+
+UPDATE（修改）
+
+DELETE（刪除）
+
+2️⃣ 基本語法
+CREATE OR REPLACE TRIGGER trg_check_salary
+BEFORE INSERT OR UPDATE ON employees
+FOR EACH ROW
+BEGIN
+    IF :NEW.salary < 1000 THEN
+        RAISE_APPLICATION_ERROR(-20001, '薪水不得低於 1000');
+    END IF;
+END;
+/
+
+說明
+
+BEFORE INSERT OR UPDATE → 事件發生前觸發
+
+FOR EACH ROW → 每筆資料觸發
+
+:NEW.salary → 新資料欄位值
+
+RAISE_APPLICATION_ERROR → 拋出自訂異常
+
+3️⃣ 優點
+
+自動化驗證：資料表操作前後自動執行檢查。
+
+強制資料完整性：避免應用程式忘記檢查。
+
+不需應用程式呼叫：只要事件發生，觸發器就會執行。
+
+4️⃣ 注意事項
+
+觸發器執行不可見給應用程式，錯誤會直接阻止操作。
+
+過多觸發器或複雜邏輯會降低資料庫效能。
+
+現代架構中，很多檢查會移到應用層，觸發器多用於審計、日誌、特殊驗證。
+
+🧩 三、存儲過程 vs 觸發器
+特性	存儲過程 (Procedure)	觸發器 (Trigger)
+執行方式	由應用程式或其他程序呼叫	自動觸發（事件驅動）
+呼叫控制	可多次呼叫	無法直接呼叫，依事件發生
+用途	封裝商業邏輯、批次處理、可重複運算	強制資料完整性、審計、事件自動處理
+參數	可以有輸入/輸出參數	通常用 :NEW / :OLD 讀取資料
+效能	由使用頻率決定，通常可控	過多或複雜會降低效能
+可測試性	容易測試、除錯	不易測試，需模擬事件
+🏢 四、業界實務使用
+物件	使用情境
+存儲過程	ERP 批次更新薪資、訂單處理、報表計算
+觸發器	審計表記錄修改歷史、自動產生流水號、資料驗證
+
+💡 現代系統設計建議：
+
+邏輯複雜 → 用存儲過程（可呼叫、可測試）
+
+資料完整性 → 用觸發器或資料庫約束（Constraint）
+
+避免過多觸發器，防止效能下降或難追蹤錯誤
+
+告訴我存儲過程，與觸發器
+ChatGPT 說：
+
+好，我幫你整理得很清楚，把 PL/SQL 的核心物件：存儲過程（Stored Procedure）與觸發器（Trigger） 做全面比較，方便理解用途、差異與業界實務。
+
+🧩 一、存儲過程（Stored Procedure）
+1️⃣ 定義
+
+Stored Procedure 是在資料庫中事先編譯好的 PL/SQL 程式片段。
+
+用來封裝可重複使用的程式邏輯。
+
+可以接受輸入參數、輸出結果，也可以直接操作資料。
+
+2️⃣ 基本語法
+CREATE OR REPLACE PROCEDURE UpdateSalary(
+    p_emp_id IN NUMBER,
+    p_increase IN NUMBER
+)
+IS
+BEGIN
+    UPDATE employees
+    SET salary = salary + p_increase
+    WHERE employee_id = p_emp_id;
+
+    COMMIT;
+END;
+/
+
+說明
+
+p_emp_id IN NUMBER → 輸入參數
+
+p_increase IN NUMBER → 輸入參數
+
+UPDATE ... → 真正要執行的 SQL
+
+COMMIT → 提交資料庫操作
+
+3️⃣ 優點
+
+重複使用：多個應用程式可以呼叫同一個程序。
+
+封裝邏輯：把資料處理邏輯集中在資料庫端。
+
+效能：資料庫內執行，減少應用程式與 DB 的往返。
+
+4️⃣ 呼叫方式
+BEGIN
+    UpdateSalary(100, 500);  -- 員工 100 加薪 500
+END;
+/
+
+🧩 二、觸發器（Trigger）
+1️⃣ 定義
+
+Trigger 是一段 PL/SQL 程式，會在資料表或視圖上 自動觸發，依照某些事件執行。
+
+事件可以是：
+
+INSERT（新增）
+
+UPDATE（修改）
+
+DELETE（刪除）
+
+2️⃣ 基本語法
+CREATE OR REPLACE TRIGGER trg_check_salary
+BEFORE INSERT OR UPDATE ON employees
+FOR EACH ROW
+BEGIN
+    IF :NEW.salary < 1000 THEN
+        RAISE_APPLICATION_ERROR(-20001, '薪水不得低於 1000');
+    END IF;
+END;
+/
+
+說明
+
+BEFORE INSERT OR UPDATE → 事件發生前觸發
+
+FOR EACH ROW → 每筆資料觸發
+
+:NEW.salary → 新資料欄位值
+
+RAISE_APPLICATION_ERROR → 拋出自訂異常
+
+3️⃣ 優點
+
+自動化驗證：資料表操作前後自動執行檢查。
+
+強制資料完整性：避免應用程式忘記檢查。
+
+不需應用程式呼叫：只要事件發生，觸發器就會執行。
+
+4️⃣ 注意事項
+
+觸發器執行不可見給應用程式，錯誤會直接阻止操作。
+
+過多觸發器或複雜邏輯會降低資料庫效能。
+
+現代架構中，很多檢查會移到應用層，觸發器多用於審計、日誌、特殊驗證。
+
+🧩 三、存儲過程 vs 觸發器
+特性	存儲過程 (Procedure)	觸發器 (Trigger)
+執行方式	由應用程式或其他程序呼叫	自動觸發（事件驅動）
+呼叫控制	可多次呼叫	無法直接呼叫，依事件發生
+用途	封裝商業邏輯、批次處理、可重複運算	強制資料完整性、審計、事件自動處理
+參數	可以有輸入/輸出參數	通常用 :NEW / :OLD 讀取資料
+效能	由使用頻率決定，通常可控	過多或複雜會降低效能
+可測試性	容易測試、除錯	不易測試，需模擬事件
+🏢 四、業界實務使用
+物件	使用情境
+存儲過程	ERP 批次更新薪資、訂單處理、報表計算
+觸發器	審計表記錄修改歷史、自動產生流水號、資料驗證
+
+💡 現代系統設計建議：
+
+邏輯複雜 → 用存儲過程（可呼叫、可測試）
+
+資料完整性 → 用觸發器或資料庫約束（Constraint）
+
+避免過多觸發器，防止效能下降或難追蹤錯誤
+
+如果你要，我可以幫你畫一張 存儲過程 vs 觸發器的執行流程圖，
+清楚看出誰被動觸發、誰需要呼叫，幫助理解兩者差異。
+
+你希望我畫這張圖嗎？
+
+你說：
+觸發器是指 update insert 那些麼? select ?
+ChatGPT 說：
+
+對，觸發器（Trigger）主要是針對資料表的資料變更事件而設計的，所以通常是：
+
+事件類型	說明
+INSERT	當有新資料新增到資料表時觸發
+UPDATE	當資料表的資料被修改時觸發
+DELETE	當資料被刪除時觸發
+⚠️ SELECT 與觸發器
+
+SELECT 查詢本身不會觸發觸發器
+
+原因：觸發器設計目的是「在資料變動時自動執行程式邏輯」，
+只是讀取資料不會改變資料，所以不會觸發。
+
+🔹 範例
+CREATE OR REPLACE TRIGGER trg_update_salary
+BEFORE UPDATE ON employees
+FOR EACH ROW
+BEGIN
+    IF :NEW.salary < 1000 THEN
+        RAISE_APPLICATION_ERROR(-20001, '薪水不得低於 1000');
+    END IF;
+END;
+/
+
+
+這個觸發器只在 UPDATE 事件發生時檢查薪水
+
+如果只是 SELECT * FROM employees，完全不會執行觸發器。
+
+簡單一句話：
+
+觸發器是資料變動驅動的機制（INSERT、UPDATE、DELETE），SELECT 不會觸發。
+
+如果你願意，我可以幫你畫一張圖，把 觸發器對應事件（Insert/Update/Delete）與 SELECT 的關係直觀呈現。
+你希望我畫嗎？
+
+你說：
+所以說觸發器這個機制，不是像function 或存儲過程是被寫好，然後用到才呼叫，而是像一個自動偵測的東西，條件有到自動執行
+ChatGPT 說：
+
+完全正確 ✅
+你理解得很到位！我們把它整理清楚：
+
+🧩 觸發器的核心特性
+
+自動觸發
+
+不需要手動呼叫，當 指定事件發生時自動執行。
+
+事件通常是：INSERT / UPDATE / DELETE。
+
+事件驅動
+
+觸發器是「監聽器」，監控資料表的變動。
+
+一旦符合條件，就執行觸發器裡寫好的程式邏輯。
+
+對比存儲過程 / function
+| 特性 | 存儲過程 / Function | 觸發器 |
+|------|-------------------|--------|
+| 執行方式 | 需明確呼叫 | 自動觸發 |
+| 用途 | 封裝邏輯，批次處理 | 資料變動檢查、審計、事件處理 |
+| 參數 | 可傳入/傳出 | 依 :NEW / :OLD 讀取資料欄位 |
+| 可控性 | 可隨時呼叫 | 由事件決定，無法直接呼叫 |
+
+
+
