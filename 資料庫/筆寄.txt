@@ -233,3 +233,109 @@ SELECT NVL(salary, 0) FROM employees;
 UNKNOWN 是 SQL 在比較運算中，遇到 NULL 時產生的「無法判定」結果。
 它不是錯誤，而是代表「不知道真或假」，
 而在 WHERE 裡，它的效果等於「被忽略」。
+
+🧩 一、什麼是 PL/SQL？
+
+PL/SQL 全名是 Procedural Language / SQL，
+中文可譯為「程序化的 SQL 語言」。
+
+👉 它是 Oracle 對 SQL 的延伸語言，
+讓你在 Oracle 資料庫中，不只能寫查詢（SELECT），
+還能寫邏輯控制、條件判斷、迴圈、例外處理（Error Handling）等。
+
+💬 簡單講：
+
+PL/SQL = SQL + 程式語言控制結構（IF、LOOP、EXCEPTION...）
+
+⚙️ 二、為什麼需要 PL/SQL？
+
+原始的 SQL 是「聲明式語言（Declarative Language）」
+👉 只能告訴資料庫「你要的結果是什麼」，
+但不能描述「要怎麼做」。
+
+PL/SQL 補上了這個缺口。
+它讓你可以：
+
+功能	說明
+✅ 宣告變數	存資料或中間運算結果
+✅ 寫條件判斷	IF...THEN...ELSE
+✅ 寫迴圈	LOOP、FOR、WHILE
+✅ 錯誤處理	EXCEPTION 段落
+✅ 封裝邏輯	用 Procedure 或 Function
+✅ 事件觸發	用 Trigger 在資料改變時自動執行程式
+📦 三、PL/SQL 程式的基本結構
+
+每個 PL/SQL 區塊（block）都有三個部分：
+
+DECLARE
+    -- 宣告區（可省略）
+    v_name VARCHAR2(50);
+BEGIN
+    -- 主體區
+    SELECT first_name INTO v_name FROM employees WHERE emp_id = 100;
+    DBMS_OUTPUT.PUT_LINE('員工姓名：' || v_name);
+EXCEPTION
+    -- 例外處理區
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('查無資料');
+END;
+/
+
+
+🔍 結構說明：
+
+區塊	功能
+DECLARE	宣告變數、常數、游標等
+BEGIN ... END;	程式主要執行區塊
+EXCEPTION	錯誤發生時要怎麼處理
+🧠 四、PL/SQL 常見用途
+用途	範例
+📌 自動化處理	每天自動更新薪資、寄信、清除資料
+📌 封裝商業邏輯	把邏輯寫成 Stored Procedure，統一被多個應用呼叫
+📌 建立觸發器（Trigger）	當資料表被 INSERT/UPDATE/DELETE 時自動執行動作
+📌 寫 Function	回傳計算結果給 SQL 使用
+📌 批次處理（Batch Jobs）	一次處理大量資料，減少應用層負擔
+🧩 五、範例比較：SQL vs PL/SQL
+🧾 一般 SQL
+UPDATE employees SET salary = salary * 1.1 WHERE dept_id = 10;
+
+
+👉 執行單一指令，沒有條件分支、沒有錯誤處理。
+
+🧱 PL/SQL
+DECLARE
+    v_rows NUMBER;
+BEGIN
+    UPDATE employees SET salary = salary * 1.1 WHERE dept_id = 10;
+    v_rows := SQL%ROWCOUNT; -- 查更新筆數
+    DBMS_OUTPUT.PUT_LINE(v_rows || ' 筆資料已更新');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('發生錯誤：' || SQLERRM);
+END;
+/
+
+
+👉 有變數、有條件控制、有錯誤處理，像「程式」一樣運作。
+
+🧩 六、PL/SQL 可以建立的物件類型
+類型	說明
+Procedure（儲存程序）	執行一段邏輯（不一定回傳值）
+Function（函數）	執行後回傳一個值
+Trigger（觸發器）	當事件發生（如 INSERT）自動執行
+Package（套件）	一組 Procedure + Function 的集合
+Anonymous Block（匿名區塊）	一次性執行、不儲存的 PL/SQL 區塊
+⚙️ 七、執行位置
+類型	執行位置	說明
+SQL	資料庫伺服器上	單次請求
+PL/SQL	伺服器端（由 Oracle Engine 執行）	多步驟邏輯一次送到資料庫執行，更快、更穩
+📈 八、效能與優點
+優點	說明
+✅ 效能高	減少應用程式與資料庫之間的多次往返
+✅ 安全性高	可以限制誰能執行某些邏輯
+✅ 維護方便	可以封裝邏輯在資料庫層
+✅ 九、總結一句話
+
+🔹 PL/SQL 是 Oracle 提供的「可編程 SQL」語言，
+🔹 用來在資料庫內寫流程控制、封裝商業邏輯、觸發事件。
+🔹 它讓資料庫不只是存資料，更能「自己思考、自己處理」。
