@@ -147,3 +147,89 @@ UNION vs UNION ALL
 JOIN 比集合查詢更有效率（尤其有索引時）
 🔹 UNION ALL 是集合查詢中最快的選項
 🔹 MINUS / INTERSECT 最耗效能，建議改寫 JOIN
+
+你提到的 UNKNOWN（未知值），是 SQL 中邏輯判斷（Boolean logic） 的重要概念之一。
+它代表「不是 TRUE，也不是 FALSE，而是無法確定的狀態」。
+這個概念跟 NULL 密切相關。
+
+🧩 一、UNKNOWN 是什麼？
+
+在 SQL（包括 Oracle）裡，邏輯判斷有三種可能結果：
+
+狀態	意義
+TRUE	條件為真
+FALSE	條件為假
+UNKNOWN	無法判定真或假（通常因為涉及 NULL）
+
+👉 所以 SQL 是「三值邏輯（Three-valued logic）」，不是單純的真/假二值。
+
+🧠 二、為什麼會出現 UNKNOWN？
+
+最常見的情況：當比較運算式中出現 NULL。
+
+例如：
+
+SELECT *
+FROM employees
+WHERE salary > NULL;
+
+
+💬 salary > NULL 的結果是什麼？
+👉 答案是：UNKNOWN，因為 NULL 代表「不知道是什麼值」，所以沒辦法確定它是否大於。
+
+📊 三、實際例子對照
+表達式	結果	原因說明
+5 = 5	✅ TRUE	兩邊相同
+5 = 6	❌ FALSE	不同
+5 = NULL	❓ UNKNOWN	無法判定
+NULL = NULL	❓ UNKNOWN	因為兩個未知值不能確定是否相等
+salary > NULL	❓ UNKNOWN	無法比較
+NULL IS NULL	✅ TRUE	這是唯一可確定的 NULL 判斷法
+⚙️ 四、WHERE 子句中的影響
+
+SQL 的 WHERE 子句只會選出 條件為 TRUE 的資料，
+FALSE 和 UNKNOWN 都會被排除。
+
+例如：
+
+SELECT * FROM employees WHERE salary > NULL;
+
+
+👉 結果：沒有任何列被選出。
+
+因為 salary > NULL → UNKNOWN，而 UNKNOWN 不會被當作 TRUE。
+
+🧩 五、如何正確處理 UNKNOWN / NULL
+
+可以用 IS NULL 或 IS NOT NULL 來檢查：
+
+SELECT * FROM employees WHERE salary IS NULL;
+SELECT * FROM employees WHERE salary IS NOT NULL;
+
+🧮 六、三值邏輯表（Truth Table）
+A	B	A = B	說明
+TRUE	TRUE	TRUE	一樣
+TRUE	FALSE	FALSE	不一樣
+TRUE	UNKNOWN	UNKNOWN	無法判斷
+FALSE	UNKNOWN	UNKNOWN	無法判斷
+UNKNOWN	UNKNOWN	UNKNOWN	無法判斷
+💡 七、小重點整理
+重點	說明
+UNKNOWN ≠ NULL	UNKNOWN 是邏輯結果，NULL 是資料值
+比較中有 NULL → 結果是 UNKNOWN	除非用 IS NULL
+WHERE 只會選出 TRUE	FALSE 和 UNKNOWN 都被排除
+NULL = NULL 不是 TRUE	需要用 IS NULL 才能判定
+🧭 八、延伸：用 NVL / COALESCE 避免 UNKNOWN
+
+你可以用函數將 NULL 轉換成具體值：
+
+SELECT NVL(salary, 0) FROM employees;
+
+
+這樣比較運算就不會出現 UNKNOWN。
+
+✅ 結論一句話：
+
+UNKNOWN 是 SQL 在比較運算中，遇到 NULL 時產生的「無法判定」結果。
+它不是錯誤，而是代表「不知道真或假」，
+而在 WHERE 裡，它的效果等於「被忽略」。
