@@ -1,0 +1,61 @@
+oracle的監聽程序是甚麼
+ChatGPT 說：
+
+在 Oracle 資料庫中，監聽程序（Listener）是一個在資料庫伺服器上運行的 伺服器程式，負責 接收客戶端的連線請求，然後將這些請求轉交給對應的資料庫實例處理。它是客戶端與資料庫之間的「中介」，確保資料庫可以接受遠端或本地的連線。
+
+下面是詳細解釋：
+
+1. 監聽程序的功能
+
+接收連線請求：
+
+客戶端程式（如 SQL*Plus、JDBC、TOAD）向監聽程序發送連線請求。
+
+解析連線資訊：
+
+監聽程序會解析請求中指定的資料庫服務名稱（Service Name）或 SID。
+
+轉交請求給資料庫實例：
+
+根據配置，監聽程序將請求轉給對應的資料庫執行緒或實例。
+
+返回連線結果：
+
+成功連線後，監聽程序返回客戶端連線成功資訊；若失敗，則返回錯誤訊息。
+
+2. 常見特性
+
+多協議支援：Oracle Listener 支援 TCP/IP、TCP/IP with SSL、IPC 等協議。
+
+集中管理：一個監聽程序可以監控多個資料庫實例。
+
+配置文件：
+
+listener.ora：監聽程序的主要設定檔，包括監聽地址、端口號（預設 1521）、協議等。
+
+動態服務註冊：
+
+從 Oracle 10g 開始，資料庫實例可以自動向監聽程序註冊（Dynamic Service Registration），不必手動修改 listener.ora。
+
+3. 常用管理命令
+
+使用 lsnrctl 工具管理 Oracle Listener：
+
+# 啟動監聽程序
+lsnrctl start
+
+# 停止監聽程序
+lsnrctl stop
+
+# 重啟監聽程序
+lsnrctl reload
+
+# 查看監聽狀態
+lsnrctl status
+
+4. 簡單示意
+[客戶端] --> TCP/IP --> [Oracle Listener] --> [Database Instance]
+
+
+監聽程序本身不處理 SQL 查詢，它只負責「接線、轉交」，真正執行查詢的是資料庫實例。
+
