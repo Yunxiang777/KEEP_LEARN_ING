@@ -59,3 +59,102 @@ lsnrctl status
 
 監聽程序本身不處理 SQL 查詢，它只負責「接線、轉交」，真正執行查詢的是資料庫實例。
 
+🔹 一、Oracle 監聽程序可以有多個
+
+Oracle 預設會有一個主要的監聽程式，通常名稱為：
+
+LISTENER
+
+
+但你可以依需要：
+
+新增多個監聽程序（例如不同的埠口、協議或資料庫實例）；
+
+或 刪除不再需要的監聽程序。
+
+這在多實例、多服務或不同安全網段的環境中非常常見。
+
+🔹 二、新增監聽程序的方式
+方法一：使用 netca（Oracle Net Configuration Assistant）
+
+這是 Oracle 提供的圖形化設定工具：
+
+在伺服器上執行：
+
+netca
+
+
+選擇 「Listener configuration」。
+
+點選 Add。
+
+輸入新監聽器名稱（例如 LISTENER2）。
+
+選擇通訊協定（例如 TCP）。
+
+設定監聽的埠號（例如 1522）。
+
+儲存並完成設定。
+
+完成後，會在 $ORACLE_HOME/network/admin/listener.ora 中自動新增設定。
+
+方法二：手動編輯 listener.ora
+
+範例設定（通常在 ORACLE_HOME/network/admin/listener.ora）：
+
+LISTENER =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = mydbserver)(PORT = 1521))
+    )
+  )
+
+LISTENER2 =
+  (DESCRIPTION_LIST =
+    (DESCRIPTION =
+      (ADDRESS = (PROTOCOL = TCP)(HOST = mydbserver)(PORT = 1522))
+    )
+  )
+
+
+然後執行命令啟動：
+
+lsnrctl start LISTENER2
+
+🔹 三、刪除監聽程序的方式
+方法一：使用 netca
+
+同樣開啟 Net Configuration Assistant：
+
+選擇 Listener configuration。
+
+點選 Delete。
+
+選擇要刪除的監聽器名稱。
+
+方法二：手動刪除設定
+
+開啟 listener.ora。
+
+刪除相對應監聽器的區塊（例如 LISTENER2 的設定）。
+
+儲存檔案。
+
+執行：
+
+lsnrctl stop LISTENER2
+lsnrctl reload
+
+🔹 四、注意事項
+注意項目	說明
+🔸 監聽埠號	不同監聽器應使用不同埠號（例如 1521、1522）。
+🔸 主機名稱	若主機有多張網卡或多個 IP，可分別監聽不同網段。
+🔸 資料庫動態註冊	監聽程序啟動後，資料庫會自動向監聽器註冊（需設定 LOCAL_LISTENER 參數）。
+🔸 防火牆	記得開放對應的 TCP 埠號。
+🔹 五、常見管理命令
+命令	說明
+lsnrctl start LISTENER2	啟動指定監聽程序
+lsnrctl stop LISTENER2	停止指定監聽程序
+lsnrctl status LISTENER2	查看監聽狀態
+lsnrctl reload	重新載入 listener.ora 設定
+
