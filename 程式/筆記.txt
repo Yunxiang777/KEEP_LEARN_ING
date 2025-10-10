@@ -1,3 +1,4 @@
+. AppDbContext 這段程式碼是什麼？
 1. AppDbContext 這段程式碼是什麼？
 public class AppDbContext : DbContext
 {
