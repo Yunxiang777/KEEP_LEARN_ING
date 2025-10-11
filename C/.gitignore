@@ -1,7 +1,0 @@
-# Visual Studio 專案設定檔
-.vs/
-*.user
-*.suo
-ConsoleApp1/ConsoleApp1/bin/
-ConsoleApp1/ConsoleApp1/obj/bin/
-obj/

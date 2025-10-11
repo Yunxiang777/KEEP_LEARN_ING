@@ -1,0 +1,202 @@
+主程式不是特別去找「Program」這個類別名稱。
+它在找的是：👉 有沒有包含 Main() 方法的類別。
+
+在 C# 中：
+
+程式執行的起點是「Main 方法（Main entry point）」，
+
+而不是特定叫做 Program 的類別。
+
+🔍 說明：
+
+你可以有不同名字的類別，只要其中有 Main() 方法，程式都能從那裡開始：
+
+using System;
+
+class MyApp
+{
+    static void Main()
+    {
+        Console.WriteLine("這個程式從 MyApp.Main() 開始執行");
+    }
+}
+
+
+執行結果會一樣，因為：
+
+編譯器會搜尋整個專案中「哪個類別」包含 static void Main()，然後從那裡開始。
+
+⚙️ 技術細節：
+
+在編譯時（build 時期），C# 編譯器會建立一個可執行檔（.exe）。
+這個檔案的中繼資料（metadata）會記錄哪個方法是「入口點（entry point）」。
+
+💡 所以「Program」只是慣例名稱，不是規定。
+Visual Studio 建新專案時，預設給你一個 Program.cs，只是為了方便人類閱讀。
+
+⚙️ 問題 2：static void Main() 是如何被呼叫的？
+
+這個問題很深、問得非常好。
+我們來從底層流程理解 👇
+
+🔸 執行流程：
+
+你按下「執行」或在命令列輸入：
+
+dotnet run
+
+
+.NET 執行階段（CLR：Common Language Runtime）啟動。
+
+CLR 載入你的程式組件（Assembly，通常是 .exe）。
+
+CLR 檢查組件中哪個方法是「entry point」（入口點），通常就是：
+
+static void Main()
+
+
+CLR 呼叫它，程式正式開始執行。
+
+🔹 為什麼要加 static？
+
+因為：
+
+在程式啟動時，CLR 還沒有建立任何物件。
+
+static 代表「屬於類別本身」，不用先建立物件就能呼叫。
+
+所以，CLR 可以直接呼叫：
+
+Program.Main();
+
+
+而不用先：
+
+var p = new Program();
+p.Main(); // ❌ 不行，因為那需要物件
+
+🔹 為什麼回傳型別是 void？
+
+因為大部分程式不需要回傳值。
+但如果你想讓程式回傳「結束狀態碼（exit code）」給系統，也可以寫成：
+
+static int Main()
+{
+    Console.WriteLine("程式執行完畢");
+    return 0; // 0 通常代表成功
+}
+
+🔹 為什麼要用 Main 這個名字？
+
+這是 .NET 的語言規範 所定義的「保留名稱」。
+CLR 會特別尋找名字叫 Main 的方法作為入口點。
+你不能用其他名字（像是 Start 或 Run）取代它，否則程式不知道從哪裡開始。
+
+🧠 小總結
+概念	說明
+Program 類別	名字隨意，慣例名稱而已。
+Main() 方法	程式的「入口點」。CLR 從這裡開始執行。
+static	讓 CLR 不需建立物件就能直接呼叫。
+void / int	可選擇是否要回傳結束狀態碼。
+
+超級好問題 👍👏！
+這其實是 C# 編譯器與專案設定 的關鍵機制之一。
+你問的狀況確實會發生在大型專案裡 —— 當不同類別都有 Main() 方法時，程式該從哪個開始？
+
+🧩 情境範例
+
+假設你有兩個類別檔案：
+
+📄 ProgramA.cs
+using System;
+
+class ProgramA
+{
+    static void Main()
+    {
+        Console.WriteLine("這是 ProgramA 的 Main()");
+    }
+}
+
+📄 ProgramB.cs
+using System;
+
+class ProgramB
+{
+    static void Main()
+    {
+        Console.WriteLine("這是 ProgramB 的 Main()");
+    }
+}
+
+
+這樣的程式能不能編譯？
+答案是：可以，但你必須指定哪一個是「入口點（entry point）」。
+
+🧠 原理說明
+
+在 C# 中，整個應用程式只能有一個 entry point（Main 方法）。
+如果有多個 Main()，編譯器會報錯：
+
+Program has more than one entry point defined.
+Compile with /main to specify the type that contains the entry point.
+
+
+這句英文的意思是：
+
+你有多個 Main()，請使用 /main 編譯選項或在專案設定中指定哪一個是主入口。
+
+⚙️ 解決方式一：Visual Studio 專案設定
+
+如果你是用 Visual Studio，可以這樣做：
+
+右鍵點擊專案 → 選擇 屬性 (Properties)
+
+選取左側的 應用程式 (Application)
+
+在「啟動物件 (Startup object)」下拉選單中，
+選擇你要執行的類別（例如 ProgramA 或 ProgramB）
+
+💡 這樣你就能決定執行哪一個 Main。
+
+⚙️ 解決方式二：使用編譯參數（命令列）
+
+如果你是用命令列（例如 dotnet build 或 csc）編譯：
+
+csc /main:ProgramB ProgramA.cs ProgramB.cs
+
+
+這表示：
+
+用 ProgramB.Main() 作為程式的入口。
+
+⚙️ 解決方式三：用不同專案管理不同入口
+
+在實務上，一個專案通常只會有一個 Main()。
+但你可以用「多專案方案（multi-project solution）」的方式：
+
+每個專案各自有一個 Main()；
+
+在 Visual Studio 裡設定「哪個專案是啟動專案」。
+
+例如：
+
+MySolution/
+ ├─ ProjectA/ (有 ProgramA.Main)
+ ├─ ProjectB/ (有 ProgramB.Main)
+
+
+然後在方案中設定要執行哪一個。
+
+🧩 小結表
+狀況	結果
+只有一個 Main	自動執行那一個
+有兩個以上 Main	編譯失敗，需指定啟動物件
+用 Visual Studio	可在「屬性 → 應用程式 → 啟動物件」選擇
+用命令列	可用 /main:<ClassName> 指定
+多專案方案	各自有 Main，可選擇哪個專案執行
+
+💬 小延伸：
+這個設計其實反映 C# 的「明確性原則」：
+
+不讓系統「猜」哪個 Main 才是正確的，而是要開發者明確指定。
