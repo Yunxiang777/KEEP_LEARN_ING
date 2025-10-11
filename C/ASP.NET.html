@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASP.NET Core 學習筆記</title>
+</head>
+<body>
+    <h1>ASP.NET Core 學習筆記</h1>
+
+    <h2>一、LINQ 與 EF Core</h2>
+    
+    <h3>LINQ 是什麼？</h3>
+    <p><strong>Language Integrated Query（語言整合查詢）</strong></p>
+    <ul>
+        <li>在 C# 裡用統一語法查詢各種資料來源</li>
+        <li>支援：陣列、List、XML、JSON、資料庫（Entity Framework）</li>
+        <li>方法語法：函式式風格</li>
+        <li>查詢語法：SQL 式風格</li>
+    </ul>
+
+    <h3>LINQ 與 SQL Injection</h3>
+    <p><strong>LINQ 本身不是資料庫查詢，但用 EF Core 就安全</strong></p>
+    <ul>
+        <li>用在 Array / List → 沒有 SQL，不存在 SQL Injection</li>
+        <li>用在 EF Core（LINQ to Entities）→ 會轉成 SQL</li>
+        <li>關鍵：EF Core 會自動把 LINQ 查詢轉成參數化 SQL</li>
+        <li>輸入的資料永遠不會直接拼進 SQL 字串</li>
+        <li>SQL Injection 基本上被阻擋</li>
+    </ul>
+
+    <h3>Entity Framework Core (EF Core)</h3>
+    <p><strong>.NET 的 ORM（Object-Relational Mapper）</strong></p>
+    <p>功能：</p>
+    <ul>
+        <li>把資料表映射成 C# 類別</li>
+        <li>用物件操作資料庫，不必直接寫 SQL</li>
+        <li>支援多種資料庫（SQL Server、PostgreSQL、MySQL、SQLite...）</li>
+    </ul>
+    <p>核心概念：</p>
+    <ul>
+        <li>DbContext → 對應資料庫連線和操作</li>
+        <li>DbSet&lt;TEntity&gt; → 對應資料表</li>
+        <li>LINQ → 查詢資料表，就像查集合一樣</li>
+    </ul>
+    <p>範例：</p>
+    <pre>
+// 定義資料模型
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+}
+
+// 定義 DbContext
+public class AppDbContext : DbContext
+{
+    public DbSet&lt;User&gt; Users { get; set; }
+}
+
+// 使用 LINQ 查詢資料
+using (var db = new AppDbContext())
+{
+    var user = db.Users
+                 .Where(u => u.Name == "Alice")
+                 .FirstOrDefault(); // 會自動生成 SQL
+}
+    </pre>
+
+    <h2>二、ASP.NET 發展歷程</h2>
+
+    <h3>ASP (Classic ASP)</h3>
+    <ul>
+        <li>1996 年推出的伺服器端動態網頁技術</li>
+        <li>檔案副檔名是 .asp</li>
+        <li>使用 VBScript、JScript</li>
+        <li>現在幾乎淘汰</li>
+    </ul>
+
+    <h3>ASP.NET (.NET Framework 2.0 ~ 4.8.1)</h3>
+    <ul>
+        <li>2002 年起，基於 .NET Framework</li>
+        <li>支援 C# / VB.NET</li>
+        <li>開發模式：Web Forms (.aspx)、ASP.NET MVC、ASP.NET Web API</li>
+        <li>只能 Windows + IIS</li>
+        <li>最後一版是 4.8.1，微軟已停止更新</li>
+    </ul>
+
+    <h3>ASP.NET Core (2016 起)</h3>
+    <ul>
+        <li>全新跨平台版本，不再依賴 IIS 和 Windows</li>
+        <li>可在 Windows / Linux / macOS 執行</li>
+        <li>整合了 MVC、Web API、Razor Pages</li>
+        <li>從 .NET 5 (2020) 開始，微軟把「Core」字拿掉，改叫 .NET X</li>
+        <li>.NET 5、.NET 6、.NET 7、.NET 8 都屬於「ASP.NET Core」家族</li>
+    </ul>
+
+    <h3>版本判斷速查表</h3>
+    <table border="1">
+        <tr>
+            <th>名稱</th>
+            <th>代表什麼</th>
+        </tr>
+        <tr>
+            <td>ASP (Classic)</td>
+            <td>1996 年的老 ASP，副檔名 .asp</td>
+        </tr>
+        <tr>
+            <td>ASP.NET (.NET Framework 2.0 ~ 4.8.1)</td>
+            <td>舊世代，只能 Windows + IIS</td>
+        </tr>
+        <tr>
+            <td>ASP.NET Core (.NET Core 1.0 ~ 3.1)</td>
+            <td>新架構，跨平台，高效能</td>
+        </tr>
+        <tr>
+            <td>ASP.NET Core on .NET 5+ (.NET 5, 6, 7, 8...)</td>
+            <td>現在主流，名字只叫「.NET」，但本質上就是 ASP.NET Core</td>
+        </tr>
+    </table>
+    <p><strong>判斷關鍵：</strong>只要看到 .NET 5、.NET 6、.NET 7、.NET 8，就一定是 Core 架構</p>
+
+    <h2>三、跨平台與 Web Server</h2>
+
+    <h3>跨平台 (Cross-Platform) 定義</h3>
+    <ul>
+        <li>軟體可以在不同作業系統上運行（Windows、Linux、macOS）</li>
+        <li>同一份程式碼可以在不同 OS 上執行</li>
+    </ul>
+
+    <h3>IIS 的限制</h3>
+    <ul>
+        <li>IIS = Internet Information Services</li>
+        <li>Windows 專用的 Web Server</li>
+        <li>只能在 Windows 上運行</li>
+        <li>無法部署到 Linux / macOS → 不跨平台</li>
+    </ul>
+
+    <h3>Kestrel 的跨平台特性</h3>
+    <p><strong>ASP.NET Core 內建的跨平台 Web Server</strong></p>
+    <ul>
+        <li>支援 Windows / Linux / macOS</li>
+        <li>不依賴 IIS 或 Windows 專有 API</li>
+        <li>可以直接當 Web Server 使用</li>
+        <li>也可以放在反向代理後面：Nginx (Linux)、Apache (Linux)、IIS (Windows)</li>
+        <li>跨平台：Windows、Linux、macOS 都能跑</li>
+        <li>高效能，適合直接對外服務或配合反向代理</li>
+        <li>支援 HTTP/HTTPS</li>
+    </ul>
+    <p>在 Visual Studio 建立的 Web API 專案中，dotnet run 或 F5 啟動時，專案就會用 Kestrel 來監聽指定的端口。</p>
+
+    <h2>四、RESTful API 設計</h2>
+
+    <h3>REST 是什麼？</h3>
+    <p><strong>Representational State Transfer</strong></p>
+    <p>Roy Fielding 博士在 2000 年提出的 Web API 設計風格，不是標準或協定。</p>
+    <p>核心概念：</p>
+    <ul>
+        <li>資源（Resource）→ 用 URI 來標識，例如 /users/1</li>
+        <li>動作（Action）→ 用 HTTP 方法來表達（GET、POST、PUT、DELETE）</li>
+        <li>狀態轉移（State Transfer）→ 客戶端透過 HTTP 請求改變或查詢資源的狀態</li>
+    </ul>
+
+    <h3>RESTful API 的設計原則</h3>
+    
+    <h4>(1) 資源導向（Resource-Oriented）</h4>
+    <ul>
+        <li>✅ /users/123 代表 ID 為 123 的使用者</li>
+        <li>❌ /getUserById?id=123（不夠 RESTful，因為動作藏在 URL）</li>
+    </ul>
+
+    <h4>(2) 使用 HTTP 方法表示動作</h4>
+    <ul>
+        <li>GET /users → 取得所有使用者</li>
+        <li>GET /users/123 → 取得 ID=123 的使用者</li>
+        <li>POST /users → 建立新使用者</li>
+        <li>PUT /users/123 → 更新 ID=123 的使用者（整個物件）</li>
+        <li>PATCH /users/123 → 更新 ID=123 的部分欄位</li>
+        <li>DELETE /users/123 → 刪除 ID=123 的使用者</li>
+    </ul>
+
+    <h4>(3) 無狀態（Stateless）</h4>
+    <ul>
+        <li>伺服器不應保存用戶端的會話狀態</li>
+        <li>每個請求都應該包含必要的驗證資訊（例如 JWT Token）</li>
+    </ul>
+
+    <h4>(4) 統一介面（Uniform Interface）</h4>
+    <ul>
+        <li>資源表現形式應統一，例如回傳 JSON 或 XML</li>
+        <li>資源 URL 應該清晰一致，例如 /orders/123/items</li>
+    </ul>
+
+    <h3>完美的 RESTful API 條件</h3>
+    <ul>
+        <li>資源 URL 清晰且語意化：不用動詞，而是名詞</li>
+        <li>HTTP 方法正確使用：GET 查詢、POST 建立、PUT/PATCH 更新、DELETE 刪除</li>
+        <li>使用適當的 HTTP 狀態碼：
+            <ul>
+                <li>200 OK（成功查詢）</li>
+                <li>201 Created（成功建立）</li>
+                <li>204 No Content（刪除成功，不需回應內容）</li>
+                <li>400 Bad Request（請求格式錯誤）</li>
+                <li>401 Unauthorized（未認證）</li>
+                <li>404 Not Found（資源不存在）</li>
+                <li>500 Internal Server Error（伺服器錯誤）</li>
+            </ul>
+        </li>
+        <li>無狀態：每個請求獨立，驗證用 Token</li>
+        <li>一致的資料格式：例如統一回傳 JSON，錯誤格式統一</li>
+    </ul>
+    <pre>
+{ "error": "UserNotFound", "message": "User with ID 123 not found" }
+    </pre>
+
+    <h2>五、專案設定與屬性</h2>
+
+    <h3>appsettings.json</h3>
+    <p>共用的值存放處</p>
+
+    <h3>專案設定</h3>
+    <ul>
+        <li>&lt;Nullable&gt;disable&lt;/Nullable&gt; → 警告提示</li>
+        <li>&lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt; → using 從預設載入改成強制</li>
+    </ul>
+
+    <h3>[ApiController] 屬性</h3>
+    <ul>
+        <li>告訴框架這個 Controller 是 API 用的</li>
+        <li>不改變繼承鏈，只是屬性，不是父類別</li>
+        <li>啟用自動模型驗證</li>
+        <li>啟用自動 400 回應</li>
+        <li>自動推斷參數綁定</li>
+    </ul>
+
+</body>
+</html>
