@@ -204,3 +204,4 @@ MySolution/
 
 C#的註解，會在編譯成IL的時候，被拿掉。
 CTRL + K => CTRL + C(加註解)，CTRL + U(取消註解)
+CTRL + / => 單行註解
