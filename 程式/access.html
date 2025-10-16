@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASP.NET Core 與 JWT 認證筆記</title>
+</head>
+<body>
+    <h1>ASP.NET Core 與 JWT 認證筆記</h1>
+
+    <h2>1. AppDbContext 是什麼？</h2>
+    <p>這是一個 Entity Framework Core (EF Core) 的資料庫上下文 (DbContext)。它的用途是：把資料表與 C# 類別 (Model) 做對應，讓你可以用 C# 物件來存取資料庫，而不用自己寫 SQL。</p>
+    
+    <h3>程式碼範例：</h3>
+    <pre>
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions&lt;AppDbContext&gt; options) : base(options) { }
+
+    public DbSet&lt;User&gt; Users { get; set; }
+    public DbSet&lt;Note&gt; Notes { get; set; }
+}
+    </pre>
+
+    <ul>
+        <li><strong>DbContext</strong>：EF Core 提供的基底類別，代表跟資料庫的連線與操作環境。</li>
+        <li><strong>DbSet&lt;User&gt; Users</strong>：代表一個「Users」資料表，每個 User 物件對應到資料表中的一筆紀錄。</li>
+        <li><strong>DbSet&lt;Note&gt; Notes</strong>：代表「Notes」資料表。</li>
+    </ul>
+
+    <p>舉例：你可以寫 <code>var users = await _context.Users.ToListAsync();</code>，它會自動轉成 SQL：<code>SELECT * FROM Users;</code></p>
+
+    <h2>2. IConfiguration 是什麼？</h2>
+    <p>IConfiguration 是 ASP.NET Core 內建的設定存取介面。它可以讀取 appsettings.json、環境變數、使用者祕密、Azure Key Vault 等等。</p>
+
+    <h3>程式碼範例：</h3>
+    <pre>
+private readonly IConfiguration _config;
+public UsersController(AppDbContext context, IConfiguration config)
+{
+    _context = context;
+    _config = config;
+}
+    </pre>
+
+    <p>假設你的 appsettings.json 有：</p>
+    <pre>
+"Jwt": {
+  "SecretKey": "12345678901234567890123456789012",
+  "Issuer": "myApp",
+  "Audience": "myUsers"
+}
+    </pre>
+    <p>在程式裡你可以用 <code>_config["Jwt:SecretKey"]</code> 讀出字串 "12345678901234567890123456789012"。這就是你用來產生 JWT 的金鑰。</p>
+
+    <h2>3. 409 Conflict 是什麼？</h2>
+    <pre>
+if (exists)
+{
+    return Conflict(ApiResponse&lt;User&gt;.Fail("Email 已被註冊"));
+}
+    </pre>
+    <p>這裡的 Conflict(...) 代表 HTTP 狀態碼 409 Conflict。</p>
+    <p><strong>HTTP 409 Conflict</strong> = 請求和伺服器目前的狀態有衝突。在這裡的意思是：「這個 Email 已經存在，新增會造成衝突。」</p>
+    <p>這比單純用 400 Bad Request 更精確，因為 400 表示「用戶輸入錯誤」，但 409 則是「用戶輸入沒錯，但和現有資料衝突」。</p>
+
+    <h2>4. JWT 登入流程詳解</h2>
+
+    <h3>步驟 1：使用者登入</h3>
+    <p>前端送出登入請求：</p>
+    <pre>
+POST /api/users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123456"
+}
+    </pre>
+
+    <h3>步驟 2：後端驗證帳號密碼</h3>
+    <p>後端 (ASP.NET Core) 收到後做：</p>
+    <ul>
+        <li>去資料庫找 Email 為 test@example.com 的 User</li>
+        <li>檢查密碼是否正確 (實務上會存哈希過的密碼，例如 BCrypt)</li>
+        <li>如果正確 → 產生 JWT Token</li>
+    </ul>
+
+    <h3>步驟 3：後端產生 JWT Token</h3>
+    <p>假設資料：</p>
+    <ul>
+        <li>userId = "abc-123"</li>
+        <li>email = "test@example.com"</li>
+        <li>secretKey = "MySuperSecretKey"</li>
+        <li>過期時間 = 1 小時</li>
+    </ul>
+
+    <h4>(1) 建立 Header</h4>
+    <pre>{ "alg": "HS256", "typ": "JWT" }</pre>
+    <p>Base64Url 編碼後：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</p>
+
+    <h4>(2) 建立 Payload</h4>
+    <pre>
+{
+  "sub": "abc-123",
+  "email": "test@example.com",
+  "exp": 1712345678
+}
+    </pre>
+    <p>Base64Url 編碼後：eyJzdWIiOiJhYmMtMTIzIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzEyMzQ1Njc4fQ</p>
+
+    <h4>(3) 建立簽章</h4>
+    <p>把兩段連起來：</p>
+    <pre>data = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMtMTIzIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzEyMzQ1Njc4fQ"</pre>
+    <p>用 HMAC-SHA256 + secretKey 算出雜湊：</p>
+    <pre>signature = HMACSHA256(data, "MySuperSecretKey")</pre>
+    <p>結果再 Base64Url 編碼，假設：abc123xyz987</p>
+
+    <h4>(4) 最終 Token</h4>
+    <pre>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYmMtMTIzIiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiZXhwIjoxNzEyMzQ1Njc4fQ.abc123xyz987</pre>
+
+    <h3>步驟 4：後端回傳給前端</h3>
+    <p>登入成功的 API 回應：</p>
+    <pre>
+{
+  "success": true,
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....abc123xyz987"
+}
+    </pre>
+
+    <h3>步驟 5：前端儲存 Token</h3>
+    <p>前端（瀏覽器 / App）收到後，通常會存到：</p>
+    <ul>
+        <li><strong>localStorage</strong> → 永久保存，除非清除瀏覽器資料</li>
+        <li><strong>sessionStorage</strong> → 只在瀏覽器分頁存在</li>
+        <li><strong>App</strong> → 通常存 SQLite 或 Secure Storage</li>
+    </ul>
+    <p>例子 (前端 JS)：<code>localStorage.setItem("jwt", token);</code></p>
+
+    <h3>步驟 6：前端帶著 Token 呼叫受保護 API</h3>
+    <p>假設要呼叫「取得個人資料」的 API：</p>
+    <pre>
+GET /api/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....abc123xyz987
+    </pre>
+
+    <h3>步驟 7：後端驗證 Token</h3>
+    <p>後端做這些事：</p>
+    <ol>
+        <li>拿到 Token，拆成三段 (Header, Payload, Signature)</li>
+        <li>用同樣的 secretKey 重新計算簽章</li>
+        <li>比對「算出來的簽章」 == 「Token 帶來的簽章」</li>
+        <li>如果一致，而且 exp 還沒過期 → Token 有效</li>
+        <li>從 Payload 讀出 sub = abc-123 → 知道是哪個使用者</li>
+    </ol>
+
+    <h3>步驟 8：後端回傳資料</h3>
+    <p>假設 User = "test@example.com"，回傳：</p>
+    <pre>
+{
+  "id": "abc-123",
+  "email": "test@example.com",
+  "name": "Test User"
+}
+    </pre>
+
+    <h2>5. HMAC-SHA256 雜湊說明</h2>
+    <h3>出來的是亂數麼？可以反解譯麼？</h3>
+    
+    <h4>出來的不是亂數</h4>
+    <p>HMAC-SHA256 是一種「雜湊演算法 (Hash)」，同樣的輸入 + 同樣的 secretKey，永遠會得到一樣的結果。</p>
+    <pre>
+HMACSHA256("hello", "key") => abc123...
+HMACSHA256("hello", "key") => abc123...  (一樣)
+    </pre>
+
+    <h4>不能反解譯</h4>
+    <p>雜湊是單向函數，就像「果汁機」：丟進去水果只能變成果汁，無法反推出原本的水果。</p>
+    <p>所以別人拿到簽章 (Signature) 這段字串，不能反推出 payload 或 secretKey。</p>
+
+    <h4>安全性來源</h4>
+    <p>因為只有伺服器知道 secretKey，攻擊者就算改了 Payload（例如把 "role":"user" 改成 "role":"admin"），也算不出正確的簽章，伺服器一驗證就會失敗。</p>
+
+    <h2>6. JWT 驗證流程詳細步驟</h2>
+    <p>假設 Token 是：aaa.bbb.ccc</p>
+    <ul>
+        <li>aaa = Header (Base64Url)</li>
+        <li>bbb = Payload (Base64Url)</li>
+        <li>ccc = Signature (Base64Url)</li>
+    </ul>
+
+    <h3>後端驗證流程：</h3>
+    <ol>
+        <li><strong>拆三段</strong>
+            <pre>
+headerBase64 = aaa
+payloadBase64 = bbb
+signatureFromToken = ccc
+            </pre>
+        </li>
+        <li><strong>重新算簽章</strong>
+            <pre>expectedSignature = HMACSHA256(headerBase64 + "." + payloadBase64, secretKey)</pre>
+        </li>
+        <li><strong>比對簽章</strong>
+            <pre>
+if (expectedSignature == signatureFromToken) {
+    // Token 沒被竄改
+} else {
+    // Token 無效 (可能被偽造)
+}
+            </pre>
+        </li>
+        <li><strong>檢查過期時間</strong>
+            <p>解開 Payload（Base64 解碼 JSON）：</p>
+            <pre>
+{
+  "sub": "abc-123",
+  "email": "test@example.com",
+  "exp": 1712345678
+}
+            </pre>
+            <p>檢查 exp 是否大於現在時間。如果過期 → Token 無效。</p>
+        </li>
+        <li><strong>讀取使用者資訊</strong>
+            <p>如果驗證成功 → 從 Payload 取 sub = abc-123，就知道是哪個使用者。</p>
+        </li>
+    </ol>
+
+    <h2>7. 為什麼叫 JWT (JSON Web Token)？</h2>
+    <ul>
+        <li><strong>JSON</strong> → 它的內容（Header, Payload）都是用 JSON 格式描述的</li>
+        <li><strong>Web</strong> → 它是為了網路傳輸設計的（HTTP API 常用）</li>
+        <li><strong>Token</strong> → 它是一種憑證，用來讓伺服器識別使用者</li>
+    </ul>
+    <p>所以組合起來就是：「一種基於 JSON 格式的 Web 授權憑證」。</p>
+
+    <h2>8. 其他 Token 方式</h2>
+
+    <h3>1. Session Token (傳統方式)</h3>
+    <ul>
+        <li>使用者登入後，伺服器建立一個 Session（存在記憶體 / Redis / 資料庫）</li>
+        <li>伺服器回傳一個 Session ID 給瀏覽器，通常存在 Cookie</li>
+        <li>瀏覽器每次請求自動帶上 Cookie，伺服器用 Session ID 找到使用者資料</li>
+        <li>優點：簡單、伺服器能隨時強制登出使用者</li>
+        <li>缺點：伺服器要保存狀態（不適合分散式 / 多台伺服器）</li>
+    </ul>
+
+    <h3>2. Opaque Token (不透明 Token)</h3>
+    <ul>
+        <li>Token 是一個隨機字串（例如 UUID）</li>
+        <li>本身不能解讀，伺服器要去資料庫查詢 Token 對應的使用者</li>
+        <li>像 OAuth 2.0 很多實作（例如 Facebook access_token）就是這種</li>
+        <li>優點：安全，因為外部拿到 Token 看不出資料</li>
+        <li>缺點：每次驗證都要查資料庫，增加負擔</li>
+    </ul>
+
+    <h3>3. JWT (自包含 Token, Self-contained Token)</h3>
+    <ul>
+        <li>Token 裡面直接包含了使用者資訊（Payload）</li>
+        <li>不需要查資料庫，只要驗證簽章，就能知道 Token 有效 + 使用者是誰</li>
+        <li>優點：無狀態，適合分散式系統 (微服務、Serverless)</li>
+        <li>缺點：一旦簽發出去，除非用黑名單，否則 Token 在過期前都有效</li>
+    </ul>
+
+    <h3>4. OAuth 2.0 / OpenID Connect Token</h3>
+    <ul>
+        <li>一種「授權框架」，會用到 Access Token 和 Refresh Token</li>
+        <li>Access Token → 常常就是 JWT 或 Opaque Token</li>
+        <li>Refresh Token → 用來換新的 Access Token</li>
+        <li>優點：業界標準（Google, GitHub, Facebook 登入都用這個）</li>
+    </ul>
+
+    <h2>9. Redux 原理與資料存放</h2>
+
+    <h3>Redux 是什麼？</h3>
+    <p>Redux 本質上是一個前端的狀態管理工具。「狀態」就是你應用程式裡的資料（例如：登入使用者資訊、購物車內容、通知數量…）。</p>
+
+    <h3>Redux 的運作核心有三個要素：</h3>
+    <ol>
+        <li><strong>Store</strong>：就像一個大的「物件樹」，裡面存放應用程式的所有狀態。在 React 裡，通常只有一個 Store。
+            <pre>
+{
+  auth: { user: { id: 1, name: "Alice" }, token: "jwt..." },
+  cart: { items: [ { id: 101, qty: 2 } ] }
+}
+            </pre>
+        </li>
+        <li><strong>Action</strong>：一個普通的 JS 物件，用來描述「發生了什麼事」。
+            <pre>{ type: "LOGIN_SUCCESS", payload: { id: 1, name: "Alice" } }</pre>
+        </li>
+        <li><strong>Reducer</strong>：一個純函式 (pure function)，負責接收舊的 state 和 action，產生新的 state。
+            <pre>
+function authReducer(state, action) {
+  switch (action.type) {
+    case "LOGIN_SUCCESS":
+      return { ...state, user: action.payload };
+    default:
+      return state;
+  }
+}
+            </pre>
+        </li>
+    </ol>
+
+    <p>整個過程就像一個「流水線」：使用者操作 → dispatch action → reducer 更新 state → UI 自動重新 render。</p>
+
+    <h3>Redux 的資料存在哪裡？</h3>
+    <ul>
+        <li>Redux 的資料（state）是存放在<strong>記憶體（RAM）中的 JavaScript 物件</strong></li>
+        <li>它並不是存到 cookie、localStorage、或伺服器資料庫</li>
+        <li>只要你重新整理頁面，Redux 的 state 就會消失（因為 JS 重新執行了）</li>
+        <li>如果想要持久化（reload 後還在），通常會搭配 localStorage / sessionStorage 或 API 重抓資料</li>
+    </ul>
+
+    <h3>為什麼每個 client 的資料都不一樣？</h3>
+    <p>因為 Redux 的 state 是存在每個瀏覽器分別的記憶體：</p>
+    <ul>
+        <li>使用者 A 打開網站 → 產生一個 Redux Store（屬於 A 的 session）</li>
+        <li>使用者 B 打開同一網站 → 在另一台電腦/瀏覽器產生另一個 Redux Store</li>
+        <li>兩者互不影響，因為 state 只存在各自的前端環境</li>
+    </ul>
+
+    <h2>10. 瀏覽器記憶體說明</h2>
+    <p>當我們說「存在瀏覽器記憶體」，通常指的是 JavaScript 程式運行時 (runtime) 在 RAM 裡建立的物件。</p>
+    <p>例如你在 React 裡寫：<code>const [user, setUser] = useState(null)</code></p>
+    <p>這個 user 實際上就是一個 JavaScript 物件，存在於瀏覽器的 JS 引擎（像 V8、SpiderMonkey）分配的記憶體空間，也就是電腦的 RAM。</p>
+
+    <h3>特性：</h3>
+    <ul>
+        <li>當頁面在執行 → 變數存在</li>
+        <li>一旦刷新 (F5) 或關閉頁籤 → JS 重新跑，這些變數就消失</li>
+    </ul>
+    <p>所以「瀏覽器記憶體」≈「JS 執行時在 RAM 裡的暫存資料」，屬於揮發性記憶體。</p>
+
+    <h3>業界實務上會不會用？</h3>
+    <p><strong>會，而且非常常見</strong>，但通常會搭配其他方式，避免刷新就掉光。</p>
+
+    <h2>11. localStorage vs sessionStorage vs Cookie</h2>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>特性</th>
+                <th>localStorage</th>
+                <th>sessionStorage</th>
+                <th>Cookie</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>存活時間</td>
+                <td>永久保存，除非使用者手動清除，或程式碼刪除</td>
+                <td>只在「分頁」存在，分頁關閉就消失</td>
+                <td>可以設置 Expires 或 Max-Age，到期自動刪除</td>
+            </tr>
+            <tr>
+                <td>範圍</td>
+                <td>同網域所有分頁共享</td>
+                <td>只限當前分頁（同一網站開新分頁也不會共享）</td>
+                <td>預設跟 domain 綁定，可以跨分頁、跨 session 使用</td>
+            </tr>
+            <tr>
+                <td>大小限制</td>
+                <td>一般瀏覽器 ~5MB</td>
+                <td>一般瀏覽器 ~5MB</td>
+                <td>每個 cookie ~4KB，數量有限制</td>
+            </tr>
+            <tr>
+                <td>存取方式</td>
+                <td>localStorage.getItem("key")</td>
+                <td>sessionStorage.getItem("key")</td>
+                <td>會自動隨 HTTP Request 帶給伺服器</td>
+            </tr>
+            <tr>
+                <td>常見用途</td>
+                <td>保存登入狀態、使用者偏好設定</td>
+                <td>表單暫存資料、分頁臨時狀態</td>
+                <td>安全儲存 JWT，設定 HttpOnly 防止 XSS</td>
+            </tr>
+            <tr>
+                <td>安全性</td>
+                <td>完全暴露給 JS → 如果被 XSS 攻擊，token 就會被盜</td>
+                <td>完全暴露給 JS → 如果被 XSS 攻擊，token 就會被盜</td>
+                <td>若設 HttpOnly → JS 不能存取（防 XSS）</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>12. Redux Persist 與 XSS 風險</h2>
+
+    <h3>為什麼會有 XSS 風險？</h3>
+    <ul>
+        <li>redux-persist 通常把 Redux store 序列化成 JSON，存到 localStorage / sessionStorage</li>
+        <li>這些 storage 可以被前端 JS 任意讀寫</li>
+        <li>如果你的應用程式被 XSS 攻擊（攻擊者注入惡意 JS）：攻擊者可以直接讀取 localStorage 的資料</li>
+        <li>如果你把 JWT、使用者敏感資訊（email、token、user ID）存在 store 裡 → 攻擊者就可以偷走</li>
+    </ul>
+
+    <h3>安全做法：</h3>
+    <ol>
+        <li><strong>使用 Cookie 存 JWT</strong>
+            <ul>
+                <li>登入後，後端回傳 JWT → 存 HttpOnly、Secure Cookie</li>
+                <li>Redux store 只存非敏感資訊（UI 需要的 profile、暫存狀態）</li>
+                <li>刷新頁面時，前端透過 /me API 取得 user 資料 → 更新 store</li>
+            </ul>
+        </li>
+        <li><strong>如果想用 redux-persist</strong>
+            <ul>
+                <li>僅存非敏感資料（像 UI theme、form draft、搜尋條件）</li>
+                <li>千萬不要存 JWT、密碼、token</li>
+            </ul>
+        </li>
+        <li><strong>防 XSS</strong>
+            <ul>
+                <li>React 預設 JSX 會自動 escape HTML → 降低 XSS</li>
+                <li>避免直接使用 dangerouslySetInnerHTML 或不可信來源的 script</li>
+                <li>使用 CSP (Content Security Policy) 限制外部 JS 執行</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>13. 兩種登入方案比較</h2>
+
+    <h3>方案 1：JWT 只存 ID → 個人頁再 call API 取完整資料</h3>
+    <h4>流程：</h4>
+    <ol>
+        <li>登入 → 後端回傳 JWT（只含 user ID）</li>
+        <li>前端把 JWT 存 cookie（建議 HttpOnly）</li>
+        <li>使用者進入個人頁 → 前端帶 JWT call /me 或 /profile API</li>
+        <li>後端驗證 JWT → 回傳完整使用者資料</li>
+        <li>Redux / Context 只作 UI 快取</li>
+    </ol>
+    <h4>優點：</h4>
+    <ul>
+        <li>安全性高：JWT 本身不含敏感資料 → 即使被偷也不會泄漏重要資訊</li>
+        <li>資料即時：每次 call API 都是最新狀態</li>
+        <li>容易維護：後端可以自由修改 user 資料結構，不需要擔心前端持久化過期資料</li>
+    </ul>
+    <h4>缺點：</h4>
+    <ul>
+        <li>初次載入可能有一個 API call latency → 使用者進入頁面時可能需要短暫 loading</li>
+    </ul>
+
+    <h3>方案 2：JWT + 個人資料一起存到 Redux Persist</h3>
+    <h4>流程：</h4>
+    <ol>
+        <li>登入 → 後端回傳 JWT + 個人資料</li>
+        <li>前端存進 Redux Persist + cookie</li>
+        <li>每次頁面載入，從 Redux Persist 讀取 user 資料，不一定再 call API</li>
+    </ol>
+    <h4>優點：</h4>
+    <ul>
+        <li>使用者體驗好：頁面載入可以立即顯示 user 資料，少一次 API call</li>
+        <li>跨分頁或刷新可保持狀態（只要 redux-persist 有存）</li>
+    </ul>
+    <h4>缺點：</h4>
+    <ul>
+        <li>安全性降低：Redux Persist 存在 localStorage / sessionStorage → 可被 JS 讀取，如果資料包含敏感資訊或 JWT，XSS 就能偷走</li>
+        <li>資料可能過期：前端存的資料不會自動同步後端修改 → 可能出現舊資訊</li>
+        <li>維護麻煩：後端資料結構改了，需要處理前端 persist 的同步</li>
+    </ul>
+
+    <h3>建議做法（Hybrid）：</h3>
+    <ol>
+        <li>登入後，call /me API 拿一次完整 user 資料 → 存在 Redux / Context（快取）</li>
+        <li>之後各頁面直接取 Redux / Context，不用每頁都 call API</li>
+        <li>重要資訊 / token 永遠存 HttpOnly Cookie → 防 XSS</li>
+    </ol>
+
+    <h2>14. 實務流程說明</h2>
+
+    <h3>情境 1：使用者從登入頁進入個人頁（正常流程）</h3>
+    <ol>
+        <li>使用者在登入頁輸入帳號密碼 → call /login</li>
+        <li>後端回傳 JWT，存 HttpOnly Cookie</li>
+        <li>前端登入成功後 → 導向個人頁</li>
+        <li>在個人頁初始化時 → call /me API</li>
+        <li>後端驗證 Cookie 裡的 JWT</li>
+        <li>回傳完整 user 資料</li>
+        <li>前端把 user 存進 Redux / Context（記憶體快取）</li>
+        <li>之後各個頁面都可以直接從 Redux / Context 拿資料，不用每頁再 call API</li>
+    </ol>
+
+    <h3>情境 2：使用者直接在個人頁輸入網址（或刷新頁面）</h3>
+    <ol>
+        <li>這時候 Redux / Context 還沒初始化（記憶體被刷新或新開分頁）</li>
+        <li>前端沒辦法直接拿到 user 資料</li>
+        <li>個人頁初始化 → 自動 call /me API</li>
+        <li>後端驗證 Cookie 裡的 JWT</li>
+        <li>回傳完整 user 資料 → 更新 Redux / Context</li>
+    </ol>
+
+    <h3>小結：</h3>
+    <ul>
+        <li>Redux / Context 只是快取，方便頁面間共享 user 資料</li>
+        <li>刷新或直接輸入網址 → 記憶體空了 → 必須用 JWT Cookie call API 拿回資料</li>
+        <li>重要資訊 / token 永遠不要存在 Redux / redux-persist，都放 HttpOnly Cookie</li>
+    </ul>
+
+    <h2>15. Redux 與分頁狀態</h2>
+    <p><strong>問題：如果我存 redux，我開新分頁，狀態會消失麼？</strong></p>
+    <p><strong>答案：對，會消失。</strong></p>
+
+    <p>Redux 本質上就是存在瀏覽器的 JS 記憶體 (RAM)。所以：</p>
+    <ul>
+        <li>在同一個分頁裡，Redux store 狀態會一直在（只要你不刷新頁面）</li>
+        <li>但只要你刷新頁面 (F5) 或開新分頁 / 新視窗：
+            <ul>
+                <li>JS runtime 會重新初始化</li>
+                <li>Redux store 也會重建</li>
+                <li>所以 Redux 之前的 state 全部消失</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>實務解法（避免 Redux 狀態一刷新就掉）</h3>
+    <p>如果你希望 Redux 狀態跨分頁/刷新也能保存，業界會搭配「持久化」方案：</p>
+    <ol>
+        <li><strong>redux-persist</strong>
+            <ul>
+                <li>一個官方常用的套件</li>
+                <li>可以自動把 Redux store 同步到 localStorage / sessionStorage</li>
+                <li>好處：新分頁或刷新後，會自動從 storage 把狀態載回來</li>
+            </ul>
+        </li>
+        <li><strong>自己手動存/取 localStorage</strong>
+            <ul>
+                <li>Redux store 改變時，把需要的部分寫進 localStorage</li>
+                <li>App 初始化時再從 localStorage 讀回來</li>
+                <li>比較輕量，但要自己寫程式碼</li>
+            </ul>
+        </li>
+        <li><strong>Cookie + 後端 API（更安全的做法）</strong>
+            <ul>
+                <li>登入狀態不用放 Redux</li>
+                <li>改放在 HttpOnly Cookie</li>
+                <li>Redux 只放 UI 相關狀態</li>
+                <li>開新分頁時，只要 call /me API 就能拿到使用者資料</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h3>結論：</h3>
+    <ul>
+        <li>單純 Redux = 狀態只活在記憶體，刷新 / 新分頁會消失</li>
+        <li>如果要跨分頁保存 → 用 redux-persist 或 localStorage</li>
+        <li>如果要跨分頁還要安全 → 用 Cookie + API，Redux 只當快取，不當主要來源</li>
+    </ul>
+
+    <h2>16. React App 中的 user 存放位置</h2>
+    <p>在 React 程式碼中：</p>
+    <pre>const { user, loading: authLoading, signIn, signUp, signOut } = useAuth()</pre>
+    
+    <p>user 是從 useAuth() 這個自訂 hook 拿到的。要知道 user 存在哪裡，就要看 useAuth 的實作。</p>
+
+    <h3>常見的 useAuth 實作方式：</h3>
+    <ol>
+        <li><strong>存在 React state (記憶體)</strong>
+            <p>useAuth 可能裡面有 useState，例如：</p>
+            <pre>const [user, setUser] = useState&lt;User | null&gt;(null)</pre>
+            <p>當你登入 (signIn) 時，它會把後端回傳的使用者資訊（例如 id, email, name）存進 user 這個 state。</p>
+            <p>特性：只存在瀏覽器記憶體。頁面一旦刷新 (F5) → state 會消失 → 通常要再去後端驗證 JWT 重新抓一次 user 資料。</p>
+        </li>
+        <li><strong>存在 Context (全域狀態)</strong>
+            <p>很多專案會用 AuthContext 包起來：</p>
+            <pre>const AuthContext = createContext&lt;AuthState&gt;(...)</pre>
+            <p>然後 useAuth 只是 useContext(AuthContext) 的封裝。</p>
+            <p>這樣一來，不同 component 都可以拿到同一份 user，不用一直傳 props。</p>
+        </li>
+        <li><strong>存在 localStorage / sessionStorage</strong>
+            <p>有些 useAuth 會把登入後的 user 或 JWT 存到 localStorage，重新整理時可以從 localStorage 讀出來，避免掉線。</p>
+            <pre>
+useEffect(() => {
+  const savedUser = localStorage.getItem("user")
+  if (savedUser) setUser(JSON.parse(savedUser))
+}, [])
+            </pre>
+            <p>這樣就算刷新頁面，user 仍然存在（直到使用者登出）。</p>
+        </li>
+        <li><strong>存在 Cookie + 後端驗證</strong>
+            <p>如果 JWT 已經存在 cookie（特別是 HttpOnly cookie），那麼 useAuth 通常會在 component mount 時呼叫 /me API：</p>
+            <pre>
+useEffect(() => {
+  fetch("/api/me", { credentials: "include" })
+    .then(res => res.json())
+    .then(data => setUser(data))
+}, [])
+            </pre>
+            <p>好處：不用在前端存敏感資訊，安全性較高。</p>
+            <p>缺點：需要額外一次 API 請求。</p>
+        </li>
+    </ol>
+
+    <h3>結論：</h3>
+    <p>在程式碼裡的 user：</p>
+    <ul>
+        <li>直接存在前端記憶體（React state / Context），這是 useAuth() hook 管理的結果</li>
+        <li>每個 client 的 user 是獨立的，因為它只存在於該使用者的瀏覽器環境</li>
+        <li>重新整理頁面後，若 useAuth 沒有額外做 localStorage / API restore，那 user 就會變回 null，需要重新登入或重新抓資料</li>
+    </ul>
+
+    <h2>17. 總結</h2>
+    <ul>
+        <li><strong>AppDbContext</strong> = EF Core 資料庫操作的入口，DbSet 代表資料表</li>
+        <li><strong>IConfiguration</strong> = ASP.NET Core 的設定存取服務，可以讀 appsettings.json 等</li>
+        <li><strong>409 Conflict</strong> = 一個 HTTP 狀態碼，代表請求與伺服器狀態衝突（例如新增重複資料）</li>
+        <li><strong>JWT</strong> = JSON 格式的 Web Token，最大特色是「自包含 + 簽章驗證」</li>
+        <li><strong>HMAC-SHA256</strong> = 單向雜湊函數，不能反解，用於驗證 JWT 完整性</li>
+        <li><strong>Redux</strong> = 前端狀態管理工具，資料存在 JS 記憶體（RAM）</li>
+        <li><strong>localStorage</strong> = 永久保存（直到手動刪除）</li>
+        <li><strong>sessionStorage</strong> = 只在分頁存在</li>
+        <li><strong>Cookie (HttpOnly)</strong> = 最安全的 JWT 存放方式，JS 無法讀取</li>
+        <li><strong>redux-persist</strong> = 將 Redux 狀態持久化到 localStorage，但有 XSS 風險</li>
+        <li><strong>最佳實務</strong> = JWT 存 HttpOnly Cookie + Redux/Context 做 UI 快取 + 刷新時 call /me API</li>
+    </ul>
+
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資訊安全重點整理</title>
+</head>
+<body>
+    <h1>資訊安全重點整理</h1>
+
+    <h2>風險管理與評估</h2>
+    <h3>Exposure Factor（暴露因子）</h3>
+    <p>計算損失百分比（資產受損比例），用於 SLE = AV × EF</p>
+    <ul>
+        <li>Risk tolerance：組織能接受多少風險，屬於策略性概念</li>
+        <li>Vulnerability classification：漏洞嚴重度評估，不是損失計算</li>
+        <li>Environmental variables：環境因素影響修補優先級，不是損失數值</li>
+    </ul>
+
+    <h3>Risk Appetite（風險偏好）</h3>
+    <p>衡量組織願意接受的風險程度</p>
+    <ul>
+        <li>保守（conservative）：傾向避免風險</li>
+        <li>積極（expansionary / aggressive）：願意承擔更多風險以追求機會</li>
+    </ul>
+
+    <h3>Risk Register（風險登錄）</h3>
+    <p>用於識別並記錄專案計畫中每個步驟相關的風險，包含風險名稱、影響程度、可能性、責任人等</p>
+
+    <h2>SIEM 與警報管理</h2>
+    <h3>Alert Tuning（警報調校）</h3>
+    <p>調整 SIEM 或 IDS/IPS 的警報規則，以減少誤報（false positives）與漏報（false negatives）</p>
+    <ul>
+        <li>持續調整警報規則，排除誤報</li>
+        <li>Application benchmarking：做效能與行為基準，用於異常偵測</li>
+        <li>SIEM aggregation：集中日誌收集與報表</li>
+        <li>Data archiving：封存資料供審計或合規</li>
+    </ul>
+
+    <h2>加密與資料保護</h2>
+    <h3>Tokenization（代碼化）</h3>
+    <p>將敏感資料替換成非敏感的佔位符，常用於 NFC 支付系統</p>
+    <ul>
+        <li>由支付平台產生一次性代碼，代替真實信用卡號</li>
+        <li>符合 PCI DSS 安全規範</li>
+        <li>適合行動支付、線上支付等場景</li>
+    </ul>
+
+    <h3>Hashing（雜湊）</h3>
+    <p>將資料轉換成固定長度的指紋值，用於驗證完整性或密碼儲存</p>
+
+    <h3>Steganography（隱寫術）</h3>
+    <p>把資訊藏在其他媒體（例如圖片、音訊或影片）裡</p>
+
+    <h3>Salting（加鹽）</h3>
+    <p>在雜湊值中加入隨機資料，增強密碼安全性</p>
+    <ul>
+        <li>Obfuscation：混淆程式或資料，使其難以閱讀</li>
+        <li>Key stretching：密鑰延伸，重複運算增加暴力攻擊防護</li>
+        <li>Digital signature：數位簽章，提供資料完整性</li>
+    </ul>
+
+    <h3>HSM（硬體安全模組）</h3>
+    <p>高階加密硬體設備，安全儲存金鑰與憑證</p>
+    <ul>
+        <li>集中管理私鑰</li>
+        <li>防止私鑰外洩</li>
+        <li>提供高安全等級的加密運算</li>
+        <li>常用於銀行、證券、政府單位</li>
+    </ul>
+
+    <h3>加密類型</h3>
+    <ul>
+        <li>Full disk encryption：全磁碟加密</li>
+        <li>TPM（Trusted Platform Module）：可信平台模組，用於單一設備</li>
+        <li>Record-level encryption：紀錄級加密，針對資料庫個別欄位</li>
+        <li>Journaling：日誌記錄，先寫入臨時日誌再寫入資料庫</li>
+    </ul>
+
+    <h2>網路安全</h2>
+    <h3>IPsec（網際協定安全）</h3>
+    <p>在網路層運作，提供機密性、封包完整性與來源驗證</p>
+    <ul>
+        <li>ESP（Encapsulating Security Payload）：提供加密與完整性</li>
+        <li>AH（Authentication Header）：提供完整性與來源驗證但不加密</li>
+        <li>IKE（Internet Key Exchange）：鍵協商</li>
+        <li>Transport mode：只保護封包 payload</li>
+        <li>Tunnel mode：封裝整個封包，適合站對站 VPN</li>
+    </ul>
+
+    <h3>NAC（網路存取控制）</h3>
+    <p>裝置連接到網路時的身份驗證與授權程序</p>
+    <ul>
+        <li>802.1X：基於端口的認證</li>
+        <li>RADIUS：遠端驗證撥入使用者服務</li>
+        <li>Host posture check：主機健康檢查</li>
+        <li>隔離網段：將不合規設備分流</li>
+    </ul>
+
+    <h3>SASE（安全存取服務邊緣）</h3>
+    <p>次世代 VPN 技術，優化到雲端服務的安全通訊</p>
+    <ul>
+        <li>適合行動裝置與遠端工作</li>
+        <li>提供統一的安全政策管理</li>
+    </ul>
+
+    <h3>防火牆與網路防護</h3>
+    <ul>
+        <li>Host-based firewall：主機型防火牆，防範即時通訊惡意連結</li>
+        <li>NGFW（Next-Generation Firewall）：下一代防火牆</li>
+        <li>Screened subnet：隔離公開服務的網路區段</li>
+    </ul>
+
+    <h2>憑證與身份驗證</h2>
+    <h3>OCSP Stapling（線上憑證狀態協定裝訂）</h3>
+    <p>伺服器預先查詢憑證狀態，直接傳給客戶端</p>
+    <ul>
+        <li>省流量、加快速度</li>
+        <li>避免公司內網流量外洩</li>
+        <li>提升可靠性</li>
+    </ul>
+
+    <h3>多因素驗證（MFA）</h3>
+    <ul>
+        <li>Something you know（你知道的）：密碼、PIN</li>
+        <li>Something you have（你擁有的）：智慧卡、手機、USB 金鑰</li>
+        <li>Something you are（你是誰）：指紋、虹膜、臉部辨識</li>
+        <li>Somewhere you are（你在哪）：GPS、IP 位址、Wi-Fi 位置</li>
+    </ul>
+
+    <h3>認證協定</h3>
+    <ul>
+        <li>802.1X：使用集中式身份驗證伺服器</li>
+        <li>EAP（Extensible Authentication Protocol）：可擴充認證協議</li>
+        <li>Federation：聯合認證，跨組織使用同一組憑證</li>
+        <li>SSO（Single Sign-On）：單一登入，一次驗證存取多服務</li>
+    </ul>
+
+    <h3>無線安全</h3>
+    <ul>
+        <li>WPA3：802.11 無線網路加密協定</li>
+        <li>PSK（Pre-Shared Key）：預共享金鑰，所有人使用相同密碼</li>
+        <li>802.1X：企業級無線認證，每人獨立帳密</li>
+    </ul>
+
+    <h2>威脅與攻擊</h2>
+    <h3>常見攻擊類型</h3>
+    <ul>
+        <li>On-path（MITM）：中間人攻擊，攔截並篡改通訊</li>
+        <li>DNS poisoning：DNS 中毒，修改 DNS 紀錄導向惡意網站</li>
+        <li>Phishing campaign：釣魚活動，測試使用者安全習慣</li>
+        <li>Smishing：簡訊釣魚，透過簡訊進行社交工程</li>
+        <li>Vishing：語音釣魚，透過電話詐騙</li>
+        <li>Social engineering：社交工程，透過欺騙獲取資訊</li>
+    </ul>
+
+    <h3>進階攻擊</h3>
+    <ul>
+        <li>Buffer overflow：緩衝區溢位，操控記憶體內容</li>
+        <li>SQL injection：SQL 注入，操控資料庫查詢</li>
+        <li>Race condition：競爭狀態，多程序執行順序錯誤</li>
+        <li>Resource consumption：資源消耗，耗盡系統資源</li>
+        <li>DDoS：分散式阻斷服務攻擊</li>
+        <li>Supply chain attack：供應鏈攻擊</li>
+    </ul>
+
+    <h3>惡意軟體</h3>
+    <ul>
+        <li>Keylogger：鍵盤側錄器，記錄鍵盤輸入</li>
+        <li>Rootkit：隱藏於系統核心的惡意軟體</li>
+        <li>Trojan：木馬程式，偽裝成合法軟體</li>
+    </ul>
+
+    <h3>其他威脅</h3>
+    <ul>
+        <li>RFID cloning：複製 RFID 晶片</li>
+        <li>Jailbreaking：越獄，替換行動裝置韌體</li>
+        <li>Deauthentication：斷線攻擊，將設備從無線網路移除</li>
+        <li>Impersonation：冒充攻擊</li>
+        <li>Typosquatting：網址錯置攻擊</li>
+        <li>Watering hole：水坑攻擊，感染受害者常訪問的網站</li>
+    </ul>
+
+    <h2>漏洞管理</h2>
+    <h3>漏洞評估工具</h3>
+    <ul>
+        <li>Vulnerability scanner：識別漏洞但不利用</li>
+        <li>Penetration testing：實際嘗試利用漏洞</li>
+        <li>SCAP（Security Content Automation Protocol）：安全內容自動化協定</li>
+    </ul>
+
+    <h3>偵察類型</h3>
+    <ul>
+        <li>Passive reconnaissance：被動偵察，從公開來源蒐集資訊（OSINT）</li>
+        <li>Active reconnaissance：主動偵察，對目標系統進行互動式資料蒐集</li>
+        <li>Partially known environment：部分已知環境，知道部分目標資訊</li>
+        <li>Known environment：完全已知環境，掌握完整資訊</li>
+    </ul>
+
+    <h3>系統強化</h3>
+    <ul>
+        <li>Server hardening：伺服器強化</li>
+        <li>修改預設配置</li>
+        <li>關閉不必要服務</li>
+        <li>限制權限</li>
+        <li>更新憑證與安全補丁</li>
+        <li>Network segmentation：網路分段</li>
+    </ul>
+
+    <h2>事件回應</h2>
+    <h3>事件回應流程</h3>
+    <ol>
+        <li>Preparation：準備</li>
+        <li>Detection：偵測</li>
+        <li>Containment：隔離（使用沙箱分析惡意軟體）</li>
+        <li>Eradication：根除（完全清除惡意軟體）</li>
+        <li>Recovery：復原（重建系統與服務）</li>
+        <li>Lessons learned：事後檢討</li>
+    </ol>
+
+    <h3>相關技術</h3>
+    <ul>
+        <li>Sandbox：沙箱，隔離環境執行不信任程式</li>
+        <li>Escalation scripting：升級腳本，自動化回應安全事件</li>
+        <li>Chain of custody：證據保管鏈</li>
+        <li>Forensics / E-discovery：電子取證</li>
+    </ul>
+
+    <h3>災難復原演練</h3>
+    <ul>
+        <li>Tabletop exercise：桌上演練，討論災難應對流程</li>
+        <li>BIA（Business Impact Analysis）：業務影響分析</li>
+        <li>COOP（Continuity of Operations）：營運持續性</li>
+    </ul>
+
+    <h2>存取控制</h2>
+    <h3>存取控制模型</h3>
+    <ul>
+        <li>DAC（Discretionary Access Control）：自主存取控制，資源擁有者決定</li>
+        <li>Zero Trust：零信任，永不信任、始終驗證</li>
+        <li>Policy Enforcement Point (PEP)：策略執行點</li>
+    </ul>
+
+    <h3>實體安全控制</h3>
+    <ul>
+        <li>Access control vestibule：出入口管制前室</li>
+        <li>Biometric scanner：生物辨識掃描器</li>
+        <li>Badge readers：門禁讀卡器</li>
+        <li>Security guard：保全人員</li>
+        <li>Fencing：圍欄</li>
+        <li>Bollards：防撞柱</li>
+        <li>Pressure sensors：壓力感測器</li>
+        <li>Infrared sensors：紅外線感測器</li>
+    </ul>
+
+    <h2>資料管理</h2>
+    <h3>資料角色</h3>
+    <ul>
+        <li>Data owner：資料擁有者，決定資料使用與保護</li>
+        <li>Data custodian：資料管理者，負責安全與存取控制</li>
+        <li>Data processor：資料處理者，執行資料操作</li>
+        <li>Data controller：資料管理者，決定資料處理方式</li>
+        <li>Data subject：資料主體，資料所屬的個人或實體</li>
+    </ul>
+
+    <h3>資料分類</h3>
+    <ul>
+        <li>Public：公開</li>
+        <li>Restricted：受限</li>
+        <li>Private：私人</li>
+        <li>Regulated：受規範</li>
+    </ul>
+
+    <h3>資料保護</h3>
+    <ul>
+        <li>Privacy compliance：隱私合規性（GDPR、CCPA）</li>
+        <li>Data retention：資料保存</li>
+        <li>Data exfiltration：資料外洩</li>
+        <li>Open permissions：開放權限</li>
+    </ul>
+
+    <h2>雲端安全</h2>
+    <h3>雲端責任</h3>
+    <ul>
+        <li>Responsibility matrix / RACI Matrix：責任矩陣</li>
+        <li>IaaS：客戶負責 OS、應用程式、資料</li>
+        <li>PaaS：客戶負責應用程式、資料</li>
+        <li>SaaS：客戶僅負責資料</li>
+    </ul>
+
+    <h3>混合雲考量</h3>
+    <ul>
+        <li>Network protection mismatches：網路防護不一致</li>
+        <li>認證選項差異</li>
+        <li>使用者權限設定不同</li>
+    </ul>
+
+    <h2>行動裝置管理</h2>
+    <h3>MDM（Mobile Device Management）</h3>
+    <ul>
+        <li>自動鎖定</li>
+        <li>位置追蹤</li>
+        <li>資料分割（Segmentation）</li>
+        <li>集中管理政策</li>
+    </ul>
+
+    <h3>設定強制</h3>
+    <ul>
+        <li>Configuration enforcement：配置強制</li>
+        <li>Posture assessment：姿態評估</li>
+        <li>Private VLAN：私有虛擬區域網路</li>
+        <li>Quarantine：隔離不合規設備</li>
+    </ul>
+
+    <h2>變更管理</h2>
+    <h3>變更控制流程</h3>
+    <ul>
+        <li>Change management：變更管理</li>
+        <li>Backout plan：回退計畫</li>
+        <li>Maintenance window：維護時段</li>
+        <li>Testing：測試階段</li>
+    </ul>
+
+    <h3>離職流程</h3>
+    <ul>
+        <li>Offboarding：離職流程</li>
+        <li>Account audit：帳號稽核</li>
+        <li>停用系統存取權</li>
+        <li>設備與資產回收</li>
+    </ul>
+
+    <h2>合規與政策</h2>
+    <h3>政策類型</h3>
+    <ul>
+        <li>Acceptable use policy：可接受使用政策</li>
+        <li>Password policy：密碼政策</li>
+        <li>Security policy：安全政策</li>
+    </ul>
+
+    <h3>密碼政策要素</h3>
+    <ul>
+        <li>Password expiration：密碼有效期限</li>
+        <li>Account lockout：帳號鎖定</li>
+        <li>Password complexity：密碼複雜度</li>
+        <li>Password reuse：密碼重複使用限制</li>
+        <li>Password managers：密碼管理器</li>
+    </ul>
+
+    <h3>合約與協議</h3>
+    <ul>
+        <li>MOA（Memorandum of Agreement）：協議備忘錄</li>
+        <li>SLA（Service Level Agreement）：服務層級協議</li>
+        <li>SOW（Statement of Work）：工作說明書</li>
+        <li>NDA（Non-Disclosure Agreement）：保密協議</li>
+        <li>Right-to-audit clause：審計權條款</li>
+    </ul>
+
+    <h3>合規自動化</h3>
+    <ul>
+        <li>Automation：定期自動檢查合規性</li>
+        <li>Attestation：確認與認可</li>
+        <li>External audit：外部稽核</li>
+    </ul>
+
+    <h2>可靠性指標</h2>
+    <h3>系統可靠性</h3>
+    <ul>
+        <li>MTBF（Mean Time Between Failures）：平均故障間隔時間</li>
+        <li>MTTR（Mean Time To Repair）：平均修復時間</li>
+        <li>RTO（Recovery Time Objective）：復原時間目標</li>
+        <li>RPO（Recovery Point Objective）：復原點目標</li>
+    </ul>
+
+    <h2>電子郵件安全</h2>
+    <h3>郵件驗證</h3>
+    <ul>
+        <li>SPF（Sender Policy Framework）：寄件者政策框架</li>
+        <li>DKIM：郵件簽章驗證</li>
+        <li>DMARC：郵件驗證與處理政策</li>
+    </ul>
+
+    <h2>虛擬化安全</h2>
+    <h3>虛擬化風險</h3>
+    <ul>
+        <li>Hypervisor：虛擬機管理程式</li>
+        <li>VM 隔離失效風險</li>
+        <li>SDN（Software-Defined Networking）：軟體定義網路</li>
+    </ul>
+
+    <h2>遠端管理</h2>
+    <h3>管理工具</h3>
+    <ul>
+        <li>Jump server：跳板伺服器，集中安全管理入口</li>
+        <li>NAC：存取控制與健康檢查</li>
+    </ul>
+
+    <h2>其他重要概念</h2>
+    <h3>安全控制類型</h3>
+    <ul>
+        <li>Deterrent：嚇阻性（如登入橫幅）</li>
+        <li>Preventive：預防性</li>
+        <li>Detective：偵測性</li>
+        <li>Corrective：矯正性</li>
+        <li>Compensating：補償性</li>
+        <li>Directive：指導性</li>
+    </ul>
+
+    <h3>控制分類</h3>
+    <ul>
+        <li>Operational：操作性控制，由人員執行</li>
+        <li>Managerial：管理性控制，政策與策略</li>
+        <li>Physical：實體控制，保護建築與設備</li>
+        <li>Technical：技術控制，系統自動執行</li>
+    </ul>
+
+    <h3>其他術語</h3>
+    <ul>
+        <li>Due care：內部防護措施與責任</li>
+        <li>Due diligence：第三方審核與評估</li>
+        <li>Enumeration：枚舉，詳細列出裝置零件</li>
+        <li>Sanitization：資料清理</li>
+        <li>Decommissioning：退役</li>
+        <li>Benchmarks：安全設定基準</li>
+        <li>Honeypot：蜜罐，無密碼訪客帳號於 screened subnet</li>
+        <li>Blockchain：區塊鏈，不可竄改的分散式帳本</li>
+        <li>Secure enclave：安全區域，硬體級保護</li>
+    </ul>
+
+    <h3>風險處理策略</h3>
+    <ul>
+        <li>Mitigate：減輕，降低威脅程度</li>
+        <li>Accept：接受</li>
+        <li>Transfer：轉移</li>
+        <li>Avoid：避免</li>
+    </ul>
+
+    <h3>關鍵服務考量</h3>
+    <ul>
+        <li>System availability：系統可用性（最重要）</li>
+        <li>Integration costs：整合成本</li>
+        <li>Patch availability：修補程式可用性</li>
+        <li>Power usage：電力使用量</li>
+    </ul>
+
+    <h2>威脅行為者</h2>
+    <ul>
+        <li>Hacktivists：駭客行動主義者（政治訊息攻擊）</li>
+        <li>Nation-state actors：國家級攻擊者</li>
+        <li>Organized crime：組織犯罪</li>
+        <li>Script kiddies：腳本小子</li>
+        <li>Insider threats：內部威脅</li>
+    </ul>
+
+    <h2>錯誤類型</h2>
+    <ul>
+        <li>False positive：假陽性，誤報</li>
+        <li>False negative：假陰性，漏報</li>
+        <li>True positive：真陽性</li>
+        <li>True negative：真陰性</li>
+    </ul>
+
+</body>
+</html>

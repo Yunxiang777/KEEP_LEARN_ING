@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C# 學習筆記整理</title>
+</head>
+<body>
+    <h1>C# 學習筆記整理</h1>
+
+    <h2>一、程式執行基礎</h2>
+    
+    <h3>1.1 程式入口點 (Entry Point)</h3>
+    <ul>
+        <li>主程式會尋找包含 <code>Main()</code> 方法的類別，而非特定名稱的類別</li>
+        <li><code>Program</code> 只是慣例名稱，不是規定</li>
+        <li>編譯器會搜尋整個專案中哪個類別包含 <code>static void Main()</code></li>
+    </ul>
+
+    <h3>1.2 Main() 方法特性</h3>
+    <ul>
+        <li><strong>static</strong>：屬於類別本身，CLR 可以直接呼叫，不需建立物件</li>
+        <li><strong>void / int</strong>：可選擇是否回傳結束狀態碼</li>
+        <li><strong>Main</strong>：.NET 語言規範定義的保留名稱</li>
+    </ul>
+
+    <h3>1.3 多個 Main() 的處理</h3>
+    <ul>
+        <li>一個應用程式只能有一個 entry point</li>
+        <li>若有多個 Main()，編譯器會報錯</li>
+        <li>解決方式：
+            <ul>
+                <li>Visual Studio：專案屬性 → 應用程式 → 啟動物件</li>
+                <li>命令列：<code>csc /main:ClassName</code></li>
+                <li>多專案方案：各專案有各自的 Main()</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>1.4 Top-level Statements (C# 9+)</h3>
+    <ul>
+        <li>可省略 class 和 Main()，直接在檔案最上方寫程式碼</li>
+        <li>編譯器會自動生成隱藏的 class 與 Main()</li>
+    </ul>
+
+    <h2>二、CLR 與執行機制</h2>
+    
+    <h3>2.1 CLR (Common Language Runtime)</h3>
+    <ul>
+        <li>.NET 的核心執行引擎，類似虛擬機器</li>
+        <li>功能：記憶體管理、型別安全、例外處理、垃圾回收、多執行緒、安全性檢查</li>
+    </ul>
+
+    <h3>2.2 執行流程</h3>
+    <ol>
+        <li>執行 <code>dotnet run</code></li>
+        <li>CLR 啟動並載入程式組件 (.exe)</li>
+        <li>CLR 檢查組件中的 entry point</li>
+        <li>CLR 呼叫 Main() 方法</li>
+    </ol>
+
+    <h3>2.3 編譯過程</h3>
+    <p>C# 原始碼 → 編譯成 IL → 打包進 .exe/.dll → 執行時 CLR 載入 IL → JIT 轉成機器碼 → CPU 執行</p>
+
+    <h2>三、記憶體管理</h2>
+    
+    <h3>3.1 Stack (堆疊)</h3>
+    <ul>
+        <li>儲存：區域變數、函式參數、返回位址</li>
+        <li>特性：速度快、自動管理、LIFO (後進先出)</li>
+        <li>釋放時機：函式執行結束時自動釋放</li>
+    </ul>
+
+    <h3>3.2 Heap (堆積)</h3>
+    <ul>
+        <li>儲存：物件實體、動態分配的資料</li>
+        <li>特性：空間大、彈性高、需要 GC 管理</li>
+        <li>釋放時機：GC 偵測到無參考時回收</li>
+    </ul>
+
+    <h3>3.3 參考型別 vs 值型別</h3>
+    <table border="1">
+        <tr>
+            <th>特性</th>
+            <th>class (參考型別)</th>
+            <th>struct (值型別)</th>
+        </tr>
+        <tr>
+            <td>記憶體位置</td>
+            <td>Heap</td>
+            <td>Stack (或內嵌)</td>
+        </tr>
+        <tr>
+            <td>變數存放</td>
+            <td>參考 (reference)</td>
+            <td>實際值</td>
+        </tr>
+        <tr>
+            <td>複製行為</td>
+            <td>複製參考</td>
+            <td>複製整份資料</td>
+        </tr>
+        <tr>
+            <td>繼承</td>
+            <td>支援</td>
+            <td>不支援 (可實作介面)</td>
+        </tr>
+        <tr>
+            <td>預設值</td>
+            <td>null</td>
+            <td>各欄位預設值</td>
+        </tr>
+    </table>
+
+    <h2>四、資料型別</h2>
+    
+    <h3>4.1 基本型別</h3>
+    <ul>
+        <li><strong>int</strong>：4 byte (32 bit)</li>
+        <li><strong>float</strong>：4 byte，精度 7 位</li>
+        <li><strong>double</strong>：8 byte (預設小數型別)</li>
+        <li><strong>decimal</strong>：16 byte，高精度</li>
+        <li><strong>char</strong>：2 byte (UTF-16 編碼)</li>
+        <li><strong>bool</strong>：1 byte</li>
+        <li><strong>short</strong>：2 byte</li>
+        <li><strong>byte</strong>：1 byte (8 bit)</li>
+    </ul>
+
+    <h3>4.2 字串 (string)</h3>
+    <ul>
+        <li>參考型別，但具有不可變性 (Immutable)</li>
+        <li>變數存在 Stack，字串物件存在 Heap</li>
+        <li>修改字串會建立新物件，而非修改原物件</li>
+    </ul>
+
+    <h3>4.3 陣列 (Array)</h3>
+    <ul>
+        <li>參考型別</li>
+        <li>陣列本體在 Heap，變數 (reference) 在 Stack</li>
+        <li>傳遞陣列時傳的是參考，修改會影響原陣列</li>
+    </ul>
+
+    <h3>4.4 型別轉換</h3>
+    <ul>
+        <li><strong>隱式轉換</strong>：小型別 → 大型別 (如 int → float)</li>
+        <li><strong>顯式轉換</strong>：大型別 → 小型別 (需強制轉型)</li>
+        <li>轉換順序：int → float → double → decimal</li>
+        <li>枚舉轉換：
+            <ul>
+                <li>enum → int：允許 <code>(int)myEnum</code></li>
+                <li>int → enum：必須 <code>(MyEnum)myInt</code></li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>五、存取修飾詞</h2>
+    
+    <table border="1">
+        <tr>
+            <th>修飾詞</th>
+            <th>說明</th>
+            <th>存取範圍</th>
+        </tr>
+        <tr>
+            <td>public</td>
+            <td>完全公開</td>
+            <td>任何地方</td>
+        </tr>
+        <tr>
+            <td>private</td>
+            <td>私有</td>
+            <td>類別內部</td>
+        </tr>
+        <tr>
+            <td>protected</td>
+            <td>受保護</td>
+            <td>類別本身與子類別</td>
+        </tr>
+        <tr>
+            <td>internal</td>
+            <td>內部</td>
+            <td>同一組件 (Assembly)</td>
+        </tr>
+    </table>
+
+    <h2>六、物件導向概念</h2>
+    
+    <h3>6.1 三大特性</h3>
+    <ul>
+        <li><strong>封裝 (Encapsulation)</strong>：隱藏內部實作細節</li>
+        <li><strong>繼承 (Inheritance)</strong>：子類別繼承父類別特性</li>
+        <li><strong>多型 (Polymorphism)</strong>：同一介面不同實作</li>
+    </ul>
+
+    <h3>6.2 類別成員</h3>
+    <ul>
+        <li><strong>欄位 (Field)</strong>：類別的資料成員</li>
+        <li><strong>方法 (Method)</strong>：類別的行為</li>
+        <li><strong>建構子 (Constructor)</strong>：初始化物件</li>
+        <li><strong>this 關鍵字</strong>：指向當前物件的參考</li>
+    </ul>
+
+    <h3>6.3 變數解析順序</h3>
+    <p>在方法內使用變數時，編譯器依序查找：</p>
+    <ol>
+        <li>方法的區域變數</li>
+        <li>方法的參數</li>
+        <li>類別的欄位</li>
+    </ol>
+    <p>當有命名衝突時，使用 <code>this.</code> 明確指定類別欄位</p>
+
+    <h2>七、介面與設計原則</h2>
+    
+    <h3>7.1 介面 (Interface)</h3>
+    <ul>
+        <li>只定義行為契約，不包含實作</li>
+        <li>用於降低耦合 (Coupling)</li>
+        <li>支援多型，不同實作可互換</li>
+        <li>便於測試 (可用假物件)</li>
+    </ul>
+
+    <h3>7.2 耦合 (Coupling)</h3>
+    <ul>
+        <li><strong>高耦合</strong>：模組間依賴程度高，修改影響大</li>
+        <li><strong>低耦合</strong>：模組間依賴程度低，修改影響小</li>
+        <li>介面可有效降低耦合</li>
+    </ul>
+
+    <h3>7.3 里氏替換原則 (LSP)</h3>
+    <ul>
+        <li>子類別必須能夠完全替代父類別</li>
+        <li>不違背父類別的承諾</li>
+        <li>提高可擴展性與維護性</li>
+    </ul>
+
+    <h2>八、泛型 (Generics)</h2>
+    
+    <h3>8.1 泛型概念</h3>
+    <ul>
+        <li>型別的模板，先不指定具體型別</li>
+        <li>使用時再指定實際型別</li>
+        <li>編譯時型別綁定 (compile-time type binding)</li>
+    </ul>
+
+    <h3>8.2 泛型優點</h3>
+    <ul>
+        <li>省程式碼：一次邏輯支援多種型別</li>
+        <li>型別安全：編譯時期檢查</li>
+        <li>效能佳：避免 boxing/unboxing</li>
+    </ul>
+
+    <h3>8.3 IEnumerable&lt;T&gt;</h3>
+    <ul>
+        <li>能逐一列舉元素的集合介面</li>
+        <li>適合用來回傳資料的標準型別</li>
+        <li>通用且不綁死具體實作</li>
+    </ul>
+
+    <h2>九、專案與引用管理</h2>
+    
+    <h3>9.1 專案結構</h3>
+    <ul>
+        <li><strong>bin/</strong>：最終輸出 (.exe, .dll)</li>
+        <li><strong>obj/</strong>：中繼檔案 (編譯過程暫存)</li>
+        <li>兩者都不應加入 Git</li>
+    </ul>
+
+    <h3>9.2 using vs 引用</h3>
+    <ul>
+        <li><strong>using</strong>：語法糖，省略完整命名空間</li>
+        <li><strong>引用 (Reference)</strong>：建立專案/DLL 依賴關係</li>
+        <li>必須先有引用，using 才有意義</li>
+    </ul>
+
+    <h3>9.3 引用方式</h3>
+    <ul>
+        <li><strong>專案引用</strong>：開發階段方便同步更新</li>
+        <li><strong>DLL 引用</strong>：直接使用已編譯組件</li>
+        <li><strong>NuGet 引用</strong>：使用 &lt;PackageReference&gt;</li>
+    </ul>
+
+    <h3>9.4 編譯時 vs 執行時引用</h3>
+    <ul>
+        <li><strong>編譯時</strong>：/reference 參數，型別檢查</li>
+        <li><strong>執行時</strong>：Assembly.Load，動態載入 (用於 Plugin 架構)</li>
+    </ul>
+
+    <h3>9.5 NuGet</h3>
+    <ul>
+        <li>.NET 的套件管理工具</li>
+        <li>類似 npm (Node.js) 或 pip (Python)</li>
+        <li>Package Manager Console：Visual Studio 的 PowerShell 視窗</li>
+    </ul>
+
+    <h2>十、進階語法與特性</h2>
+    
+    <h3>10.1 擴充方法 (Extension Method)</h3>
+    <ul>
+        <li>不改變原類別，新增方法</li>
+        <li>必須在靜態類別中定義</li>
+        <li>方法必須是靜態的</li>
+        <li>第一個參數使用 <code>this</code> 關鍵字</li>
+    </ul>
+
+    <h3>10.2 參數傳遞</h3>
+    <ul>
+        <li><strong>ref</strong>：已有值，要讓方法修改</li>
+        <li><strong>out</strong>：沒有值，要讓方法提供輸出</li>
+        <li>兩者都是參考傳遞 (pass by reference)</li>
+    </ul>
+
+    <h3>10.3 例外處理</h3>
+    <ul>
+        <li><strong>try-catch</strong>：捕捉例外</li>
+        <li><strong>Exception.Message</strong>：例外訊息</li>
+        <li><strong>Exception.StackTrace</strong>：呼叫堆疊</li>
+        <li><strong>int.TryParse</strong>：安全的型別轉換，失敗時 result = 0</li>
+    </ul>
+
+    <h2>十一、運算子與控制流程</h2>
+    
+    <h3>11.1 運算子優先順序</h3>
+    <p>括號 → 乘除 → 加減 → 比較 → 邏輯 → 左到右</p>
+    <ul>
+        <li>&& (AND) 優先於 || (OR)</li>
+    </ul>
+
+    <h3>11.2 邏輯運算子差異</h3>
+    <table border="1">
+        <tr>
+            <th>運算子</th>
+            <th>短路</th>
+            <th>用途</th>
+        </tr>
+        <tr>
+            <td>&& / ||</td>
+            <td>是</td>
+            <td>邏輯運算 (bool)</td>
+        </tr>
+        <tr>
+            <td>& / |</td>
+            <td>否</td>
+            <td>位元運算 (int) 或邏輯運算 (bool)</td>
+        </tr>
+    </table>
+
+    <h3>11.3 除法運算</h3>
+    <ul>
+        <li><strong>/</strong>：除法 (整數除法會捨棄小數)</li>
+        <li><strong>%</strong>：取餘數 (modulo)</li>
+        <li>整數運算會自動提升型別</li>
+    </ul>
+
+    <h3>11.4 三元運算子</h3>
+    <ul>
+        <li>語法：<code>condition ? value_if_true : value_if_false</code></li>
+        <li>必須有回傳值</li>
+        <li>在字串插值中使用時建議加括號</li>
+    </ul>
+
+    <h3>11.5 控制結構</h3>
+    <ul>
+        <li><strong>switch</strong>：case 必須接常量，最後必須 break</li>
+        <li><strong>continue</strong>：跳過本次迴圈，進入下一次</li>
+        <li><strong>break</strong>：跳出迴圈</li>
+        <li><strong>do-while</strong>：至少執行一次</li>
+    </ul>
+
+    <h2>十二、多執行緒</h2>
+    
+    <h3>12.1 CPU 與執行緒</h3>
+    <ul>
+        <li><strong>核心 (Core)</strong>：CPU 的運算單元</li>
+        <li><strong>超執行緒 (Hyper-Threading)</strong>：一個核心模擬兩個邏輯核心</li>
+        <li><strong>執行緒 (Thread)</strong>：程序的最小執行單位</li>
+    </ul>
+
+    <h3>12.2 C# 多執行緒</h3>
+    <ul>
+        <li>Thread：基本執行緒</li>
+        <li>ThreadPool：執行緒池</li>
+        <li>Task (TPL)：平行程式庫，支援 async/await</li>
+    </ul>
+
+    <h2>十三、其他重要概念</h2>
+    
+    <h3>13.1 Stack&lt;T&gt; vs CPU Stack</h3>
+    <ul>
+        <li><strong>Stack&lt;T&gt;</strong>：C# 的泛型資料結構</li>
+        <li><strong>CPU Stack</strong>：電腦硬體的記憶體區域</li>
+        <li>兩者都是 LIFO，但用途不同</li>
+    </ul>
+
+    <h3>13.2 靜態類別生命週期</h3>
+    <ul>
+        <li>不會被 GC 回收</li>
+        <li>存活到 AppDomain 卸載為止</li>
+    </ul>
+
+    <h3>13.3 Unicode</h3>
+    <ul>
+        <li>全球統一的字元編碼標準</li>
+        <li>每個字元有唯一編號 (code point)</li>
+        <li>C# 的 char 使用 UTF-16 編碼</li>
+        <li>超過 U+FFFF 的字元需要代理對 (surrogate pair)</li>
+    </ul>
+
+    <h3>13.4 變數初始化</h3>
+    <table border="1">
+        <tr>
+            <th>變數類型</th>
+            <th>必須初始化</th>
+            <th>預設值</th>
+        </tr>
+        <tr>
+            <td>局部變數</td>
+            <td>是</td>
+            <td>無</td>
+        </tr>
+        <tr>
+            <td>成員變數</td>
+            <td>否</td>
+            <td>0 / null / false</td>
+        </tr>
+        <tr>
+            <td>靜態變數</td>
+            <td>否</td>
+            <td>0 / null / false</td>
+        </tr>
+    </table>
+
+    <h2>十四、常用快捷鍵</h2>
+    <ul>
+        <li><strong>Ctrl+K, Ctrl+C</strong>：多行註解</li>
+        <li><strong>Ctrl+K, Ctrl+U</strong>：取消註解</li>
+        <li><strong>Ctrl+K</strong>：刪除該行</li>
+    </ul>
+
+</body>
+</html>
