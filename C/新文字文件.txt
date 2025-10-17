@@ -33,7 +33,7 @@ FCL (Framework Class Library)：.NET 的工具箱
 
 visul studio => ctrl + 滾輪 => code大小縮放
 	     => 深黑色背景可以護眼
-ctrl + K，ctrl + D => 格式化整齊代碼 1
+ctrl + K，ctrl + D => 格式化整齊代碼
 ========================================================================================
 🧠 一、C# 是高級語言（High-Level Language）
 
