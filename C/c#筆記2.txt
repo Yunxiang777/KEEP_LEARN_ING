@@ -17,7 +17,7 @@ class MyApp
 {
     static void Main()
     {
-        Console.WriteLine("這個程式從 MyApp.Main() 開始執行");
+        Console.WriteLine("這個程式從 MyApp.Main() 開始執行");1111
     }
 }
 
