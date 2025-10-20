@@ -204,3 +204,22 @@ MySolution/
 C#的註解，會在編譯成IL的時候，被拿掉。
 CTRL + K => CTRL + C(加註解)，CTRL + U(取消註解)
 CTRL + / => 單行註解
+
+byte a = 5;
+byte b = 10;
+byte c = a + b;
+Console.WriteLine(c);
+🚫 錯誤訊息（編譯時）：
+pgsql
+複製程式碼
+Cannot implicitly convert type 'int' to 'byte'.
+An explicit conversion exists (are you missing a cast?)
+🔍 為什麼會錯：
+在 C# 裡，雖然 a 和 b 都是 byte，
+但 算術運算（+、-、*、/）時會自動提升（promotion）到 int 型別。
+
+➜ 所以 a + b 的結果型別是 int，不是 byte。
+
+接著你想把 int 結果指派給 byte c，
+這是「可能造成資料遺失的隱式轉型（implicit conversion）」，
+C# 編譯器不允許這樣自動轉型。
