@@ -11,7 +11,7 @@
 
 你可以有不同名字的類別，只要其中有 Main() 方法，程式都能從那裡開始：
 
-using System;
+using System;123
 
 class MyApp
 {
