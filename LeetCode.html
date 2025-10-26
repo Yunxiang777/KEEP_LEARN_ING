@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeetCode 題目練習集</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", "Microsoft JhengHei", sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+
+        header {
+            background-color: #24292e;
+            color: white;
+            padding: 15px 25px;
+            font-size: 1.4em;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* 每一題的整體容器 */
+        .leetcode-item {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 3px solid #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        .left-panel, .right-panel {
+            flex: 1;
+            min-width: 300px;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+
+        .left-panel {
+            background-color: #ffffff;
+            border-right: 2px solid #f0f0f0;
+        }
+
+        .right-panel {
+            background-color: #f9fafc;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #e67e22;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+
+        pre {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: "Consolas", "Courier New", monospace;
+        }
+
+        .question, .answer {
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #24292e;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 900px) {
+            .leetcode-item {
+                flex-direction: column;
+            }
+            .left-panel {
+                border-right: none;
+                border-bottom: 2px solid #f0f0f0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>💡 LeetCode 題目練習集</header>
+
+<!-- 🧩 題目 #1 -->
+<div class="leetcode-item">
+    <div class="left-panel">
+        <h2>1️⃣ Two Sum</h2>
+        <div class="question">
+            <p>給定一個整數陣列 <code>nums</code> 和一個目標值 <code>target</code>，請找出陣列中兩個數，使它們的和等於目標值。</p>
+            <ul>
+                <li>你可以假設每組輸入只有一個答案。</li>
+                <li>同一個元素不能重複使用。</li>
+            </ul>
+            <pre><code>輸入: nums = [2,7,11,15], target = 9
+輸出: [0,1]</code></pre>
+        </div>
+    </div>
+    <div class="right-panel">
+        <h2>解答</h2>
+        <div class="answer">
+            <pre><code>public int[] TwoSum(int[] nums, int target) {
+    int len = nums.Length;
+    for (int i = 0; i < len - 1; i++) {
+        for (int j = i + 1; j < len; j++) {
+            if (nums[i] + nums[j] == target)
+                return new int[] { i, j };
+        }
+    }
+    return null;
+}</code></pre>
+            <p>此方法為暴力解法 (Brute Force)，時間複雜度 O(n²)。</p>
+        </div>
+    </div>
+</div>
+
+<!-- 🧩 題目 #2 -->
+<div class="leetcode-item">
+    <div class="left-panel">
+        <h2>2️⃣ Reverse String</h2>
+        <div class="question">
+            <p>請反轉給定的字元陣列。必須<strong>原地修改</strong>輸入陣列，並使用 O(1) 額外空間。</p>
+            <pre><code>輸入: ['h','e','l','l','o']
+輸出: ['o','l','l','e','h']</code></pre>
+        </div>
+    </div>
+    <div class="right-panel">
+        <h2>解答</h2>
+        <div class="answer">
+            <pre><code>public class Solution {
+    public void ReverseString(char[] s) {
+        int left = 0, right = s.Length - 1;
+        while (left &lt; right) {
+            char temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}</code></pre>
+            <p>雙指針 (Two Pointers) 技巧，時間 O(n)，空間 O(1)。</p>
+        </div>
+    </div>
+</div>
+
+<div class="footer">© 2025 LeetCode 練習筆記 - 製作 by 你</div>
+
+</body>
+</html>
