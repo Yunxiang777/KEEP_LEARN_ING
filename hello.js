@@ -1,2 +1,2 @@
-let buf = Buffer.from('你好');
-console.log(buf);
+const fs = require('fs');
+fs.writeFileSync('/hello.txt', 'Hello World');
