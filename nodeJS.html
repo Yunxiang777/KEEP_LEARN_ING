@@ -303,6 +303,47 @@ console.log(buf);
     </tbody>
   </table>
   <hr>
+  <h2>🧩 一、什麼是「進程（Process）」</h2>
+  <p><strong>進程（Process）</strong> 是：一個「正在執行中的程式」。</p>
+  <p>每當你開啟一個應用程式（例如開啟 Chrome、Word、或計算機 app），作業系統就會建立一個「進程」來負責執行這個程式。</p>
+
+  <h3>🔹進程的特性</h3>
+  <ul>
+    <li><strong>獨立性：</strong> 每個進程都有自己獨立的記憶體空間、資料、變數與系統資源。一個進程崩潰，不會直接影響其他進程。（例如 Chrome 當中的一個分頁當掉，其他分頁仍能運作）</li>
+    <li><strong>系統資源分配單位：</strong> 作業系統分配記憶體、CPU 時間等資源給進程。</li>
+    <li><strong>開銷較大：</strong> 建立、切換進程需要花費較多資源（例如記憶體、系統呼叫等）。</li>
+  </ul>
+
+  <h2>🧵 二、什麼是「線程（Thread）」</h2>
+  <p><strong>線程（Thread）</strong> 是：進程中的「執行單位」。</p>
+  <p>一個進程可以包含一條或多條線程，這些線程共享同一個進程的資源（記憶體、檔案描述符等），但每條線程有自己獨立的執行堆疊（stack）與計數器（program counter）。</p>
+
+  <h3>🔹線程的特性</h3>
+  <ul>
+    <li><strong>輕量級（lightweight）：</strong> 線程的建立和切換比進程更快，因為它們共享相同的記憶體空間。</li>
+    <li><strong>共享資源：</strong> 同一進程內的多個線程可以直接共享變數與資料。
+      <blockquote>👉 這讓多線程能夠快速協作，但也可能產生<strong>競爭條件（race condition）與死鎖（deadlock）</strong>問題。</blockquote>
+    </li>
+    <li><strong>同時執行（併發）：</strong> 多條線程可以在多核心 CPU 上同時執行不同的任務，提升效能。</li>
+  </ul>
+
+  <h2>🧠 三、舉例說明</h2>
+  <p>假設你打開一個「網頁瀏覽器」：</p>
+  <ul>
+    <li>每個開啟的瀏覽器視窗或分頁 = 一個「<strong>進程（Process）</strong>」</li>
+    <li>每個分頁裡：
+      <ul>
+        <li>一條線程負責載入 HTML</li>
+        <li>一條線程負責渲染畫面</li>
+        <li>一條線程負責執行 JavaScript</li>
+      </ul>
+      → 這些都是「<strong>線程（Threads）</strong>」。
+    </li>
+  </ul>
+  <hr>
+  <h3>甚麼是 \r\n</h3>
+  <p>當我們輸出「文字」時，像 <code>\r\n</code> 這種「跳脫序列（escape sequence）」並不是字面上的兩個字元，而是電腦在解析並執行對應動作（例如換行）。</p>
+  <hr>
 
 </body>
 
