@@ -1,0 +1,234 @@
+ECMAScript（簡稱 ES） 是一種 標準，不是程式語言
+JavaScript 是 ECMAScript 的一種實作，實現了 ECMAScript 標準 + 瀏覽器 的 API(例如 DOM API)
+Node.js 也是 ECMAScript 的一種實作，實現了 ECMAScript 標準 + Node.js 的 API(例如 fs 模組)
+以「汽車」類比：
+ECMAScript = 汽車設計圖標準
+JavaScript = Toyota 根據設計圖製造的車
+Node.js = Tesla 根據同樣設計圖，但改成電動車版本
+
+什麼是 ES5 和 ES6？
+ES5 和 ES6 是 ECMAScript 標準的不同版本
+
+Buffer是甚麼?
+Buffer 是 Node.js 用來處理二進位資料的類別
+在 JavaScript 裡，字串是以 UTF-16 編碼的，而 Buffer 則是以位元組（byte）為單位來儲存資料
+Buffer 可以用來處理檔案讀寫、網路傳輸等需要操作二進位資料的情況
+
+Unicode 與 UTF-16 的關係
+Unicode 是一個字元編碼標準，為全球所有文字和符號分配"唯一的編碼"
+UTF-16 是「實現 Unicode」的一種具體編碼方式。
+
+🧠 一、電腦只能看懂「數字（位元）」
+對電腦而言，世界只有 0 和 1。
+字母、漢字、符號都要先「變成數字」，然後再「變成位元」才能儲存或顯示。
+
+例如：A → 65 → 01000001（二進位）
+
+🏗️ 二、最早只有 ASCII（美國標準）
+在 1960～1970 年代，電腦只支援英文。
+
+字元 數字 二進位 說明
+A 65 01000001 英文字母
+B 66 01000010 英文字母
+a 97 01100001 英文字母
+這套編碼叫 ASCII，只用 1 byte (8 bits)，可表示 0~127 共 128 個符號。
+這時候「A = 65」是直接規定在 ASCII 標準裡。
+
+🌏 三、問題：那中文、日文、希伯來文怎辦？
+ASCII 只夠表示英文字母，其他語言就沒空間了。
+各國於是自己發明不同的編碼（如 Big5、Shift-JIS、GB2312）——結果全球混亂不堪，
+不同地區的同一組數字會代表不同的字！
+
+例如：
+
+編碼系統 數字 0xA4A4 顯示結果
+Big5 「你」
+GB2312 「啊」
+Shift-JIS 亂碼
+🌐 四、Unicode 的出現：統一編號系統
+
+Unicode 的目標：全世界所有文字，都有一個「全球唯一的代碼」。
+
+所以它規定：
+字元 Unicode 碼點（Code Point）
+A U+0041
+中 U+4E2D
+😊 U+1F60A
+
+這裡的 U+0041 就是「Unicode 編號」，
+它是一個「抽象的字元代號」——不代表實際的位元資料。
+只是標準在說：「這個符號 A，我給它一個唯一的代碼 0x0041。」
+
+💾 五、UTF 系列的目的：把 Unicode「轉成」實際位元
+
+電腦要儲存、傳輸，還是得要 0 與 1。
+於是有了「UTF（Unicode Transformation Format）」——
+把 Unicode 碼點轉成實際的 bytes。
+
+例子：
+
+Unicode 定義：
+
+A = U+0041
+
+
+UTF-16 編碼方式會把它變成：
+
+U+0041 → 00 41 （兩個 bytes）
+
+
+UTF-8 編碼方式會把它變成：
+
+U+0041 → 41 （一個 byte）
+
+
+所以在電腦底層，
+
+UTF-16 的 A：00000000 01000001
+
+UTF-8 的 A：01000001
+
+顯示結果都是一樣的「A」，
+只是編碼方式不同。
+
+⚙️ 六、為什麼需要 U+0041 這種符號格式？
+
+因為「Unicode 編號」只是抽象定義，不綁定任何特定編碼方式。
+
+這樣的好處是：
+
+目的 好處
+統一全世界文字 不同語言共用同一套代號
+不受編碼方式限制 UTF-8、UTF-16、UTF-32 都能表示相同的 Unicode 碼點
+更容易維護 程式或標準文件可用「U+xxxx」直接表示字元，而不用關心二進位長相
+
+換句話說：
+
+U+0041 是「字元 A」在全球的身份證號碼。
+UTF-8 / UTF-16 是「這個人如何被存進電腦裡」。
+
+🧩 七、完整流程圖
+概念層：
+"A" → Unicode code point: U+0041 ← (全世界統一的代號)
+編碼層：
+UTF-8 → 0x41 → 01000001
+UTF-16 → 0x0041 → 00000000 01000001
+UTF-32 → 0x00000041→ 00000000 00000000 00000000 01000001
+
+
+顯示層：
+
+→ 螢幕顯示 "A"
+
+================================================================================
+let buf = Buffer.from('hello'); console.log(buf); 告訴我這個輸出的關係 PS D:\KEEP_LEARN_ING> node .\hello.js <Buffer 68 65 6c 6c
+  6f 77>
+
+  let buf = Buffer.from('hello');
+  console.log(buf);
+
+  告訴我這個輸出的關係
+  PS D:\KEEP_LEARN_ING> node .\hello.js
+  <Buffer 68 65 6c 6c 6f 77>
+
+    這段程式其實牽涉到了 字串 → 二進位資料（Buffer） → 十六進位顯示 的過程，
+    正好可以幫你把「文字編碼」在 Node.js 裡是怎麼落地實作的講清楚。
+
+    🧠 一、程式碼內容回顧
+    let buf = Buffer.from('hello');
+    console.log(buf);
+    輸出：
+
+    <Buffer 68 65 6c 6c 6f>
+
+
+      （你貼的結果 <Buffer 68 65 6c 6c 6f 77> 裡的最後 77 可能是多打了一個字母 😄，正確應該只有 hello → 五個位元組）
+
+        🧩 二、發生了什麼？
+
+        1️⃣ 'hello' 是一個 JavaScript 字串
+        → 內部採用 UTF-16 編碼 儲存。
+
+        2️⃣ Buffer.from('hello')
+        → Node.js 會自動把字串轉成 UTF-8 編碼的 bytes，
+        並建立一個 Buffer 物件（類似 C 裡的 byte array）。
+
+        3️⃣ console.log(buf)
+        → Node 以 十六進位（hexadecimal）格式 顯示每個位元組。
+
+        🔍 三、逐步對照分析
+        字元 Unicode 碼點 UTF-8 編碼 (十六進位) Buffer 內容
+        h U+0068 68 68
+        e U+0065 65 65
+        l U+006C 6C 6C
+        l U+006C 6C 6C
+        o U+006F 6F 6F
+
+        所以結果是：
+
+        <Buffer 68 65 6c 6c 6f>
+
+          ⚙️ 四、進一步解釋：為什麼是 68 而不是 104？
+
+          十六進位 0x68 = 十進位 104。
+          這代表字母 'h' 的 ASCII／UTF-8 編碼值。
+
+          換算如下：
+
+          h = U+0068 → 0x68 = 104（二進位 01101000）
+
+
+          Node 顯示時為了簡潔，選擇十六進位表示。
+
+          🧠 五、驗證轉換
+
+          你可以把 Buffer 轉回字串看看：
+
+          let buf = Buffer.from('hello');
+          console.log(buf.toString('utf8')); // hello
+
+
+          也可以看十六進位字串：
+
+          console.log(buf.toString('hex')); // 68656c6c6f
+
+          💾 六、所以整個關係是：
+          JavaScript 字串 "hello"
+          ↓ (內部是 UTF-16)
+          Buffer.from("hello")
+          ↓ (轉成 UTF-8)
+          Buffer = <68 65 6C 6C 6F>
+            ↓
+            顯示時以十六進位格式輸出
+
+            ✅ 七、簡單總結
+            概念 說明
+            Buffer Node.js 的二進位資料容器，類似 byte array
+            'hello' JavaScript 字串，內部 UTF-16
+            Buffer.from('hello') 轉成 UTF-8 bytes
+            <Buffer 68 65 6c 6c 6f> 顯示每個 byte 的十六進位值
+              68 65 6c 6c 6f 對應字母 h e l l o 的 UTF-8 編碼
+
+
+              如果你想，我可以示範一下：
+              👉「同樣的字串在 UTF-16 和 UTF-8 下的 Buffer 差別」
+              例如 Buffer.from('hello', 'utf16le') 與 Buffer.from('hello', 'utf8')。
+              要我幫你比較一下嗎？
+
+              UTF-8，他是用多少BYTE再存字元
+              💡 一句話總結：
+
+              UTF-8 用 1～4 個 bytes 來表示一個 Unicode 字元，
+              英文 1 byte、中文 3 bytes、Emoji 4 bytes。
+
+              、UTF-8 的關鍵特性：變長（Variable-length）
+
+              UTF-8 不是固定 1 byte，而是：
+
+              👉 每個字元可以佔 1 到 4 個 bytes。
+
+              字元範圍 (Unicode 碼點) 位元組數 (Bytes) 說明
+              U+0000 ~ U+007F 1 byte 英文、數字、基本符號（與 ASCII 完全相同）
+              U+0080 ~ U+07FF 2 bytes 拉丁擴充、希臘文、阿拉伯文等
+              U+0800 ~ U+FFFF 3 bytes 多數亞洲文字（如中文、日文、韓文）
+              U+10000 ~ U+10FFFF 4 bytes emoji、罕見字、特殊符號

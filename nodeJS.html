@@ -65,6 +65,244 @@
       </tbody>
     </table>
   </section>
+  <hr>
+  <section>
+    <h2>ECMAScript 與實作</h2>
+    <p>
+      <strong>ECMAScript（簡稱 ES）</strong> 是一種標準，不是程式語言。<br>
+      <strong>JavaScript</strong> 是 ECMAScript 的一種實作，實現了 ECMAScript 標準並在瀏覽器中提供瀏覽器特有的 API（例如 DOM API）。<br>
+      <strong>Node.js</strong> 也是 ECMAScript 的一種實作，實現了 ECMAScript 標準並提供 Node.js 的 API（例如 <code>fs</code> 模組）。
+    </p>
+
+    <p>以「汽車」類比：</p>
+    <ul>
+      <li>ECMAScript = 汽車設計圖標準</li>
+      <li>JavaScript = Toyota 根據設計圖製造的車</li>
+      <li>Node.js = Tesla 根據同樣設計圖，但改成電動車版本</li>
+    </ul>
+  </section>
+  <hr>
+  <h2>Buffer 是什麼？</h2>
+  <ul>
+    <li><strong>Buffer</strong> 是 Node.js 用來處理<strong>二進位資料</strong>的類別。</li>
+    <li>在 JavaScript 裡，字串是以 UTF-16 編碼的，而 Buffer 則是以<strong>位元組（byte）</strong>為單位來儲存資料。</li>
+    <li>Buffer 可以用來處理檔案讀寫、網路傳輸等需要操作二進位資料的情況。</li>
+  </ul>
+
+  <hr>
+
+  <h2>Unicode 與 UTF-16 的關係</h2>
+  <ul>
+    <li><strong>Unicode</strong> 是一個<strong>字元編碼標準</strong>，為全球所有文字和符號分配「唯一的編碼」。</li>
+    <li><strong>UTF-16</strong> 是「實現 Unicode」的一種<strong>具體編碼方式</strong>。</li>
+  </ul>
+
+  <hr>
+
+  <h1>電腦編碼原理（ASCII、Unicode、UTF 系列）</h1>
+
+  <h3>一、電腦只能看懂「數字（位元）」</h3>
+  <p>對電腦而言，世界只有 0 和 1。字母、漢字、符號都要先「變成數字」，然後再「變成位元」才能儲存或顯示。</p>
+  <blockquote>例如：A → 65 → 01000001（二進位）</blockquote>
+
+  <h3>二、最早只有 ASCII（美國標準）</h3>
+  <p>這套編碼叫 ASCII，只用 1 byte (8 bits)，可表示 0~127 共 128 個符號。只夠表示英文字母、數字與基本符號。</p>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+      <tr>
+        <th>字元</th>
+        <th>十進位數字</th>
+        <th>二進位</th>
+        <th>位元組數</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A</td>
+        <td>65</td>
+        <td>01000001</td>
+        <td>1 byte</td>
+      </tr>
+      <tr>
+        <td>B</td>
+        <td>66</td>
+        <td>01000010</td>
+        <td>1 byte</td>
+      </tr>
+      <tr>
+        <td>a</td>
+        <td>97</td>
+        <td>01100001</td>
+        <td>1 byte</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>三、問題：那中文、日文、希伯來文怎辦？</h3>
+  <p>各國自己發明不同的編碼（如 Big5、Shift-JIS、GB2312），導致不同地區的同一組數字會代表不同的字，造成全球混亂。</p>
+
+  <h3>四、Unicode 的出現：統一編號系統</h3>
+  <p>Unicode 的目標是：全世界所有文字，都有一個「全球唯一的代碼」 (Code Point)。</p>
+  <p><strong>U+xxxx</strong> 是「抽象的字元代號」，不代表實際的位元資料，只是字元的全球身份證號碼。</p>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+      <tr>
+        <th>字元</th>
+        <th>Unicode 碼點（Code Point）</th>
+        <th>說明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>A</td>
+        <td>U+0041</td>
+        <td>英文字母</td>
+      </tr>
+      <tr>
+        <td>中</td>
+        <td>U+4E2D</td>
+        <td>中文字元</td>
+      </tr>
+      <tr>
+        <td>😊</td>
+        <td>U+1F60A</td>
+        <td>Emoji 符號</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>五、UTF 系列的目的：把 Unicode「轉成」實際位元</h3>
+  <p>UTF（Unicode Transformation Format）是把 Unicode 碼點轉成實際儲存或傳輸所需的 bytes。</p>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Unicode 碼點</th>
+        <th>UTF-16 編碼 (Bytes)</th>
+        <th>UTF-8 編碼 (Bytes)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>U+0041 ('A')</td>
+        <td>00 41 （2 bytes）</td>
+        <td>41 （1 byte）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>七、完整流程圖</h3>
+  <ol>
+    <li><strong>概念層：</strong> "A" → Unicode code point: U+0041 (全世界統一的代號)</li>
+    <li><strong>編碼層：</strong>
+      <ul>
+        <li>UTF-8 → 0x41 → 01000001</li>
+        <li>UTF-16 → 0x0041 → 00000000 01000001</li>
+        <li>UTF-32 → 0x00000041→ 00000000 00000000 00000000 01000001</li>
+      </ul>
+    </li>
+    <li><strong>顯示層：</strong> → 螢幕顯示 "A"</li>
+  </ol>
+
+  <hr>
+
+  <h1>Node.js Buffer 實例分析</h1>
+
+  <pre><code>let buf = Buffer.from('hello');
+console.log(buf);
+// 輸出：
+// &lt;Buffer 68 65 6c 6c 6f&gt;
+    </code></pre>
+
+  <h3>二、發生了什麼？</h3>
+  <ol>
+    <li><code>'hello'</code>：JavaScript 字串，內部採用 UTF-16 編碼。</li>
+    <li><code>Buffer.from('hello')</code>：Node.js 自動轉成 <strong>UTF-8 編碼的 bytes</strong>，建立 Buffer 物件。</li>
+    <li><code>&lt;Buffer ... &gt;</code>：Node 以 <strong>十六進位（hexadecimal）格式</strong> 顯示每個位元組。</li>
+  </ol>
+
+  <h3>三、逐步對照分析 (UTF-8 編碼)</h3>
+  <table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+      <tr>
+        <th>字元</th>
+        <th>Unicode 碼點</th>
+        <th>UTF-8 編碼 (十六進位)</th>
+        <th>Buffer 內容</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>h</td>
+        <td>U+0068</td>
+        <td>68</td>
+        <td>68</td>
+      </tr>
+      <tr>
+        <td>e</td>
+        <td>U+0065</td>
+        <td>65</td>
+        <td>65</td>
+      </tr>
+      <tr>
+        <td>l</td>
+        <td>U+006C</td>
+        <td>6C</td>
+        <td>6C</td>
+      </tr>
+      <tr>
+        <td>l</td>
+        <td>U+006C</td>
+        <td>6C</td>
+        <td>6C</td>
+      </tr>
+      <tr>
+        <td>o</td>
+        <td>U+006F</td>
+        <td>6F</td>
+        <td>6F</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>結果：<code>&lt;Buffer 68 65 65 6c 6c 6f&gt;</code></p>
+
+  <hr>
+
+  <h2>UTF-8 編碼的位元組數</h2>
+
+  <p><strong>總結：</strong> UTF-8 用 <strong>1～4 個 bytes</strong> 來表示一個 Unicode 字元，是變長（Variable-length）編碼。</p>
+
+  <table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+      <tr>
+        <th>字元範圍 (Unicode 碼點)</th>
+        <th>位元組數 (Bytes)</th>
+        <th>常見範例</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>U+0000 ~ U+007F</td>
+        <td>1 byte</td>
+        <td>英文、數字 (與 ASCII 相同)</td>
+      </tr>
+      <tr>
+        <td>U+0080 ~ U+07FF</td>
+        <td>2 bytes</td>
+        <td>拉丁擴充、希臘文等</td>
+      </tr>
+      <tr>
+        <td>U+0800 ~ U+FFFF</td>
+        <td>3 bytes</td>
+        <td><strong>多數中文、日文、韓文</strong></td>
+      </tr>
+      <tr>
+        <td>U+10000 ~ U+10FFFF</td>
+        <td>4 bytes</td>
+        <td><strong>Emoji</strong>、罕見字、特殊符號</td>
+      </tr>
+    </tbody>
+  </table>
+  <hr>
 
 </body>
 
