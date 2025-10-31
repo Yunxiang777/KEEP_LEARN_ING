@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <p>NODEJS，是一款應用程式，是一個軟件，可以用來運行JS。</p>
+  <hr>
+  <section>
+    <h2>打包工具速覽</h2>
+    <ol>
+      <li><strong>Babel</strong> — 負責把新 JS 語法轉成舊版（功能完整，但相對較慢）。</li>
+      <li><strong>esbuild</strong> — 用 Go 寫的超快速編譯與打包器，速度非常快但功能較簡潔。</li>
+      <li><strong>Webpack</strong> — 萬能但笨重的傳統打包器，擴充套件眾多。</li>
+      <li><strong>Rollup</strong> — 針對 ESM 的乾淨優雅打包器（Vite 在生產階段會使用它作為底層）。</li>
+      <li><strong>Vite</strong> — 現代化、結合 esbuild（開發時）與 Rollup（生產時）的超快建構工具。</li>
+    </ol>
+  </section>
+  <hr>
+  <section>
+    <h2>整體流程概述</h2>
+    <p>目標：將程式碼轉換成瀏覽器能讀懂的格式，並減少載入檔案數量</p>
+    <ul>
+      <li><strong>第一步 — 語法轉換：</strong>把新 JS 語法（例如 <code>const</code>、箭頭函式、JSX、TypeScript）轉成舊 JS（ES5）。常見工具：Babel 或
+        esbuild；打包工具（如 Webpack、Vite）會依賴編譯器先處理。</li>
+      <li><strong>第二步 — 模組打包：</strong>把分散的檔案（.js, .css, images）合併成少數幾個檔案（例如
+        <code>bundle.js</code>）。常見工具：Webpack 或 Rollup，這些工具在語法轉換後會將程式碼合併並優化。
+      </li>
+    </ul>
+  </section>
+  <hr>
+  <section>
+    <h2>關係與分工</h2>
+    <table border="1" cellpadding="6" cellspacing="0">
+      <thead>
+        <tr>
+          <th>階段</th>
+          <th>核心工具</th>
+          <th>協作工具（底層）</th>
+          <th>關係描述</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>開發 (Dev)</td>
+          <td>Vite（開發伺服器）</td>
+          <td>esbuild</td>
+          <td>Vite 利用 esbuild 的超快速度處理與轉換程式碼，達成幾乎即時的熱重載（hot-reload）。</td>
+        </tr>
+        <tr>
+          <td>生產 (Build)</td>
+          <td>Vite（build 命令）</td>
+          <td>Rollup</td>
+          <td>Vite 使用 Rollup 進行最終的生產打包，以達到更優化的 tree-shaking 與更小、更乾淨的輸出檔案。</td>
+        </tr>
+        <tr>
+          <td>輔助</td>
+          <td>Vite</td>
+          <td>Babel</td>
+          <td>若 esbuild 不支援某些特殊語法（例如實驗性語法或針對老舊瀏覽器），Vite 可透過 Plugin 搭配 Babel 輔助處理。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+</body>
+
+</html>
