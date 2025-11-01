@@ -421,7 +421,135 @@ fs.writeFileSync('/hello.txt', 'Hello World');
 
   <h2>四、__dirname 絕對路徑變數</h2>
   <p><strong><code>__dirname</code></strong>：它代表，此文件所在的目錄路徑，而且是<strong>絕對路徑</strong>，直到文件夾結束。</p>
+  <hr>
+  <h2>path.resolve() 行為分析</h2>
 
+  <p><strong>程式碼：</strong> <code>console.log('Current file path:', path.resolve(__filename, '/index.html'));</code>
+  </p>
+
+  <h3>為甚麼這樣變成跟目錄了？</h3>
+
+  <p>問題核心在於 <code>path.resolve()</code> 的運作邏輯，它會從<strong>右到左</strong>處理參數，直到遇到一個「絕對路徑」為止。</p>
+
+  <ul>
+    <li><code>__filename</code>：這是當前檔案的<strong>絕對路徑</strong>（例如 <code>/Users/user/project/file.js</code>）。</li>
+    <li><code>/index.html</code>：這是一個以 <code>/</code> 開頭的**絕對路徑**。</li>
+  </ul>
+
+  <p>當 <code>path.resolve()</code> 處理到第二個參數 <code>/index.html</code> 時：</p>
+  <blockquote>
+    它是一個絕對路徑（以 <code>/</code> 開頭），所以 <code>path.resolve()</code> 會將它當成「根」來處理，並<strong>忽略</strong>它前面所有的路徑部分（包括
+    <code>__filename</code>）。
+  </blockquote>
+
+  <p>因此，結果會直接是作業系統的根目錄下的 <code>index.html</code>：</p>
+  <p><strong>輸出結果：</strong> <code>/index.html</code></p>
+  <hr>
+  <h2>子網路遮罩計算 (Subnet Mask)</h2>
+
+  <p>子網路遮罩用於將 IP 位址分為「網路位址 (Network Address)」和「主機位址 (Host Address)」兩部分。</p>
+  <p>計算可用主機數量的公式：<strong>2^n - 2</strong>
+
+  <h3>範例一：C 類網路遮罩</h3>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>項目</th>
+        <th>數值</th>
+        <th>說明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IPv4 位址</td>
+        <td>192.168.0.12</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>子網路遮罩</td>
+        <td>255.255.255.0</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>子網路遮罩 (二進制)</td>
+        <td>11111111.11111111.11111111.<strong>00000000</strong></td>
+        <td><strong>前面 24 個 1</strong> (網路位址)，<strong>後面 8 個 0</strong> (主機位址，$n=8$)</td>
+      </tr>
+      <tr>
+        <td>總位址數</td>
+        <td>$2^8 = 256$</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>可用主機數量</td>
+        <td>$256 - 2 = 254$</td>
+        <td>扣除網路位址 (192.168.0.0) 和廣播位址 (192.168.0.255)</td>
+      </tr>
+      <tr>
+        <td>CIDR 表示法</td>
+        <td>/24</td>
+        <td>表示子網路遮罩有 24 個 1</td>
+      </tr>
+      <tr>
+        <td>網路/CIDR</td>
+        <td>192.168.0.0/24</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>範例二：A 類網路遮罩</h3>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>項目</th>
+        <th>數值</th>
+        <th>說明</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IPv4 位址</td>
+        <td>10.0.0.23</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>子網路遮罩</td>
+        <td>255.0.0.0</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>子網路遮罩 (二進制)</td>
+        <td>11111111.<strong>00000000.00000000.00000000</strong></td>
+        <td><strong>前面 8 個 1</strong> (網路位址)，<strong>後面 24 個 0</strong> (主機位址，$n=24$)</td>
+      </tr>
+      <tr>
+        <td>總位址數</td>
+        <td>$2^{24} = 16777216$</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>可用主機數量</td>
+        <td>$16777216 - 2 = 16777214$</td>
+        <td>扣除網路位址 (10.0.0.0) 和廣播位址 (10.255.255.255)</td>
+      </tr>
+      <tr>
+        <td>可用主機範圍</td>
+        <td>10.0.0.1 ～ 10.255.255.254</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>CIDR 表示法</td>
+        <td>/8</td>
+        <td>表示子網路遮罩有 8 個 1</td>
+      </tr>
+      <tr>
+        <td>網路/CIDR</td>
+        <td>10.0.0.0/8</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <hr>
 </body>
 
