@@ -700,6 +700,144 @@ server2.listen(5000); // 監聽 Port 5000
     </tbody>
   </table>
   <hr>
+    <ul>
+        <li><strong>Form Data 是什麼？</strong>
+            <p>表單欄位資料在提交時，打包給伺服器的內容。</p>
+        </li>
+        <li><strong>和查詢字符串（Query String）差別？</strong>
+            <p>查詢字符串是放在 URL 後的參數（例如：<code>?key=value</code>）；Form Data 通常在 <strong>POST 請求的 Body</strong> 中傳送。</p>
+        </li>
+        <li><strong>為什麼提交表單會跳頁？</strong>
+            <p>因為 <code>&lt;form&gt;</code> 的<strong>預設行為</strong>是提交資料並導向 <code>action</code> 屬性指定的頁面。</p>
+        </li>
+    </ul>
+    <hr>
+    <h2><code>application/x-www-form-urlencoded</code> 是什麼？</h2>
+
+    <p>這是一種<strong>資料編碼格式（encoding type）</strong>，是 <code>&lt;form&gt;</code> 在使用 <code>POST</code> 或 <code>GET</code> 時<strong>預設的傳送格式</strong>。</p>
+
+    <h3>📌 程式碼範例：</h3>
+    <pre>
+&lt;form action="/login" method="POST" enctype="application/x-www-form-urlencoded"&gt;
+  &lt;input type="text" name="username" value="Yunxiang"&gt;
+  &lt;input type="password" name="password" value="1234"&gt;
+  &lt;button type="submit"&gt;送出&lt;/button&gt;
+&lt;/form&gt;
+    </pre>
+
+    <p>🔹 提交時，瀏覽器會將資料編碼成：</p>
+    <blockquote>
+        <code>username=Yunxiang&password=1234</code>
+    </blockquote>
+    <p>這就是 <strong>URL encoded form data</strong>。</p>
+
+    <hr>
+
+    <h2>什麼叫做「URL 編碼」（URL Encoding）</h2>
+
+    <p>「URL 編碼」指的是：</p>
+    <p><strong>把特殊字元（例如空白、中文、符號）轉成瀏覽器與伺服器都能安全傳輸的格式。</strong></p>
+
+    <h3>✅ 範例：</h3>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>原始文字</th>
+                <th>URL 編碼後</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Yunxiang Wang</td>
+                <td><code>Yunxiang+Wang</code></td>
+            </tr>
+            <tr>
+                <td>C# language</td>
+                <td><code>C%23+language</code></td>
+            </tr>
+            <tr>
+                <td>台灣</td>
+                <td><code>%E5%8F%B0%E7%81%A3</code></td>
+            </tr>
+            <tr>
+                <td>email@example.com</td>
+                <td><code>email%40example.com</code></td>
+            </tr>
+        </tbody>
+    </table>
+    <p><em>註：這些 <code>%xx</code> 代表「字元的十六進位 ASCII 值」。例如 <code>%20</code> 表示空白，<code>%40</code> 表示 <code>@</code>。</em></p>
+    <p>因為 URL 與 HTTP 協定中，<strong>某些符號有特殊用途</strong>，不能直接出現在資料中。</p>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>符號</th>
+                <th>在 URL 中的用途</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>?</code></td>
+                <td>問號開啟查詢字串</td>
+            </tr>
+            <tr>
+                <td><code>&</code></td>
+                <td>分隔多個參數</td>
+            </tr>
+            <tr>
+                <td><code>=</code></td>
+                <td>分隔鍵和值</td>
+            </tr>
+            <tr>
+                <td><code>/</code></td>
+                <td>路徑分隔符</td>
+            </tr>
+        </tbody>
+    </table>
+    <p>👉 如果使用者輸入的內容裡也有這些字元，就會混淆伺服器的解析邏輯。所以瀏覽器會自動<strong>「URL encode」</strong>以防止錯誤。</p>
+    <hr>
+    <h2>常見的三種表單編碼方式</h2>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>編碼方式 (<code>enctype</code>)</th>
+                <th>用途說明</th>
+                <th>範例格式</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>application/x-www-form-urlencoded</code></td>
+                <td><strong>預設。</strong>用於純文字欄位（最常見）</td>
+                <td><code>key1=value1&key2=value2</code></td>
+            </tr>
+            <tr>
+                <td><code>multipart/form-data</code></td>
+                <td><strong>上傳檔案時使用</strong>（含 binary 資料）</td>
+                <td>每個欄位分段處理，有 <code>boundary</code> 標記</td>
+            </tr>
+            <tr>
+                <td><code>text/plain</code></td>
+                <td><strong>幾乎不用。</strong>純文字，不會 URL 編碼</td>
+                <td><code>key1=value1 key2=value2</code> (不同鍵值間以空格分隔)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>在實際 HTTP Request 裡怎麼看</h2>
+
+    <p>當你在瀏覽器開發者工具 (F12) 的 Network 面板中查看表單請求時，會看到類似以下內容：</p>
+
+    <blockquote>
+        <pre>
+POST /login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+username=Yunxiang+Wang&password=1234
+        </pre>
+    </blockquote>
 </body>
+<hr>
 
 </html>
