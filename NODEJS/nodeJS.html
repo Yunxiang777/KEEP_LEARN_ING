@@ -344,7 +344,7 @@ console.log(buf);
   <h3>甚麼是 \r\n</h3>
   <p>當我們輸出「文字」時，像 <code>\r\n</code> 這種「跳脫序列（escape sequence）」並不是字面上的兩個字元，而是電腦在解析並執行對應動作（例如換行）。</p>
   <hr>
-  <h2>一、Node.js 檔案寫入與 Windows 權限</h2>
+  <h2>Node.js 檔案寫入與 Windows 權限</h2>
 
   <pre><code>const fs = require('fs');
 fs.writeFileSync('/hello.txt', 'Hello World');
@@ -369,13 +369,13 @@ fs.writeFileSync('/hello.txt', 'Hello World');
 
   <hr>
 
-  <h2>二、相對路徑的基準點</h2>
+  <h2>相對路徑的基準點</h2>
   <p>有一個很特別的事情：</p>
   <p><strong>Node.js fs 模組的相對路徑是相對於 執行 node 的位置，而不是相對於 js 檔案的位置。</strong></p>
 
   <hr>
 
-  <h2>三、路徑分隔符 / 與 \ 的兼容性</h2>
+  <h2>路徑分隔符 / 與 \ 的兼容性</h2>
 
   <h3>為什麼路徑 / 跟 \ 它們的表達意思不衝突？</h3>
   <p>在 Windows 上，正斜線 (<code>/</code>) 和反斜線 (<code>\</code>) 都能用來表示路徑。</p>
@@ -419,7 +419,7 @@ fs.writeFileSync('/hello.txt', 'Hello World');
 
   <hr>
 
-  <h2>四、__dirname 絕對路徑變數</h2>
+  <h2>__dirname 絕對路徑變數</h2>
   <p><strong><code>__dirname</code></strong>：它代表，此文件所在的目錄路徑，而且是<strong>絕對路徑</strong>，直到文件夾結束。</p>
   <hr>
   <h2>path.resolve() 行為分析</h2>
@@ -551,7 +551,7 @@ fs.writeFileSync('/hello.txt', 'Hello World');
     </tbody>
   </table>
   <hr>
-  <h2>一、一台主機可以有多個不同端口處理不同事情嗎？</h2>
+  <h2>一台主機可以有多個不同端口處理不同事情嗎？</h2>
   <p><strong>答案：✅ 可以。</strong></p>
 
   <p>一台主機（Host）可以同時開啟多個不同的端口（Port），處理不同的服務或應用程式。</p>
@@ -616,7 +616,7 @@ fs.writeFileSync('/hello.txt', 'Hello World');
 
   <hr>
 
-  <h2>二、一個應用程序可以同時使用多個 Port 嗎？</h2>
+  <h2>一個應用程序可以同時使用多個 Port 嗎？</h2>
 
   <p><strong>答案：✅ 可以。</strong></p>
 
@@ -661,7 +661,7 @@ server2.listen(5000); // 監聽 Port 5000
 
   <hr>
 
-  <h2>三、執行程式時的 PID 是什麼？</h2>
+  <h2>執行程式時的 PID 是什麼？</h2>
 
   <h3>什麼是 PID？</h3>
   <p><strong>PID 是英文 Process ID（進程 ID）的縮寫。</strong></p>
@@ -700,24 +700,25 @@ server2.listen(5000); // 監聽 Port 5000
     </tbody>
   </table>
   <hr>
-    <ul>
-        <li><strong>Form Data 是什麼？</strong>
-            <p>表單欄位資料在提交時，打包給伺服器的內容。</p>
-        </li>
-        <li><strong>和查詢字符串（Query String）差別？</strong>
-            <p>查詢字符串是放在 URL 後的參數（例如：<code>?key=value</code>）；Form Data 通常在 <strong>POST 請求的 Body</strong> 中傳送。</p>
-        </li>
-        <li><strong>為什麼提交表單會跳頁？</strong>
-            <p>因為 <code>&lt;form&gt;</code> 的<strong>預設行為</strong>是提交資料並導向 <code>action</code> 屬性指定的頁面。</p>
-        </li>
-    </ul>
-    <hr>
-    <h2><code>application/x-www-form-urlencoded</code> 是什麼？</h2>
+  <ul>
+    <li><strong>Form Data 是什麼？</strong>
+      <p>表單欄位資料在提交時，打包給伺服器的內容。</p>
+    </li>
+    <li><strong>和查詢字符串（Query String）差別？</strong>
+      <p>查詢字符串是放在 URL 後的參數（例如：<code>?key=value</code>）；Form Data 通常在 <strong>POST 請求的 Body</strong> 中傳送。</p>
+    </li>
+    <li><strong>為什麼提交表單會跳頁？</strong>
+      <p>因為 <code>&lt;form&gt;</code> 的<strong>預設行為</strong>是提交資料並導向 <code>action</code> 屬性指定的頁面。</p>
+    </li>
+  </ul>
+  <hr>
+  <h2><code>application/x-www-form-urlencoded</code> 是什麼？</h2>
 
-    <p>這是一種<strong>資料編碼格式（encoding type）</strong>，是 <code>&lt;form&gt;</code> 在使用 <code>POST</code> 或 <code>GET</code> 時<strong>預設的傳送格式</strong>。</p>
+  <p>這是一種<strong>資料編碼格式（encoding type）</strong>，是 <code>&lt;form&gt;</code> 在使用 <code>POST</code> 或 <code>GET</code>
+    時<strong>預設的傳送格式</strong>。</p>
 
-    <h3>📌 程式碼範例：</h3>
-    <pre>
+  <h3>📌 程式碼範例：</h3>
+  <pre>
 &lt;form action="/login" method="POST" enctype="application/x-www-form-urlencoded"&gt;
   &lt;input type="text" name="username" value="Yunxiang"&gt;
   &lt;input type="password" name="password" value="1234"&gt;
@@ -725,119 +726,320 @@ server2.listen(5000); // 監聽 Port 5000
 &lt;/form&gt;
     </pre>
 
-    <p>🔹 提交時，瀏覽器會將資料編碼成：</p>
-    <blockquote>
-        <code>username=Yunxiang&password=1234</code>
-    </blockquote>
-    <p>這就是 <strong>URL encoded form data</strong>。</p>
+  <p>🔹 提交時，瀏覽器會將資料編碼成：</p>
+  <blockquote>
+    <code>username=Yunxiang&password=1234</code>
+  </blockquote>
+  <p>這就是 <strong>URL encoded form data</strong>。</p>
 
-    <hr>
+  <hr>
 
-    <h2>什麼叫做「URL 編碼」（URL Encoding）</h2>
+  <h2>什麼叫做「URL 編碼」（URL Encoding）</h2>
 
-    <p>「URL 編碼」指的是：</p>
-    <p><strong>把特殊字元（例如空白、中文、符號）轉成瀏覽器與伺服器都能安全傳輸的格式。</strong></p>
+  <p>「URL 編碼」指的是：</p>
+  <p><strong>把特殊字元（例如空白、中文、符號）轉成瀏覽器與伺服器都能安全傳輸的格式。</strong></p>
 
-    <h3>✅ 範例：</h3>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-            <tr>
-                <th>原始文字</th>
-                <th>URL 編碼後</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Yunxiang Wang</td>
-                <td><code>Yunxiang+Wang</code></td>
-            </tr>
-            <tr>
-                <td>C# language</td>
-                <td><code>C%23+language</code></td>
-            </tr>
-            <tr>
-                <td>台灣</td>
-                <td><code>%E5%8F%B0%E7%81%A3</code></td>
-            </tr>
-            <tr>
-                <td>email@example.com</td>
-                <td><code>email%40example.com</code></td>
-            </tr>
-        </tbody>
-    </table>
-    <p><em>註：這些 <code>%xx</code> 代表「字元的十六進位 ASCII 值」。例如 <code>%20</code> 表示空白，<code>%40</code> 表示 <code>@</code>。</em></p>
-    <p>因為 URL 與 HTTP 協定中，<strong>某些符號有特殊用途</strong>，不能直接出現在資料中。</p>
-    <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-            <tr>
-                <th>符號</th>
-                <th>在 URL 中的用途</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>?</code></td>
-                <td>問號開啟查詢字串</td>
-            </tr>
-            <tr>
-                <td><code>&</code></td>
-                <td>分隔多個參數</td>
-            </tr>
-            <tr>
-                <td><code>=</code></td>
-                <td>分隔鍵和值</td>
-            </tr>
-            <tr>
-                <td><code>/</code></td>
-                <td>路徑分隔符</td>
-            </tr>
-        </tbody>
-    </table>
-    <p>👉 如果使用者輸入的內容裡也有這些字元，就會混淆伺服器的解析邏輯。所以瀏覽器會自動<strong>「URL encode」</strong>以防止錯誤。</p>
-    <hr>
-    <h2>常見的三種表單編碼方式</h2>
+  <h3>✅ 範例：</h3>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>原始文字</th>
+        <th>URL 編碼後</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Yunxiang Wang</td>
+        <td><code>Yunxiang+Wang</code></td>
+      </tr>
+      <tr>
+        <td>C# language</td>
+        <td><code>C%23+language</code></td>
+      </tr>
+      <tr>
+        <td>台灣</td>
+        <td><code>%E5%8F%B0%E7%81%A3</code></td>
+      </tr>
+      <tr>
+        <td>email@example.com</td>
+        <td><code>email%40example.com</code></td>
+      </tr>
+    </tbody>
+  </table>
+  <p><em>註：這些 <code>%xx</code> 代表「字元的十六進位 ASCII 值」。例如 <code>%20</code> 表示空白，<code>%40</code> 表示 <code>@</code>。</em></p>
+  <p>因為 URL 與 HTTP 協定中，<strong>某些符號有特殊用途</strong>，不能直接出現在資料中。</p>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>符號</th>
+        <th>在 URL 中的用途</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>?</code></td>
+        <td>問號開啟查詢字串</td>
+      </tr>
+      <tr>
+        <td><code>&</code></td>
+        <td>分隔多個參數</td>
+      </tr>
+      <tr>
+        <td><code>=</code></td>
+        <td>分隔鍵和值</td>
+      </tr>
+      <tr>
+        <td><code>/</code></td>
+        <td>路徑分隔符</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>👉 如果使用者輸入的內容裡也有這些字元，就會混淆伺服器的解析邏輯。所以瀏覽器會自動<strong>「URL encode」</strong>以防止錯誤。</p>
+  <hr>
+  <h2>常見的三種表單編碼方式</h2>
 
-    <table border="1" cellpadding="5" cellspacing="0">
-        <thead>
-            <tr>
-                <th>編碼方式 (<code>enctype</code>)</th>
-                <th>用途說明</th>
-                <th>範例格式</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><code>application/x-www-form-urlencoded</code></td>
-                <td><strong>預設。</strong>用於純文字欄位（最常見）</td>
-                <td><code>key1=value1&key2=value2</code></td>
-            </tr>
-            <tr>
-                <td><code>multipart/form-data</code></td>
-                <td><strong>上傳檔案時使用</strong>（含 binary 資料）</td>
-                <td>每個欄位分段處理，有 <code>boundary</code> 標記</td>
-            </tr>
-            <tr>
-                <td><code>text/plain</code></td>
-                <td><strong>幾乎不用。</strong>純文字，不會 URL 編碼</td>
-                <td><code>key1=value1 key2=value2</code> (不同鍵值間以空格分隔)</td>
-            </tr>
-        </tbody>
-    </table>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>編碼方式 (<code>enctype</code>)</th>
+        <th>用途說明</th>
+        <th>範例格式</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>application/x-www-form-urlencoded</code></td>
+        <td><strong>預設。</strong>用於純文字欄位（最常見）</td>
+        <td><code>key1=value1&key2=value2</code></td>
+      </tr>
+      <tr>
+        <td><code>multipart/form-data</code></td>
+        <td><strong>上傳檔案時使用</strong>（含 binary 資料）</td>
+        <td>每個欄位分段處理，有 <code>boundary</code> 標記</td>
+      </tr>
+      <tr>
+        <td><code>text/plain</code></td>
+        <td><strong>幾乎不用。</strong>純文字，不會 URL 編碼</td>
+        <td><code>key1=value1 key2=value2</code> (不同鍵值間以空格分隔)</td>
+      </tr>
+    </tbody>
+  </table>
 
-    <hr>
+  <hr>
 
-    <h2>在實際 HTTP Request 裡怎麼看</h2>
+  <h2>在實際 HTTP Request 裡怎麼看</h2>
 
-    <p>當你在瀏覽器開發者工具 (F12) 的 Network 面板中查看表單請求時，會看到類似以下內容：</p>
+  <p>當你在瀏覽器開發者工具 (F12) 的 Network 面板中查看表單請求時，會看到類似以下內容：</p>
 
-    <blockquote>
-        <pre>
+  <blockquote>
+    <pre>
 POST /login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 username=Yunxiang+Wang&password=1234
         </pre>
-    </blockquote>
+  </blockquote>
 </body>
 <hr>
+<h2>MIME Sniffing (MIME 嗅探)</h2>
+<p>MIME 最初是郵件格式的標準，後來被 HTTP 採用，用於描述傳輸內容的型態。</p>
+
+<table border="1">
+  <caption>常見 MIME Type 範例</caption>
+  <thead>
+    <tr>
+      <th>檔案類型</th>
+      <th>MIME Type</th>
+      <th>說明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>HTML 網頁</td>
+      <td>text/html</td>
+      <td>告訴瀏覽器這是 HTML 檔</td>
+    </tr>
+    <tr>
+      <td>CSS 樣式表</td>
+      <td>text/css</td>
+      <td>告訴瀏覽器這是 CSS 檔</td>
+    </tr>
+    <tr>
+      <td>JavaScript</td>
+      <td>application/javascript</td>
+      <td>告訴瀏覽器這是 JS 檔</td>
+    </tr>
+    <tr>
+      <td>圖片</td>
+      <td>image/png</td>
+      <td>告訴瀏覽器這是 PNG 圖片</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>伺服器在回傳檔案時，會在 HTTP Header 裡加上：<code>Content-Type: [MIME Type]</code></p>
+
+<h3>什麼是 MIME sniffing（MIME 嗅探）？</h3>
+<p>有時伺服器送出的 <code>Content-Type</code> 標頭錯誤，瀏覽器為了讓網頁「仍能顯示」，會自動判斷實際的檔案內容，猜測它真正的 MIME 類型。</p>
+<blockquote>
+  <strong>🔸 MIME sniffing（MIME 嗅探）：</strong>瀏覽器聞一聞內容，看它像什麼檔案。
+</blockquote>
+
+<h3>為什麼 MIME sniffing 會有安全風險？</h3>
+<p>因為這個「自動猜測」可能導致：</p>
+<ul>
+  <li>攻擊者回傳一個看起來是 <code>.txt</code> 或 <code>.jpg</code> 的檔案，但內容其實是<strong>惡意的 JavaScript</strong>。</li>
+  <li>如果瀏覽器嗅探錯誤，把它當成 <code>text/html</code> 或 <code>application/javascript</code>，那惡意程式碼就可能被執行。</li>
+</ul>
+
+<h3>如何防止 MIME sniffing？</h3>
+<p>伺服器端設定一個安全的 HTTP 標頭：</p>
+<pre>X-Content-Type-Options: nosniff</pre>
+<p>這告訴瀏覽器：<strong>「不要猜！就用我給的 <code>Content-Type</code>。」</strong></p>
+<p>🔒 一旦設了這個 header：</p>
+<ul>
+  <li>如果一個檔案宣告 <code>Content-Type: text/plain</code>，就算裡面有 <code>&lt;script&gt;</code>，瀏覽器也只會把它當純文字顯示。</li>
+</ul>
+<hr>
+<h2>模組化 (Modularization)</h2>
+
+<h3>什麼是模組化？</h3>
+<p>模組化（Modularization）= 把程式拆成小單元（modules），每個模組負責一件事，互相引用組成完整應用程式。</p>
+
+<h3>模組化歷史時間線 🕰️</h3>
+<table border="1">
+  <thead>
+    <tr>
+      <th>年份</th>
+      <th>事件</th>
+      <th>模組系統</th>
+      <th>備註</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2009</td>
+      <td>CommonJS 提出</td>
+      <td>CommonJS</td>
+      <td>為伺服器端 JS 設計的社群規範</td>
+    </tr>
+    <tr>
+      <td>2009</td>
+      <td>Node.js 誕生</td>
+      <td>CommonJS</td>
+      <td>採用 CommonJS 模組機制 (<code>require</code>)</td>
+    </tr>
+    <tr>
+      <td>2015</td>
+      <td>ECMAScript 6(ES6) 發布</td>
+      <td>ECMAScript Module(ESM)</td>
+      <td>官方標準模組系統 (<code>import</code>/<code>export</code>)</td>
+    </tr>
+    <tr>
+      <td>2017 +</td>
+      <td>現代瀏覽器支援 ESM</td>
+      <td>ESM</td>
+      <td>前端可直接使用 <code>&lt;script type="module"&gt;</code></td>
+    </tr>
+    <tr>
+      <td>2020 +</td>
+      <td>Node.js 支援 ESM</td>
+      <td>CommonJS + ESM</td>
+      <td>Node.js 兩種模組可並存</td>
+    </tr>
+  </tbody>
+</table>
+<hr>
+<h1>Node.js 模組引入與 require 緩存機制</h1>
+
+<h2>一、Node.js 模組引入規則</h2>
+
+<h3>引入文件夾的查找順序</h3>
+<p>在模組中，如果 <code>require()</code> 導入的是一個<strong>文件夾</strong>，Node.js 會按照以下順序查找文件：</p>
+<ol>
+  <li>首先會檢查文件夾內的 <code>package.json</code> 文件，並使用其中的 <code>main</code> 字段所對應的文件。</li>
+  <li>如果沒有 <code>package.json</code>，則會依序尋找：
+    <ul>
+      <li><code>index.js</code></li>
+      <li><code>index.json</code></li>
+      <li><code>index.node</code></li>
+    </ul>
+  </li>
+  <li>如果以上都沒有，則會報錯。</li>
+</ol>
+
+<h2>二、require 導入流程</h2>
+
+<p>當呼叫 <code>require()</code> 時，Node.js 遵循以下步驟：</p>
+<ol>
+  <li><strong>解析路徑:</strong> 將相對路徑轉為絕對路徑。</li>
+  <li><strong>緩存檢查:</strong> 檢查模塊是否已經加載過。若是，則直接返回緩存中的 <code>exports</code> 對象。</li>
+  <li><strong>模塊加載:</strong> 根據文件類型（<code>.js</code>, <code>.json</code>, <code>.node</code>）選擇相應的加載方式。</li>
+  <li><strong>編譯執行:</strong> 對於 <code>.js</code> 文件，會將代碼包裝在一個函數中執行，並傳入 <code>exports</code>, <code>require</code>,
+    <code>module</code>, <code>__filename</code>, <code>__dirname</code> 等參數。
+  </li>
+  <li><strong>緩存存儲:</strong> 將加載後的模塊存入緩存，以便下次使用。</li>
+</ol>
+<p>緩存存儲在 Node.js 的<strong>「伺服器端記憶體」</strong>中，具體來說是存在於全域物件 <code>require.cache</code> 裡，讓模組只加載與執行一次。</p>
+
+<h2>三、require 緩存機制與運行環境</h2>
+
+<h3>緩存的存在地點與時效</h3>
+<ul>
+  <li>✅ <code>require.cache</code> 存在於 <strong>RAM（記憶體）</strong>裡。</li>
+  <li>它只在<strong>「這次 Node.js 程式執行期間」</strong>（即 Server Process 存活期間）有效。</li>
+  <li>一旦程式結束 (process 終止)，記憶體釋放，緩存即消失。</li>
+</ul>
+
+<h3>API 伺服器情境分析</h3>
+<p><strong>情境：</strong>在 Express 等 Node.js 伺服器中，某個 API route 內使用了 <code>require()</code> 載入模組，當第二次重新呼叫同一個 API
+  時，會重新載入還是使用緩存？</p>
+<blockquote>
+  <strong>✅ 答案：</strong>會直接使用<strong>第一次 <code>require()</code> 時放進記憶體中的快取結果</strong>。
+</blockquote>
+<p>只要伺服器程式（process）仍然在執行中（沒有被重啟），且沒有手動清空 <code>require.cache</code>，所有後續的 API 呼叫都會直接使用記憶體中的快取結果。</p>
+<p><strong>⚠️ 重要觀念：</strong>Node.js 模組載入是<strong>全域共用</strong>的。只要整個伺服器 process 中的任何一個地方 <code>require</code> 過一次，其他地方再
+  <code>require</code> 同一個路徑，都會共用同一份快取。
+</p>
+
+<h3>導致模組重新載入的狀況</h3>
+<p>以下幾種情況會導致 <code>require</code> 重新載入模組：</p>
+<table border="1">
+  <thead>
+    <tr>
+      <th>狀況</th>
+      <th>結果</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>伺服器重啟（Node process 結束）</td>
+      <td>緩存清空，重新載入</td>
+    </tr>
+    <tr>
+      <td>手動清空：<code>delete require.cache[...]</code></td>
+      <td>重新載入</td>
+    </tr>
+    <tr>
+      <td>使用 hot reload 工具（例如 nodemon）</td>
+      <td>會重新啟動 process，自然重載</td>
+    </tr>
+    <tr>
+      <td>動態讀取（例如 <code>fs.readFileSync()</code> 自行載入代碼）</td>
+      <td>不經過 <code>require.cache</code>，可重新執行（非標準模組載入）</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>✅ 最終結論：</strong>在 Node.js API 中，只要伺服器 process 還沒重啟，<code>require()</code> 只會在第一次載入模組時執行一次，之後所有 API
+  呼叫都直接使用記憶體快取結果。</p>
+<hr>
+<h3>什麼是 bundle.js？</h3>
+<p><code>bundle.js</code> 是前端專案<strong>「打包後」</strong>產生的 JavaScript 檔案。</p>
+<ul>
+  <li>它由打包工具（如 Webpack、Vite、Rollup）自動生成。</li>
+  <li>目的是將原本分散在多個模組中的程式整合成一個或多個可以讓瀏覽器直接執行的檔案。</li>
+  <li><code>.bundle.js</code> 只是開發者慣例，也可命名為 <code>.min.js</code> 或加上版本 Hash。</li>
+</ul>
+<p>🧾 總結一句話：<code>bundle.js</code> 整合所有模組與相依套件，讓瀏覽器能直接載入與執行。</p>
 
 </html>

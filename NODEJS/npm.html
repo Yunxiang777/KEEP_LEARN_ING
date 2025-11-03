@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <h1>NPM 與 npx 教學</h1>
+    <h3>npm (Node Package Manager)</h3>
+    <p>🧩 <strong>npm 是誰？</strong> npm 是 Node.js 官方內建的套件管理工具，用來下載、安裝、更新、分享 JavaScript 套件（packages）。</p>
+    <p><strong>⚙️ 生態系的中心倉庫：</strong>儘管 npm 最早是為 Node.js 設計的，但現在已成為「所有 JavaScript 世界的 App
+        Store」。無論是前端（React/Vue）、後端（Node.js），還是各種開發工具，都將其第三方模組發布到 npm 平台。</p>
+
+    <h3>npx (Node Package eXecute)</h3>
+    <table border="1">
+        <caption>npx vs npm 的差別</caption>
+        <thead>
+            <tr>
+                <th>指令</th>
+                <th>全名</th>
+                <th>功能</th>
+                <th>目的</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>npm</code></td>
+                <td>Node Package Manager</td>
+                <td>安裝 / 管理套件</td>
+                <td><code>npm install react</code></td>
+            </tr>
+            <tr>
+                <td><code>npx</code></td>
+                <td>Node Package eXecute</td>
+                <td>執行套件（不用先安裝）</td>
+                <td><code>npx create-react-app myapp</code></td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
+    <h4>npx 的運作機制</h4>
+    <p>npx 用來「執行 npm 套件」而不需要先全域安裝它。它會：</p>
+    <ol>
+        <li>檢查本地或全域有無該套件。</li>
+        <li>如果沒有，就<strong>暫時下載一份</strong>。</li>
+        <li>執行完後自動清理。</li>
+    </ol>
+    <h4>npx create-react-app myapp 範例</h4>
+    <p>該指令的意思是：「用 npx 執行 <code>create-react-app</code> 這個工具，建立一個名為 <code>myapp</code> 的新 React
+        專案。」這避免了全域安裝（<code>npm install -g</code>）可能帶來的版本過期與全域污染問題。</p>
+    <hr>
+    <h3>如何執行全域安裝的 React 腳手架</h3>
+    <p>如果你使用 <code>npm install -g create-react-app</code> 完成全域安裝，後續建立專案和執行流程如下：</p>
+    <ol>
+        <li><strong>建立專案：</strong>
+            <pre>create-react-app myapp</pre>
+        </li>
+        <li><strong>進入目錄：</strong>
+            <pre>cd myapp</pre>
+        </li>
+        <li><strong>啟動專案：</strong>
+            <pre>npm start</pre>
+            <p>💡 這行會執行專案內設定好的「啟動指令」，開啟開發伺服器（通常是 <code>localhost:3000</code>）。</p>
+        </li>
+    </ol>
+    <hr>
+
+</html>
