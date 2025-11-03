@@ -66,5 +66,183 @@
         </li>
     </ol>
     <hr>
+    <h1>Node.js 套件管理、依賴與環境工具整理</h1>
+    <h2>一、Node.js 模組查找機制</h2>
+
+    <h3>require 導入 npm 套件（例如：uniq）的流程</h3>
+    <p>當在程式碼中執行 <code>require('uniq')</code> 時，Node.js 採取「向上尋找」的機制：</p>
+    <ol>
+        <li>在**當前文件夾**下的 <code>node_moudles</code> 中尋找 <code>uniq</code> 資料夾。</li>
+        <li>在 <code>uniq</code> 資料夾中尋找 <code>package.json</code> 文件。</li>
+        <li>在 <code>package.json</code> 文件中尋找 <code>main</code> 屬性對應的值（例如 <code>uniq.js</code>）。</li>
+        <li>載入並執行該文件。</li>
+        <li>如果沒有找到，則在**當前文件夾的上層目錄**中尋找 <code>node_modules</code> 資料夾。</li>
+        <li>重複上述步驟直到找到 <code>node_modules</code> 資料夾或到達系統根目錄為止。</li>
+    </ol>
+
+    <hr>
+
+    <h2>二、npm 依賴類型與管理</h2>
+
+    <h3>1. 開發依賴與生產依賴</h3>
+    <table border="1">
+        <caption>npm 依賴類型</caption>
+        <thead>
+            <tr>
+                <th>類型</th>
+                <th>說明</th>
+                <th>指令</th>
+                <th>所在屬性</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**開發依賴**</td>
+                <td>只在開發階段需要（如：測試工具、Linter、打包工具）。</td>
+                <td><code>npm i 套件名稱 --save-dev</code> 或 <code>npm i 套件名稱 -D</code></td>
+                <td><code>devDependencies</code></td>
+            </tr>
+            <tr>
+                <td>**生產依賴**</td>
+                <td>在開發與上線階段都需要（程式執行時的必要函式庫）。</td>
+                <td><code>npm i 套件名稱 --save</code> 或 <code>npm i 套件名稱 -S</code></td>
+                <td><code>dependencies</code></td>
+            </tr>
+        </tbody>
+    </table>
+    <ul>
+        <li><code>npm install</code>：預設會安裝所有生產依賴與開發依賴。</li>
+        <li><code>npm install --production</code>：只安裝生產依賴。</li>
+        <li><code>npm init -y</code>：用於快速產生 <code>package.json</code> 文件。</li>
+    </ul>
+
+    <h3>2. 全域安裝（npm i -g）</h3>
+    <p>指令：<code>npm i -g 套件名稱</code>，例如 <code>npm i -g nodemon</code>。</p>
+    <ul>
+        <li>**作用：**將套件安裝到系統目錄，使其可以在電腦的任何位置執行。</li>
+        <li>**Windows 權限問題：**由於全域安裝會寫入系統目錄，在 Windows 系統中，可能需要：
+            <ul>
+                <li>以**系統管理員身分**執行命令提示字元或 PowerShell。</li>
+                <li>在 PowerShell 中，可能需要先執行 <code>Set-ExecutionPolicy Unrestricted</code> 來避免腳本執行限制（需輸入 <code>A</code>
+                    確認更改）。</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>3. package-lock.json 與 package.json 的差異</h3>
+    <table border="1">
+        <caption>專案依賴文件比較</caption>
+        <thead>
+            <tr>
+                <th>文件</th>
+                <th>用途</th>
+                <th>內容</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>package.json</code></td>
+                <td>描述專案基本資訊和依賴**關係**。</td>
+                <td>列出專案所需的套件名稱和<strong>版本範圍</strong>。</td>
+            </tr>
+            <tr>
+                <td><code>package-lock.json</code></td>
+                <td>**鎖定**專案依賴關係的具體版本。</td>
+                <td>記錄了每個套件的**確切版本號**以及其依賴關係樹。</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><strong>重要性：</strong>為了確保日後版本一致，<code>npm install</code> 會優先參考 <code>package-lock.json</code>。應將兩個文件都提交到版本控制系統中。
+    </p>
+
+    <h3>4. 版本控制與 node_modules</h3>
+    <ul>
+        <li><code>node_modules</code> 資料夾通常很大，**不應該**上傳到版本控制系統（如 Git）。</li>
+        <li>我們只上傳 <code>package.json</code> 與 <code>package-lock.json</code>。</li>
+        <li>其他人下載專案後，只需執行 <code>npm install</code>，npm 就會根據這兩個文件自動安裝所需套件，確保版本一致性。</li>
+    </ul>
+
+    <hr>
+
+    <h2>三、npm 命令別名與執行</h2>
+
+    <h3>配置命令別名 (Scripts)</h3>
+    <p>我們可以在 <code>package.json</code> 的 <code>"scripts"</code> 屬性下，定義命令別名：</p>
+    <pre>"scripts": {
+    "server": "node index.js",
+    "start": "node index.js"
+}</pre>
+    <ul>
+        <li>執行自定義別名：使用 <code>npm run server</code> 來執行 <code>node index.js</code>。</li>
+        <li>執行特殊別名：如果定義了 <code>"start"</code> 屬性，可以直接使用 <code>npm start</code> 來執行對應命令。</li>
+        <li><strong>自動向上尋找：</strong><code>npm run</code> 和 <code>npm start</code> 都有自動向上尋找 <code>package.json</code>
+            的功能，可以在專案的任何子目錄中執行。</li>
+    </ul>
+
+    <hr>
+
+    <h2>四、系統環境變數與套件工具</h2>
+
+    <h3>1. 環境變數 PATH</h3>
+    <p>如果我們在資料夾執行一個關鍵字（如 <code>LINE</code>），系統會在當前資料夾尋找 <code>LINE.exe</code>、<code>LINE.cmd</code> 等可執行檔。</p>
+    <p>若希望在**任何位置**都可以執行 <code>LINE</code> 指令，我們可以將 <code>LINE</code> 的安裝路徑加入到系統的<strong>環境變數 <code>PATH</code></strong>
+        中。這樣系統在尋找可執行檔時，就會包含 <code>PATH</code> 中的路徑。</p>
+
+    <h3>2. Yarn 套件管理工具</h3>
+    <p>Yarn 是 Facebook 開發的另一個套件管理工具，設計目標是解決 npm 在速度和一致性方面的一些問題。</p>
+    <ul>
+        <li>**優點：**會緩存套件在本地，減少重複下載時間；使用 <code>yarn.lock</code> 鎖定文件確保版本一致。</li>
+        <li>**與 npm 關係：**Yarn 也是從 npm 的官方註冊庫下載套件。</li>
+        <li><strong>常用指令：</strong>
+            <ul>
+                <li>安裝套件：<code>yarn add 套件名稱</code></li>
+                <li>移除套件：<code>yarn remove 套件名稱</code></li>
+                <li>安裝所有依賴：<code>yarn install</code></li>
+                <li>執行腳本：<code>yarn run 腳本名稱</code></li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>3. NVM (Node Version Manager)</h3>
+    <p>NVM 是用來管理多個 Node.js 版本的工具，它允許開發者在同一台機器上安裝和切換不同版本的 Node.js，這對於需要在不同專案中使用不同版本 Node.js 的情況非常有用。</p>
+    <table border="1">
+        <caption>NVM 常用指令</caption>
+        <thead>
+            <tr>
+                <th>指令</th>
+                <th>說明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>nvm install 版本號</code></td>
+                <td>安裝特定版本的 Node.js</td>
+            </tr>
+            <tr>
+                <td><code>nvm use 版本號</code></td>
+                <td>切換到特定版本的 Node.js</td>
+            </tr>
+            <tr>
+                <td><code>nvm ls</code></td>
+                <td>列出已安裝的 Node.js 版本</td>
+            </tr>
+            <tr>
+                <td><code>nvm alias default 版本號</code></td>
+                <td>設定預設使用的 Node.js 版本</td>
+            </tr>
+            <tr>
+                <td><code>nvm uninstall 版本號</code></td>
+                <td>移除特定版本的 Node.js</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>4. 包管理工具擴展介紹</h3>
+    <p>許多語言和操作系統都有自己的包管理工具：</p>
+    <ul>
+        <li><strong>程式語言：</strong>PHP (Composer)、Ruby (Bundler)、Python (pip)、JavaScript (npm/yarn)。</li>
+        <li><strong>操作系統：</strong>Linux (apt-get/yum)、Windows (Chocolatey)。</li>
+    </ul>
+    <p><strong>差別：</strong>系統級的包管理工具是管理系統層級的軟體安裝（例如安裝 MySQL 資料庫或 Line 軟體），而不是程式語言的函式庫或模組。</p>
 
 </html>
