@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Express、區域網路訪問與中間件整理</title>
+</head>
+
+<body>
+
+    <h1>Express、區域網路訪問與中間件整理</h1>
+
+    <hr>
+
+    <h2>一、 Express 簡介</h2>
+    <p><strong>Express</strong>，就是一個封裝好的工具包（框架）。</p>
+
+    <hr>
+
+    <h2>二、 區域網路 (Wi-Fi) 服務器訪問教學</h2>
+    <p>問題：我在電腦開一個伺服器 <code>127.0.0.1:3000</code>，我的 IP 是 <code>192.168.0.1</code>，手機連同一個 Wi-Fi 怎麼去訪問？</p>
+
+    <ol>
+        <li>
+            <h3>了解 IP</h3>
+            <ul>
+                <li><code>127.0.0.1</code> 是 **本機位址（localhost）**，只代表「自己這台機器」。</li>
+                <li>所以手機在同個 Wi-Fi 下，不能用 <code>127.0.0.1</code>，因為那在手機上代表「手機自己」，不是你的電腦。</li>
+                <li><code>192.168.0.1</code> 通常是你的路由器分配給電腦的 **區域網路 IP**（內網位址）。</li>
+            </ul>
+        </li>
+        <li>
+            <h3>用正確的 IP 啟動或訪問伺服器</h3>
+            <ul>
+                <li>如果你的 server 綁定在 <code>127.0.0.1</code>，外部設備（像手機）是<strong>無法連進來的</strong>。</li>
+                <li>請改成讓它監聽所有 IP：</li>
+                <li>Node.js 範例：
+                    <pre><code>app.listen(3000, '0.0.0.0', () => {
+    console.log('Server running on http://192.168.0.1:3000');
+});</code></pre>
+                </li>
+                <li>**<code>0.0.0.0</code>** 代表「監聽所有網卡的 IP」（包含本機、Wi-Fi、LAN 介面等等）。</li>
+            </ul>
+        </li>
+        <li>
+            <h3>手機端訪問</h3>
+            <ul>
+                <li>確保手機跟電腦連的是 **同一個 Wi-Fi**。</li>
+                <li>然後在手機瀏覽器輸入：<strong><code>http://192.168.0.1:3000</code></strong> 就能連上。</li>
+            </ul>
+        </li>
+    </ol>
+
+    <p><strong>總結：</strong>當電腦的 server 用 <code>0.0.0.0:3000</code>（或 <code>192.168.0.1:3000</code>）監聽時，等於你的電腦在區域網路內開放了
+        **3000 這個通訊埠（port）**。</p>
+
+    <hr>
+
+    <h2>三、 中間件 (Middleware) 概念</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>概念</th>
+                <th>說明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**本質**</td>
+                <td>就是一個 **回調函數 (function)**。</td>
+            </tr>
+            <tr>
+                <td>**作用**</td>
+                <td>在 **請求 (request)** 和 **響應 (response)** 之間處理一些邏輯，例如：身份驗證、日誌記錄、數據解析等。</td>
+            </tr>
+            <tr>
+                <td>**<code>app.use()</code>**</td>
+                <td>
+                    <ul>
+                        <li>設計目的：用來註冊中間件。</li>
+                        <li>特性：不加不行（必須註冊）。</li>
+                        <li>適用範圍：可以接受所有請求方法（GET, POST, etc.）。</li>
+                        <li>用途：代表 **全局中間件**。</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>**<code>app.get()</code>, <code>app.post()</code>**</td>
+                <td>
+                    <ul>
+                        <li>可以<strong>不一定要加中間件</strong>。</li>
+                        <li>可以直接處理請求和響應。</li>
+                        <li>通常用於處理特定路徑和特定 HTTP 方法的業務邏輯。</li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+
+</html>
