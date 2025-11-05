@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MongoDB、NoSQL 與檔案格式整理</title>
+</head>
+
+<body>
+
+    <h1>MongoDB (NoSQL) 概念與比較</h1>
+
+    <hr>
+
+    <h2>一、 什麼是 NoSQL 資料庫？</h2>
+
+    <h3>1. NoSQL 定義</h3>
+    <p><strong>NoSQL（Not Only SQL）</strong> 是一類「非關聯式資料庫」，它不使用傳統的表格結構（Table），而是用更彈性的方式儲存資料。</p>
+
+    <h3>2. 傳統與 NoSQL 資料庫結構對比</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>類型</th>
+                <th>結構</th>
+                <th>儲存方式</th>
+                <th>代表性資料庫</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**傳統資料庫**</td>
+                <td>關聯型、表格式（Table）</td>
+                <td>結構嚴謹、資料一致性高</td>
+                <td>MySQL</td>
+            </tr>
+            <tr>
+                <td>**MongoDB**</td>
+                <td>文件型（Document）</td>
+                <td>使用類似 **JSON** 的格式儲存資料</td>
+                <td>MongoDB</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>3. NoSQL 與 MySQL 的核心差異</h3>
+    <p>NoSQL 和 MySQL 的核心差異，<strong>不在於「查找速度」本身，而在於「結構與彈性」</strong>：</p>
+    <ul>
+        <li>**MongoDB (NoSQL)：** 為了「更靈活、更好擴充」（擅長快速擴展與大數據查詢）。</li>
+        <li>**MySQL (傳統)：** 為了「資料一致性與結構嚴謹」（擅長複雜查詢與穩定）。</li>
+    </ul>
+
+    <hr>
+
+    <h2>二、 MongoDB 與 本地 JSON 檔案查找速度比較</h2>
+
+    <p>假如我存一個 JSON 文件，在程式碼中去 <code>import json</code> 然後去 <code>find</code>，跟從 MongoDB 去 <code>find</code>，哪個比較快？</p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>比較項目</th>
+                <th>本地 JSON 檔案</th>
+                <th>MongoDB</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**初次存取速度**</td>
+                <td>**慢**（因為要讀整個檔案進記憶體）</td>
+                <td>**快**（索引化查詢，只抓匹配的資料）</td>
+            </tr>
+            <tr>
+                <td>**後續查找速度（已在記憶體中）**</td>
+                <td>**非常快**（Array.find 在記憶體中運行）</td>
+                <td>**稍慢**（需要透過 socket 跟資料庫交握）</td>
+            </tr>
+            <tr>
+                <td>**大量資料時（萬筆以上）**</td>
+                <td>會暴增記憶體使用，整個 JSON 會載入進 RAM</td>
+                <td>仍然高效（MongoDB 使用索引、B-Tree、頁快取）</td>
+            </tr>
+            <tr>
+                <td>**併發查詢能力**</td>
+                <td>**幾乎沒有**（只能單執行緒處理）</td>
+                <td>**很強**（多連線、多用戶同時查詢）</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>總結：</strong></p>
+    <ul>
+        <li>**小量資料（不到幾千筆）：** JSON + Array.find() 會更快。</li>
+        <li>**大量資料（幾萬～百萬筆以上）：** MongoDB 會快得多，而且更穩定、更具擴展性。</li>
+    </ul>
+
+    <hr>
+
+    <h2>三、 MongoDB 的三大重要概念</h2>
+    <ol>
+        <li>**資料庫（Database）：** 用來儲存資料的容器，一個 MongoDB 伺服器可以有多個資料庫。</li>
+        <li>**集合（Collection）：** 類似於關聯式資料庫中的「表格」（Table），用來儲存文件的集合。</li>
+        <li>**文件（Document）：** MongoDB 中的基本資料單位，類似於關聯式資料庫中的「列」（Row），以 BSON（類似 JSON）格式儲存資料。</li>
+    </ol>
+
+    <hr>
+
+    <h2>四、 MSI 包 與 ZIP 包 的差異</h2>
+
+    <h3>1. 基本定義</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>類型</th>
+                <th>全名</th>
+                <th>用途</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**MSI**</td>
+                <td>Microsoft Installer</td>
+                <td>**Windows 安裝套件**（用來「安裝程式」）</td>
+            </tr>
+            <tr>
+                <td>**ZIP**</td>
+                <td>ZIP Archive</td>
+                <td>**通用壓縮檔案格式**（用來「打包檔案」）</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>2. 主要差異一覽</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>比較項目</th>
+                <th>MSI (.msi)</th>
+                <th>ZIP (.zip)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**用途**</td>
+                <td>安裝應用程式（含註冊表、路徑、設定）</td>
+                <td>壓縮與傳輸檔案</td>
+            </tr>
+            <tr>
+                <td>**結構內容**</td>
+                <td>含安裝流程、檔案列表、版本資訊、註冊表修改</td>
+                <td>純粹的檔案集合（壓縮後存放）</td>
+            </tr>
+            <tr>
+                <td>**執行方式**</td>
+                <td>雙擊會啟動 Windows Installer（自動安裝）</td>
+                <td>雙擊會打開解壓縮工具（需自行解壓）</td>
+            </tr>
+            <tr>
+                <td>**可攜性**</td>
+                <td>安裝在系統中（非攜帶式）</td>
+                <td>可直接解壓即用（可攜式）</td>
+            </tr>
+            <tr>
+                <td>**系統支援**</td>
+                <td>僅 Windows（由 Windows Installer 處理）</td>
+                <td>通用（Windows/macOS/Linux 都可用）</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>總結 MSI：</strong> 下載 .msi 檔案，基本上就是 **「一步到位的安裝流程」**，會自動處理安裝精靈、資料夾建立、設定 PATH 和程式清單註冊等步驟。</p>
+
+</body>
+
+</html>
