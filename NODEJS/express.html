@@ -97,7 +97,113 @@
             </tr>
         </tbody>
     </table>
+    <hr>
+    <h1>模板引擎 (Template Engine) 概念與比較</h1>
+    <h2>一、 什麼是模板引擎？</h2>
+    <p><strong>模板引擎</strong>是一種套件，其主要功能是幫我們把需求格式轉換。</p>
 
+    <blockquote>
+        <p><strong>公式：</strong> 資料（data）+ 模板（template） → 轉換成 HTML</p>
+    </blockquote>
+
+    <h3>模板引擎的兩大類</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>類型</th>
+                <th>執行位置</th>
+                <th>流程說明</th>
+                <th>範例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**伺服器端模板引擎**</td>
+                <td>SERVER (後端)</td>
+                <td>在伺服器生成完整的 HTML 頁面後，再送給前端瀏覽器。</td>
+                <td>EJS, Pug</td>
+            </tr>
+            <tr>
+                <td>**客戶端模板引擎**</td>
+                <td>BROWSER (前端)</td>
+                <td>將資料傳到瀏覽器，在瀏覽器端生成 HTML 頁面。</td>
+                <td>Handlebars.js, Vue/React (可視為更進階的客戶端模板/渲染機制)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>結論：</strong>當我們使用「伺服器端模板引擎」時，它確實是把整個 HTML 在 Server 端處理好（填入資料）後，再丟到前端響應。</p>
+
+    <hr>
+
+    <h2>二、 「模板引擎」與「靜態 HTML」的差別</h2>
+
+    <h3>1. 傳統靜態 HTML 的流程 (File Server)</h3>
+    <ul>
+        <li>**內容：** HTML 內容是事先寫好的、固定的。</li>
+        <li>**伺服器行為：** 伺服器只是「檔案伺服器」，直接找到請求的檔案並原封不動地回傳。沒有做邏輯處理。</li>
+        <li>**適用：** 適合內容不常變的網站（例如：純公司介紹）。</li>
+    </ul>
+
+    <h3>2. 模板引擎的流程 (Dynamic Content)</h3>
+    <ul>
+        <li>**內容：** HTML 是一個含有變數或控制語法的「模板」（例如：<code>&lt;h1&gt;你好，{{name}}&lt;/h1&gt;</code>）。</li>
+        <li>**伺服器行為：**
+            <ol>
+                <li>伺服器接收請求。</li>
+                <li>拿資料（Data，例如從資料庫）。</li>
+                <li>將資料代入模板。</li>
+                <li>**生成**完整、處理好的 HTML 檔案。</li>
+                <li>把「處理好的 HTML」回傳給瀏覽器。</li>
+            </ol>
+        </li>
+        <li>**適用：** 內容需要根據時間、使用者、資料庫即時變化的網站（例如：個人檔案頁面、部落格）。</li>
+    </ul>
+
+    <hr>
+
+    <h2>三、 模板引擎與 PHP 的關係</h2>
+
+    <p><strong>問題：</strong> PHP 看起來也在模板裡塞變數、控制顯示邏輯，那它是不是模板引擎？</p>
+
+    <p><strong>答案：</strong> **PHP 不是單純的模板引擎，而是一種「伺服器端程式語言」（Server-side scripting language），但它本身內建了模板引擎的特性。**</p>
+
+    <h3>1. PHP 做的事情比模板引擎多</h3>
+    <p>PHP 可以處理 HTTP 請求與回應、操作資料庫、控制流程、執行伺服器端邏輯（登入、驗證、檔案上傳）等。模板引擎（如 EJS）則只能專注於「把資料塞進模板」以產生 HTML，不能自己去連資料庫或處理複雜的後端 API。
+    </p>
+
+    <h3>2. PHP 的模板行為</h3>
+    <p>PHP 可以在 HTML 裡嵌入程式碼，動態生成內容，行為與模板引擎相似：</p>
+    <pre><code>&lt;h1&gt;你好，
+    &lt;?php echo $name; ?&gt;
+&lt;/h1&gt;</code></pre>
+
+    <h3>3. 總結比較表</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>名稱</th>
+                <th>類型</th>
+                <th>核心能力</th>
+                <th>範例</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>**模板引擎**</td>
+                <td>用來組裝 HTML 的工具</td>
+                <td>把資料 + 模板 → 產出 HTML</td>
+                <td>Handlebars、EJS、Pug</td>
+            </tr>
+            <tr>
+                <td>**PHP**</td>
+                <td>伺服器端語言（內建模板能力）</td>
+                <td>可以控制流程 + 操作資料 + 生成 HTML</td>
+                <td>PHP 本身</td>
+            </tr>
+        </tbody>
+    </table>
+    <p><strong>準確來說：</strong> PHP **包含**模板引擎的功能，但它不只是模板引擎，而是一個完整的後端語言。</p>
 </body>
 
 </html>
