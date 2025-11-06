@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PHP 與 Node.js Session 比較</title>
+</head>
+
+<body>
+
+    <h3>🎯 Session 核心概念與運作流程</h3>
+    <p>Session 是伺服器用來**識別使用者**並**儲存其狀態資訊**的一種機制。無論是 PHP 或 Node.js，基本運作流程都是：</p>
+    <ol>
+        <li>使用者首次造訪，伺服器建立一個唯一的 <strong>Session ID</strong>。</li>
+        <li>伺服器將這個 Session ID 透過 <strong>Cookie</strong> 寫入使用者的瀏覽器。</li>
+        <li>伺服器在自己的**儲存空間**（記憶體、檔案或資料庫）中，以 Session ID 為鍵，儲存相關資料。</li>
+        <li>使用者後續每次請求，瀏覽器會自動帶上 Session ID Cookie。</li>
+        <li>伺服器透過 Cookie 找到對應的 Session 資料，實現狀態追蹤。</li>
+    </ol>
+
+    <hr>
+
+    <h3>🧩 I. PHP 的 Session (內建、自動式)</h3>
+    <p>PHP 提供內建機制，大部分工作自動完成。</p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>項目</th>
+                <th>說明</th>
+                <th>機制</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>啟用方式</strong></td>
+                <td>只需呼叫 <code>session_start()</code>。</td>
+                <td>自動</td>
+            </tr>
+            <tr>
+                <td><strong>Session ID 名稱</strong></td>
+                <td>預設為 <code>PHPSESSID</code>。</td>
+                <td>自動</td>
+            </tr>
+            <tr>
+                <td><strong>資料儲存位置</strong></td>
+                <td>預設為伺服器上的**檔案**（通常在 <code>/tmp</code> 目錄）。</td>
+                <td>自動</td>
+            </tr>
+            <tr>
+                <td><strong>資料存取</strong></td>
+                <td>透過全域變數 <code>$_SESSION</code> 陣列存取。</td>
+                <td>內建</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h3>⚙️ II. Node.js (Express) 的 Session (中介軟體、手動設定)</h3>
+    <p>Node.js 本身不帶 Session 機制，需要手動引入並設定中介軟體（Middleware），最常用的是 <code>express-session</code>。</p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>項目</th>
+                <th>說明</th>
+                <th>機制</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>啟用方式</strong></td>
+                <td>必須引入 <code>express-session</code> 並以 <code>app.use(...)</code> 形式設定。</td>
+                <td>手動</td>
+            </tr>
+            <tr>
+                <td><strong>Session ID 名稱</strong></td>
+                <td>預設為 <code>connect.sid</code>。</td>
+                <td>由中介軟體提供</td>
+            </tr>
+            <tr>
+                <td><strong>資料儲存位置</strong></td>
+                <td>預設儲存在伺服器的**記憶體**（<strong style="color:red;">不適用於生產環境</strong>）。生產環境需手動設定 <code>store</code>，例如 Redis
+                    或資料庫。</td>
+                <td>手動配置</td>
+            </tr>
+            <tr>
+                <td><strong>資料存取</strong></td>
+                <td>透過請求物件 <code>req.session</code> 屬性存取。</td>
+                <td>由中介軟體注入</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h3>⏱️ III. Session 的「兩個壽命」對照</h3>
+    <p>一個 Session 的終止，取決於 Cookie 的壽命（瀏覽器端）和 Session 資料的壽命（伺服器端），任一失效都會導致 Session 無法繼續。</p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>壽命類型</th>
+                <th>PHP 預設值 (<code>php.ini</code>)</th>
+                <th>Node.js/Express-Session 預設值</th>
+                <th>決定因素</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>🍪 Session ID Cookie 壽命</strong></td>
+                <td><code>0</code> 秒（瀏覽器關閉即刪除，稱作 Session Cookie）</td>
+                <td>預設為 Session Cookie（無 <code>maxAge</code> 屬性）</td>
+                <td>Cookie 設定中的 <code>maxAge</code> 或 <code>expires</code> 屬性</td>
+            </tr>
+            <tr>
+                <td><strong>🗄️ Session 資料本體壽命</strong></td>
+                <td><code>session.gc_maxlifetime</code> (預設 1440 秒 = 24 分鐘)</td>
+                <td>通常與 Cookie 壽命一致，或取決於 <code>store</code> 的設定。</td>
+                <td>伺服器端 Session 儲存機制（如 PHP 的 GC 或 Redis 的 TTL）</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>👉 **總結：**</p>
+    <ul>
+        <li><strong>PHP 預設：</strong> 只要瀏覽器關閉或閒置超過 24 分鐘，Session 即失效。</li>
+        <li><strong>Node.js (Express) 預設：</strong> 依賴您在 <code>cookie: { maxAge: ... }</code>
+            中的設定來決定瀏覽器端的壽命，而伺服器端的資料壽命通常會與其同步，或者由您選用的 <code>store</code> (例如 Redis) 來決定。</li>
+    </ul>
+
+</body>
+
+</html>
