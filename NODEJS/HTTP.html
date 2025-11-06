@@ -129,6 +129,184 @@
         <li><strong>Node.js (Express) 預設：</strong> 依賴您在 <code>cookie: { maxAge: ... }</code>
             中的設定來決定瀏覽器端的壽命，而伺服器端的資料壽命通常會與其同步，或者由您選用的 <code>store</code> (例如 Redis) 來決定。</li>
     </ul>
+    <hr>
+    <h3>🌍 I. 為什麼
+        <link> 和 <img> 不受 CORS 限制？
+    </h3>
+    <p>CORS (Cross-Origin Resource Sharing) 跨來源資源共用，主要目的是保護「透過 JavaScript (AJAX/Fetch) 主動發出的跨站請求」。</p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>請求類型</th>
+                <th>是否跨站</th>
+                <th>是否觸發 CORS 限制</th>
+                <th>原因</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>&lt;img src="..."&gt;</code>, <code>&lt;link href="..."&gt;</code>,
+                    <code>&lt;script src="..."&gt;</code>
+                </td>
+                <td>✅ 是</td>
+                <td>❌ 否</td>
+                <td>被視為**安全的瀏覽器資源載入行為**。瀏覽器不允許 JS 直接讀取這些資源的內容，故不涉及敏感資料外洩風險。</td>
+            </tr>
+            <tr>
+                <td><code>fetch()</code> / <code>XMLHttpRequest</code></td>
+                <td>✅ 是</td>
+                <td>✅ 是</td>
+                <td>JS **主動發出請求**，並意圖**存取回應內容**，因此必須遵守 CORS 協定（要求對方伺服器回傳 <code>Access-Control-Allow-Origin</code> 允許存取）。
+                </td>
+            </tr>
+            <tr>
+                <td>**結論**</td>
+                <td colspan="3">CORS 限制的是「讀取回應內容」，而不是「發送請求」本身。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h3>⚠️ II.
+        <link> 觸發 GET 請求的資安問題：CSRF
+    </h3>
+    <p>雖然 <code>&lt;link&gt;</code> 等標籤不會被 CORS 限制，但它們仍會發出 GET 請求，這引發了 <strong>CSRF（跨站請求偽造）</strong>的風險。</p>
+
+    <p><strong>攻擊原理：</strong></p>
+    <ol>
+        <li>使用者已登入 <code>https://apple.com</code>。</li>
+        <li>使用者瀏覽惡意網站 A，該網站包含 <code>&lt;img src="https://apple.com/logout"&gt;</code>。</li>
+        <li>瀏覽器自動發出 GET 請求到 <code>https://apple.com/logout</code>，並**自動附帶**使用者的 <code>apple.com</code> Session Cookie。
+        </li>
+        <li>如果伺服器將登出動作設計成 GET 請求，則使用者會被強制登出。</li>
+    </ol>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>行為</th>
+                <th>安全性</th>
+                <th>原因</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET 請求執行「有副作用」的操作（如登出/刪除）</td>
+                <td>❌ **不安全**</td>
+                <td>可被 <code>&lt;img&gt;</code>、<code>&lt;link&gt;</code> 等標籤在使用者不知情下偽造並自動帶上 Cookie。</td>
+            </tr>
+            <tr>
+                <td>POST 請求執行「有副作用」的操作</td>
+                <td>✅ **安全**（需搭配 Token）</td>
+                <td><code>&lt;img&gt;</code> 或 <code>&lt;link&gt;</code> 無法發出 POST 請求。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>伺服器防護方式：</strong></p>
+    <ul>
+        <li>所有有「副作用」的操作（修改/刪除/登出）應使用 **POST**、PUT 或 DELETE 方法。</li>
+        <li>使用 **CSRF Token**：在每個敏感操作的表單或請求中加入一個使用者專屬的隨機 Token，伺服器驗證此 Token 以確保請求來自合法來源。</li>
+    </ul>
+
+    <hr>
+
+    <h3>🔑 III. Token 的類型與 JWT 特點</h3>
+
+    <h4>1. 什麼是 Token？</h4>
+    <p>Token（令牌）是在網路安全中，用來代表使用者身份或授權的一段數據字串。它可以是**隨機字串**、**JSON 格式**、或遵循**標準協議**的結構。</p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Token 類型</th>
+                <th>說明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>身份驗證 Token (Auth Token)</td>
+                <td>用於驗證使用者身份。</td>
+            </tr>
+            <tr>
+                <td>授權 Token (Access Token)</td>
+                <td>用於授予使用者訪問特定資源的權限（如 OAuth 2.0）。</td>
+            </tr>
+            <tr>
+                <td>CSRF Token</td>
+                <td>用於防止跨站請求偽造攻擊，確保請求來自合法的使用者操作。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h4>2. JWT (JSON Web Token) 的特別之處</h4>
+    <p>JWT (RFC 7519) 是一種**標準化**、**自包含**的 Token 格式，通常用於無狀態 (Stateless) 的身份驗證和授權。</p>
+
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>面向</th>
+                <th>JWT (JSON Web Token)</th>
+                <th>一般 Token（隨機字串）</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>結構</strong></td>
+                <td>三段式：<code>Header.Payload.Signature</code></td>
+                <td>隨機、無結構的字串</td>
+            </tr>
+            <tr>
+                <td><strong>內容</strong></td>
+                <td>包含使用者資訊、過期時間等（Payload 部分可被 Base64 解碼，但不可竄改）</td>
+                <td>無任何意義，僅作為查找資料庫的鍵</td>
+            </tr>
+            <tr>
+                <td><strong>驗證機制</strong></td>
+                <td>**自我驗證**：伺服器用密鑰重新計算簽章，確認 Token 未被竄改（**無需查詢資料庫**）。</td>
+                <td>**查表驗證**：伺服器必須查詢資料庫或快取（如 Redis），將 Token 與使用者資料比對。</td>
+            </tr>
+            <tr>
+                <td><strong>主要特點</strong></td>
+                <td>減少伺服器負擔、適合分散式系統、跨服務驗證。</td>
+                <td>實作簡單、易於在任何時間點被伺服器撤銷 (Revoke)。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p><strong>JWT 編碼與簽章：</strong></p>
+    <ol>
+        <li>**編碼邏輯：** Header 和 Payload 都是 JSON 格式，經 Base64 URL Safe 編碼後組成第一、二段。</li>
+        <li>**簽章驗證：** 將 Base64 編碼的 Header 和 Payload 用伺服器密鑰 (Secret Key) 進行雜湊運算（例如 HS256），生成的結果組成第三段 Signature。伺服器收到
+            Token 後，會再次執行相同的運算，將結果與收到的 Signature 比對，以驗證資料的**完整性**（未被竄改）。</li>
+    </ol>
+
+    <h4>3. Token 的儲存位置（前端考量）</h4>
+    <p>無論是 JWT 還是其他 Token，前端儲存位置的選擇影響安全性：</p>
+    <table border="1" cellpadding="5" cellspacing="0">
+        <thead>
+            <tr>
+                <th>儲存位置</th>
+                <th>優點</th>
+                <th>主要安全風險</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>localStorage</code> / <code>sessionStorage</code></td>
+                <td>JS 存取簡單、跨頁可用。</td>
+                <td>容易被 **XSS** (Cross-Site Scripting) 攻擊偷走。</td>
+            </tr>
+            <tr>
+                <td><code>Cookie</code> (HttpOnly 屬性)</td>
+                <td>無法被 JS 存取，有效防禦 XSS。</td>
+                <td>會自動被帶到同網域請求，易遭 **CSRF** 攻擊（需搭配 CSRF Token 防護）。</td>
+            </tr>
+        </tbody>
+    </table>
+    <hr>
 
 </body>
 
