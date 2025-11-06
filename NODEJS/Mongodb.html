@@ -169,6 +169,326 @@
     </table>
 
     <p><strong>總結 MSI：</strong> 下載 .msi 檔案，基本上就是 **「一步到位的安裝流程」**，會自動處理安裝精靈、資料夾建立、設定 PATH 和程式清單註冊等步驟。</p>
+    <hr>
+    <h1>CORS（跨來源資源共享）簡介</h1>
+
+    <p>CORS 是一種安全機制，用於防止惡意網站從其他網站竊取資料。</p>
+
+    <h2>🎯 核心概念：瀏覽器強制執行同源政策</h2>
+    <ul>
+        <li>瀏覽器會<strong>強制執行</strong>同源政策（Same-Origin Policy）。</li>
+        <li>只有當後端透過 <code>Access-Control-Allow-Origin</code> 等 Header <strong>明確允許</strong>，瀏覽器才會放行跨來源請求。</li>
+        <li><strong>注意：</strong>CORS 阻擋是<strong>瀏覽器</strong>的行為，不是伺服器拒絕請求。</li>
+    </ul>
+
+    <h2>🌐 CORS 的工作原理：預檢請求 (Preflight Request)</h2>
+    <p>當瀏覽器發送<strong>非簡單請求</strong> (non-simple request) 時，會先發送一個「預檢請求」。</p>
+
+    <h3>預檢請求流程 (Preflight Request)</h3>
+    <ol>
+        <li><strong>預檢請求 (OPTIONS)：</strong>瀏覽器先發送一個 <code>OPTIONS</code> 請求，詢問伺服器是否允許進行特定方法的請求和使用特定 Header。
+            <blockquote>例如：<code>OPTIONS https://api.example.com/login</code></blockquote>
+        </li>
+        <li><strong>伺服器回應：</strong>後端必須回覆一組 Header (如 <code>Access-Control-Allow-Origin</code>,
+            <code>Access-Control-Allow-Methods</code> 等)，表示允許該跨域行為。
+            <blockquote>例如：<code>Access-Control-Allow-Origin: https://app.example.com</code></blockquote>
+        </li>
+        <li><strong>正式請求 (POST/GET)：</strong>瀏覽器確認伺服器允許後，才會真的送出正式的請求。</li>
+    </ol>
+    <p><strong>結論：</strong>對於非簡單請求，前端一次呼叫 API，瀏覽器實際上會發送 <strong>2 次請求</strong>。</p>
+
+    <h3>什麼情況會觸發預檢請求？ (非簡單請求條件)</h3>
+    <p>只要請求滿足以下任一條件，即為非簡單請求，會觸發預檢：</p>
+    <ul>
+        <li><strong>Method：</strong>使用了 <code>PUT</code>, <code>DELETE</code>, <code>CONNECT</code>,
+            <code>OPTIONS</code>, <code>TRACE</code>, <code>PATCH</code> (簡單請求只允許 <code>GET</code>, <code>HEAD</code>,
+            <code>POST</code>)。
+        </li>
+        <li><strong>Content-Type：</strong>不是以下三種簡單類型：
+            <ul>
+                <li><code>text/plain</code></li>
+                <li><code>multipart/form-data</code></li>
+                <li><code>application/x-www-form-urlencoded</code></li>
+                <li>例如：使用了 <code>application/json</code> 就會觸發預檢。</li>
+            </ul>
+        </li>
+        <li><strong>使用自訂 Header：</strong>Header 名稱不屬於安全標頭 (CORS-safelisted) 的。
+            <blockquote>例如：加入了 <code>'X-Custom-Header': 'test'</code>。</blockquote>
+        </li>
+    </ul>
+
+    <h2>🔍 CORS 驗證機制與預檢的關係</h2>
+    <p>預檢請求（OPTIONS）只是 CORS 機制的一部分，CORS 驗證永遠都在。</p>
+
+    <h3>CORS 驗證的兩個階段</h3>
+    <ol>
+        <li><strong>預檢階段 (Preflight Request)：</strong>針對非簡單請求，先發 <code>OPTIONS</code> 詢問。</li>
+        <li><strong>回應驗證階段 (Response Validation)：</strong><strong>所有</strong>跨網域請求 (無論是否預檢)，瀏覽器都會檢查伺服器回傳的 Header。</li>
+    </ol>
+
+    <h3>CORS 錯誤情境解析</h3>
+    <p>即使是簡單請求 (Simple Request)，如果伺服器回應時<strong>沒有</strong>加上 <code>Access-Control-Allow-Origin</code> Header，瀏覽器也會阻止
+        JavaScript 讀取內容。</p>
+    <ul>
+        <li>在 Network 面板可能看到狀態碼 <strong>200 OK</strong>（表示請求實際送達且伺服器回應了）。</li>
+        <li>但在 Console 面板會顯示 <strong>CORS error</strong>（因為瀏覽器驗證回應 Header 不通過）。</li>
+    </ul>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>階段</th>
+                <th>是否觸發預檢</th>
+                <th>是否需要 CORS Header</th>
+                <th>沒 Header 會被擋</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Simple Request (簡單請求)</td>
+                <td>否 (❌ 不會發 OPTIONS)</td>
+                <td>是 (✅ 需要)</td>
+                <td>是 (❌ 會被擋，若 Response 缺 Header)</td>
+            </tr>
+            <tr>
+                <td>Non-Simple Request (非簡單請求)</td>
+                <td>是 (✅ 發 OPTIONS 預檢)</td>
+                <td>是 (✅ 需要)</td>
+                <td>是 (❌ 預檢或主請求缺 Header 都會被擋)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>💡 後端之間為什麼沒有 CORS 問題？</h2>
+    <p>CORS 是<strong>瀏覽器</strong>的保護機制。</p>
+    <ul>
+        <li>後端（例如 Node.js 伺服器）之間發起的通訊，根本沒有瀏覽器參與。</li>
+        <li>沒有「使用者的瀏覽器」在中間，因此沒有「同源政策」的概念，不需要 CORS Header。</li>
+    </ul>
+
+    <h2>⚙️ Node.js 的模組系統與 <code>package.json</code></h2>
+    <p>Node.js 支援 CommonJS (CJS) 和 ES Module (ESM) 兩種模組格式。</p>
+
+    <h3>Node.js 判斷模組格式的邏輯</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>條件</th>
+                <th>判斷的模組系統</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>檔案是 <code>.cjs</code></td>
+                <td>CommonJS (CJS)</td>
+            </tr>
+            <tr>
+                <td>檔案是 <code>.mjs</code></td>
+                <td>ES Module (ESM)</td>
+            </tr>
+            <tr>
+                <td>檔案是 <code>.js</code> 且 <strong>無</strong> <code>package.json</code> 或 <code>package.json</code>
+                    <strong>無</strong> <code>"type": "module"</code>
+                </td>
+                <td>CommonJS (CJS) (<strong>預設</strong>)</td>
+            </tr>
+            <tr>
+                <td>檔案是 <code>.js</code> 且 <code>package.json</code> <strong>有</strong> <code>"type": "module"</code>
+                </td>
+                <td>ES Module (ESM)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>你的問題解析</h3>
+    <ul>
+        <li>「單獨寫 index.js 去 node，就沒有問題」：因為<strong>沒有 <code>package.json</code></strong>，Node.js 預設 <code>.js</code> 為
+            <strong>CommonJS</strong> 格式，可以使用 <code>require()</code>。
+        </li>
+        <li>「使用 <code>import</code> 報錯 <code>SyntaxError</code>」：因為你的 <code>.js</code> 檔案，在 Node.js 中被判定為
+            <strong>CommonJS 模式</strong>（因缺少 <code>"type": "module"</code> 設定），但你卻使用了屬於 ES Module 的 <code>import</code>
+            語法，導致語法錯誤。
+        </li>
+    </ul>
+
+    <hr>
+    <h1>資料庫與元件：MongoDB 核心</h1>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>元件名稱</th>
+                <th>類型/別名</th>
+                <th>功能說明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>MongoDB</strong></td>
+                <td>資料庫</td>
+                <td>一個 NoSQL 資料庫系統。</td>
+            </tr>
+            <tr>
+                <td><strong>mongod</strong></td>
+                <td>伺服器程式/核心進程</td>
+                <td>MongoDB 的核心伺服器進程，負責處理資料庫請求、管理資料存儲，預設監聽 27017 端口。</td>
+            </tr>
+            <tr>
+                <td><strong>mongo</strong></td>
+                <td>命令列介面 (CLI)</td>
+                <td>允許使用者連接到正在運行的 <code>mongod</code> 伺服器，並執行查詢、插入等操作。</td>
+            </tr>
+            <tr>
+                <td><strong>Mongoose</strong></td>
+                <td>ODM 庫/npm 套件</td>
+                <td>用於 Node.js 的<strong>物件資料建模 (ODM)</strong> 庫，讓開發者能以更結構化的方式操作 MongoDB 資料。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h1>🌐 URL 編碼原理：中文轉譯機制</h1>
+
+    <p>網址 (URL) 標準 (RFC 3986) 只允許 ASCII 字元，因此中文、特殊符號等必須經過編碼。</p>
+
+    <h3>URL 編碼步驟 (以「中」為例)</h3>
+    <ol>
+        <li><strong>步驟 1：轉成 UTF-8 位元組</strong>
+            <ul>
+                <li>字元「中」的 Unicode 是 U+4E2D。</li>
+                <li>轉成 UTF-8 編碼為：<code>0xE4 0xB8 0xAD</code> (三個位元組)。</li>
+            </ul>
+        </li>
+        <li><strong>步驟 2：轉成「百分比編碼 (Percent Encoding)」</strong>
+            <ul>
+                <li>將每個 UTF-8 位元組用十六進位表示，並加上 <code>%</code> 符號。</li>
+            </ul>
+        </li>
+    </ol>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>字元</th>
+                <th>UTF-8 編碼 (Hex)</th>
+                <th>URL 百分比編碼</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>中</td>
+                <td>E4 B8 AD</td>
+                <td>%E4%B8%AD</td>
+            </tr>
+            <tr>
+                <td>文</td>
+                <td>E6 96 87</td>
+                <td>%E6%96%87</td>
+            </tr>
+            <tr>
+                <td><strong>整句「中文」</strong></td>
+                <td>-</td>
+                <td><strong>%E4%B8%AD%E6%96%87</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h1>🍪 瀏覽器 Cookie 的同源限制與儲存機制</h1>
+
+    <h2>🎯 Cookie 的「同源限制」 (Same-Origin Policy)</h2>
+    <p>瀏覽器對 Cookie 有嚴格的同源政策，Cookie 只能被<strong>同一個網域 (Domain)</strong> 的請求自動附帶。</p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>狀況</th>
+                <th>Cookie 是否會自動帶上請求</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>同一網域 (例如：<code>apple.com</code>)</td>
+                <td>✅ 會</td>
+            </tr>
+            <tr>
+                <td>同一主網域的子網域 (例如：<code>store.apple.com</code>)</td>
+                <td>✅ 視 Cookie 的 <code>Domain</code> 屬性而定</td>
+            </tr>
+            <tr>
+                <td>不同網域 (例如：<code>google.com</code>)</td>
+                <td>❌ 不會</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>🔍 為什麼使用者在 DevTools 看得到，但請求不會帶上？</h2>
+    <p>這是「能看到」與「能傳送」的區別。瀏覽器將所有 Cookie 隔離儲存，並在發請求時嚴格篩選。</p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>行為</th>
+                <th>在 DevTools 是否能看到</th>
+                <th>在 HTTP 請求時是否會自動附加</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>同網域 (當前網頁)</td>
+                <td>✅ 可以</td>
+                <td>✅ 會自動附加</td>
+            </tr>
+            <tr>
+                <td>不同網域</td>
+                <td>✅ 可在 DevTools 中看到 (但分區儲存)</td>
+                <td>❌ 不會附加</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>💾 Cookie 的實際儲存位置與隔離機制</h2>
+    <p>雖然所有 Cookie 都在本機，但瀏覽器用「網域」當索引，將它們分區儲存在輕量級資料庫中，以實現隔離。</p>
+    <ul>
+        <li><strong>實際存放位置：</strong>通常是使用者電腦硬碟上的 <strong>SQLite 資料庫檔案</strong>（例如 Chrome 的 <code>Cookies</code> 檔案）。
+        </li>
+        <li><strong>SQLite：</strong>是一種嵌入式資料庫，將所有結構化資料（如 Cookie 記錄）儲存在單一檔案中，瀏覽器內部以 SQL 語句存取。</li>
+        <li><strong>隔離機制：</strong>每個 Cookie 記錄都包含 <code>host_key</code> (網域) 欄位，確保網站 A 無法存取網站 B 的 Cookie。</li>
+    </ul>
+
+    <h2>⚔️ Cookie 同源限制 與 CORS 的區別</h2>
+    <p>兩者都是瀏覽器的安全機制，但控制範圍和決定者不同。</p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>比較項目</th>
+                <th>Cookie 同源限制</th>
+                <th>CORS（跨來源資源共用）</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>控制的內容</td>
+                <td>哪些 Cookie 會被自動附帶、可被存取</td>
+                <td>哪些網站可發跨網域請求、拿到回應</td>
+            </tr>
+            <tr>
+                <td>誰決定</td>
+                <td><strong>🔒 瀏覽器規範</strong>（安全機制）</td>
+                <td><strong>🌐 伺服器設定</strong>（HTTP Header）</td>
+            </tr>
+            <tr>
+                <td>可設定跨網域嗎？</td>
+                <td>❌ 不行（只能在同 domain 或子網域）</td>
+                <td>✅ 可以用 <code>Access-Control-Allow-Origin</code> 開放</td>
+            </tr>
+        </tbody>
+    </table>
+    <blockquote><strong>總結：</strong>Cookie 同源是<strong>「瀏覽器不讓你亂帶登入憑證」</strong>；CORS 是<strong>「伺服器決定誰能存取它的
+            API」</strong>。兩者是獨立的兩層安全防護。</blockquote>
+    <hr>
 
 </body>
 
