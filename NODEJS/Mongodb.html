@@ -489,7 +489,89 @@
     <blockquote><strong>總結：</strong>Cookie 同源是<strong>「瀏覽器不讓你亂帶登入憑證」</strong>；CORS 是<strong>「伺服器決定誰能存取它的
             API」</strong>。兩者是獨立的兩層安全防護。</blockquote>
     <hr>
+    <h1>🖥️ GUI 與 MongoDB Compass</h1>
 
+    <p><strong>GUI</strong>（Graphical User Interface），中文稱為「圖形使用者介面」。</p>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>工具/概念</th>
+                <th>說明</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>GUI</strong></td>
+                <td>圖形使用者介面。利用圖形元素（如按鈕、圖示）來操作電腦，而非純文字命令。</td>
+            </tr>
+            <tr>
+                <td><strong>MongoDB Compass</strong></td>
+                <td>一個 GUI 工具，讓使用者能以視覺化的方式來操作 MongoDB 資料庫，進行查詢、管理等操作。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h1>📝 HTML Form 資料傳輸格式 (enctype)</h1>
+
+    <p>HTML 表單 (<code>&lt;form&gt;</code>) 傳輸資料時使用的格式，取決於其 <code>enctype</code> 屬性。</p>
+
+    <h3>1. application/x-www-form-urlencoded (預設格式)</h3>
+    <ul>
+        <li><strong>用途：</strong>一般文字表單，沒有檔案上傳時的**預設值**。</li>
+        <li><strong>傳輸方式：</strong>將欄位轉成 <code>key=value</code> 形式，欄位間用 <code>&amp;</code> 連接。</li>
+        <li><strong>編碼：</strong>特殊字元（如中文、空白）會使用 **URL 編碼（百分比編碼）**。</li>
+        <li><strong>HTTP Header：</strong><code>Content-Type: application/x-www-form-urlencoded</code></li>
+        <li><strong>範例傳輸內容：</strong><code>user=%E5%B0%8F%E6%98%8E&amp;age=20</code></li>
+    </ul>
+
+    <h3>2. multipart/form-data</h3>
+    <ul>
+        <li><strong>用途：</strong>當表單中包含<strong>檔案上傳</strong>元素（<code>&lt;input type="file"&gt;</code>）時必須使用。</li>
+        <li><strong>傳輸方式：</strong>將資料分成多個部分（Part），每個部分都有自己的 Header（如 <code>Content-Disposition</code>,
+            <code>Content-Type</code>），並用一個隨機的 <code>boundary</code> 隔開。</li>
+        <li><strong>HTTP Header：</strong><code>Content-Type: multipart/form-data; boundary=...</code></li>
+        <li><strong>備註：</strong>此格式也是 JavaScript <code>FormData()</code> 物件產生的內容格式。</li>
+    </ul>
+
+    <h3>3. text/plain</h3>
+    <ul>
+        <li><strong>用途：</strong>很少使用，通常用於測試或除錯。</li>
+        <li><strong>傳輸方式：</strong>直接以純文字格式傳輸，不進行任何編碼。</li>
+    </ul>
+
+    <h3>📊 Form enctype 格式總結</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>enctype 值</th>
+                <th>說明</th>
+                <th>常見用途</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>application/x-www-form-urlencoded</code></td>
+                <td>預設值，<code>key=value</code> 格式，特殊字元會被 URL 編碼。</td>
+                <td>一般文字表單送出。</td>
+            </tr>
+            <tr>
+                <td><code>multipart/form-data</code></td>
+                <td>分段傳輸，每段有獨立 Header。</td>
+                <td>上傳圖片或檔案。</td>
+            </tr>
+            <tr>
+                <td><code>text/plain</code></td>
+                <td>純文字格式，不編碼。</td>
+                <td>測試、除錯（極少使用）。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>✅ <strong>結論：</strong>一般情況下，表單傳輸的格式是 <code>application/x-www-form-urlencoded</code>，而不是俗稱的「Form Data」（該詞多指
+        <code>multipart/form-data</code> 內容）。</p>
 </body>
 
 </html>
