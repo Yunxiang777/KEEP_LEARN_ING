@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS 機制</title>
+</head>
+
+<body>
+    <h1>CORS 機制</h1>
+
+    <h2>什麼是 CORS？</h2>
+    <p>CORS（Cross-Origin Resource Sharing，跨來源資源共享）是瀏覽器的安全機制，用來控制網頁從不同來源請求資源的行為。</p>
+    <p><strong>同源定義：</strong>協議、域名、埠號三者必須完全相同。</p>
+
+    <hr>
+
+    <h2>情況一：JavaScript fetch() 跨域請求</h2>
+    <p><strong>前端：</strong><code>http://192.168.0.12:5500/client.html</code></p>
+    <p><strong>後端：</strong><code>http://localhost:3000/api/hello</code></p>
+    <p><strong>結果：</strong>❌ CORS 錯誤（不同來源）</p>
+
+    <pre>const res = await fetch('http://localhost:3000/api/hello');</pre>
+
+    <hr>
+
+    <h2>情況二：HTML 標籤載入資源（不受 CORS 限制）</h2>
+
+    <h3>後端程式碼：</h3>
+    <pre>const http = require('http');
+
+const server = http.createServer((req, res) => {
+  if (req.method === 'GET' && req.url === '/api/hello') {
+    const css = `
+      body { background-color: pink; }
+      h1 { color: red; }
+    `;
+    
+    // 故意不給 CORS header
+    res.writeHead(200, { 'Content-Type': 'text/css' });
+    res.end(css);
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
+  }
+});
+
+server.listen(3000, () => console.log(`Server running at http://localhost:3000`));</pre>
+
+    <h3>前端程式碼：</h3>
+    <pre>&lt;link rel="stylesheet" href="http://localhost:3000/api/hello"&gt;</pre>
+
+    <p><strong>結果：</strong>✅ 請求成功，CSS 樣式正常應用</p>
+    <p><strong>原因：</strong><code>&lt;link&gt;</code>、<code>&lt;script src&gt;</code>、<code>&lt;img src&gt;</code> 等標籤是「非
+        CORS Fetch 類請求」，不受 CORS 限制。</p>
+
+    <h3>什麼是 MIME type？</h3>
+    <p>MIME type 用來標識網路上傳輸的文件類型，告訴瀏覽器如何處理文件。</p>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>MIME type</th>
+            <th>說明</th>
+        </tr>
+        <tr>
+            <td>text/html</td>
+            <td>HTML 文件</td>
+        </tr>
+        <tr>
+            <td>text/css</td>
+            <td>CSS 樣式表</td>
+        </tr>
+        <tr>
+            <td>application/javascript</td>
+            <td>JavaScript 文件</td>
+        </tr>
+        <tr>
+            <td>image/png</td>
+            <td>PNG 圖像</td>
+        </tr>
+        <tr>
+            <td>image/jpeg</td>
+            <td>JPEG 圖像</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h2>CORS 檢查規則對照表</h2>
+
+    <h3>✅ 會觸發 CORS 檢查（需要伺服器回應 Access-Control-Allow-Origin）</h3>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>請求方式</th>
+            <th>是否觸發 CORS</th>
+            <th>是否需要 CORS Header</th>
+        </tr>
+        <tr>
+            <td>fetch()</td>
+            <td>✅ 會</td>
+            <td>✅ 需要</td>
+        </tr>
+        <tr>
+            <td>XMLHttpRequest (AJAX)</td>
+            <td>✅ 會</td>
+            <td>✅ 需要</td>
+        </tr>
+        <tr>
+            <td>Axios / GraphQL</td>
+            <td>✅ 會</td>
+            <td>✅ 需要</td>
+        </tr>
+    </table>
+
+    <h3>❌ 不會觸發 CORS 檢查（no-cors 模式）</h3>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>HTML 元素</th>
+            <th>是否觸發 CORS</th>
+            <th>是否發出請求</th>
+            <th>結果</th>
+        </tr>
+        <tr>
+            <td>&lt;form action="..."&gt;</td>
+            <td>❌ 不會</td>
+            <td>✅ 會</td>
+            <td>伺服器會收到資料，瀏覽器會直接導頁</td>
+        </tr>
+        <tr>
+            <td>&lt;img src="..."&gt;</td>
+            <td>❌ 不會</td>
+            <td>✅ 會</td>
+            <td>伺服器會收到 GET</td>
+        </tr>
+        <tr>
+            <td>&lt;link rel="stylesheet"&gt;</td>
+            <td>❌ 不會</td>
+            <td>✅ 會</td>
+            <td>若 MIME 為 text/css，樣式可用</td>
+        </tr>
+        <tr>
+            <td>&lt;script src="..."&gt;</td>
+            <td>❌ 不會</td>
+            <td>✅ 會</td>
+            <td>可執行（但無法取回內容）</td>
+        </tr>
+        <tr>
+            <td>&lt;iframe&gt;</td>
+            <td>❌ 不會</td>
+            <td>✅ 會載入</td>
+            <td>不會擋（但不能操作內容）</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h2>情況三：表單跨域提交</h2>
+
+    <h3>後端程式碼：</h3>
+    <pre>res.writeHead(200, {'Content-Type': 'text/html; charset=utf-8' });
+res.end(`
+  &lt;h2&gt;伺服器已收到表單資料 ✅&lt;/h2&gt;
+  &lt;p&gt;name: ${parsed.name}&lt;/p&gt;
+  &lt;p&gt;message: ${parsed.message}&lt;/p&gt;
+  &lt;a href="/"&gt;返回&lt;/a&gt;
+`);</pre>
+
+    <h3>前端程式碼：</h3>
+    <pre>&lt;form action="http://localhost:3000/api/form" method="POST"&gt;
+  &lt;label&gt;
+    Name:
+    &lt;input type="text" name="name" value="Yunxiang"&gt;
+  &lt;/label&gt;
+  &lt;br&gt;&lt;br&gt;
+  &lt;label&gt;
+    Message:
+    &lt;input type="text" name="message" value="Hello from frontend!"&gt;
+  &lt;/label&gt;
+  &lt;br&gt;&lt;br&gt;
+  &lt;button type="submit"&gt;送出表單&lt;/button&gt;
+&lt;/form&gt;</pre>
+
+    <h3>Node server 顯示：</h3>
+    <pre>📩 收到表單資料: [Object: null prototype] {
+  name: 'Yunxiang',
+  message: 'Hello from frontend!'
+}</pre>
+
+    <p><strong>結論：</strong>✅ 表單跨域提交可以成功，不會被 CORS 擋下。這是完整頁面導向，前端 JS 無法攔截或取回回應。</p>
+
+    <hr>
+
+    <h2>情況四：後端允許跨域</h2>
+
+    <h3>後端程式碼：</h3>
+    <pre>res.setHeader('Access-Control-Allow-Origin', '*');
+res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+res.setHeader('Access-Control-Allow-Headers', 'Content-Type');</pre>
+
+    <h3>前端程式碼：</h3>
+    <pre>fetch('http://localhost:3000/api/hello')</pre>
+
+    <p><strong>結果：</strong>✅ 成功收到：<code>"message": "Hello from backend 👋 (CORS enabled)"</code></p>
+
+    <hr>
+
+    <h2>CORS 運作機制總結</h2>
+
+    <h3>🧠 關鍵觀念</h3>
+    <ul>
+        <li>CORS 是<strong>瀏覽器安全機制</strong>，不是 HTTP 協定的獨立延伸</li>
+        <li>只在「瀏覽器」會被強制執行（curl、Postman 不受影響）</li>
+        <li><strong>跨域定義：</strong>協定、主機名或埠號任一不同</li>
+        <li>決定權在「後端伺服器」，前端無法強制開啟跨域</li>
+    </ul>
+
+    <h3>同源判斷範例</h3>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>前端頁面</th>
+            <th>後端 API</th>
+            <th>是否同源</th>
+        </tr>
+        <tr>
+            <td>http://localhost:3000</td>
+            <td>http://localhost:3000</td>
+            <td>✅ 同源</td>
+        </tr>
+        <tr>
+            <td>http://localhost:5500</td>
+            <td>http://localhost:3000</td>
+            <td>❌ 不同源（埠號不同）</td>
+        </tr>
+        <tr>
+            <td>https://example.com</td>
+            <td>http://example.com</td>
+            <td>❌ 不同源（協定不同）</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h2>兩種請求類型</h2>
+
+    <h3>1️⃣ 簡單請求（Simple Request）</h3>
+    <p><strong>條件：</strong></p>
+    <ul>
+        <li>方法是 GET、POST 或 HEAD</li>
+        <li>Header 僅包含安全標頭（如 Accept、Content-Type 是 application/x-www-form-urlencoded、text/plain 或 multipart/form-data）
+        </li>
+    </ul>
+    <p><strong>流程：</strong></p>
+    <ol>
+        <li>瀏覽器直接送出請求</li>
+        <li>後端回應時若包含 <code>Access-Control-Allow-Origin</code>，瀏覽器允許 JS 使用</li>
+        <li>否則即使伺服器有回應，JS 仍會報錯</li>
+    </ol>
+
+    <h3>2️⃣ 非簡單請求（Non-Simple Request）</h3>
+    <p><strong>條件：</strong></p>
+    <ul>
+        <li>使用 PUT、DELETE、PATCH 方法</li>
+        <li>或自訂 header（例如 Authorization）</li>
+        <li>或 Content-Type: application/json</li>
+    </ul>
+    <p><strong>流程：</strong>會多出「預檢請求（Preflight Request）」</p>
+
+    <hr>
+
+    <h2>預檢請求（Preflight Request）</h2>
+
+    <p>當瀏覽器偵測這是「非簡單請求」時：</p>
+
+    <h3>1. 瀏覽器先送出 OPTIONS 請求</h3>
+    <pre>OPTIONS /api/data HTTP/1.1
+Origin: http://localhost:5500
+Access-Control-Request-Method: POST
+Access-Control-Request-Headers: Content-Type</pre>
+
+    <h3>2. 後端必須回覆允許資訊</h3>
+    <pre>HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: http://localhost:5500
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type</pre>
+
+    <h3>3. 瀏覽器檢查結果</h3>
+    <ul>
+        <li>若允許 → 瀏覽器才會真正送出實際請求</li>
+        <li>若不允許 → 瀏覽器直接阻止，不會發出真正的請求</li>
+    </ul>
+
+    <hr>
+
+    <h2>常見 CORS Header 說明</h2>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>Header</th>
+            <th>功能</th>
+        </tr>
+        <tr>
+            <td>Access-Control-Allow-Origin</td>
+            <td>指定允許的來源（* 或特定 domain）</td>
+        </tr>
+        <tr>
+            <td>Access-Control-Allow-Methods</td>
+            <td>允許的 HTTP 方法，例如 GET, POST, OPTIONS</td>
+        </tr>
+        <tr>
+            <td>Access-Control-Allow-Headers</td>
+            <td>允許的自訂標頭，例如 Content-Type, Authorization</td>
+        </tr>
+        <tr>
+            <td>Access-Control-Allow-Credentials</td>
+            <td>若要允許 cookie，要設 true 並且不能用 *</td>
+        </tr>
+        <tr>
+            <td>Access-Control-Max-Age</td>
+            <td>預檢結果可被快取的秒數，減少重複預檢</td>
+        </tr>
+    </table>
+
+    <h3>後端設定範例（Node.js / Express）</h3>
+    <pre>// 允許所有網域
+res.setHeader('Access-Control-Allow-Origin', '*');
+
+// 僅允許特定網域
+res.setHeader('Access-Control-Allow-Origin', 'https://myfrontend.com');</pre>
+
+    <hr>
+
+    <h2>完整請求流程圖（非簡單請求）</h2>
+
+    <pre>前端 fetch() 
+    ↓
+瀏覽器偵測跨域
+    ↓
+發出 OPTIONS 預檢
+    ↓
+後端收到 OPTIONS → 回覆允許的 CORS Header
+    ↓
+瀏覽器檢查允許
+    ↓
+發出實際 POST
+    ↓
+後端回應 → 若含 Access-Control-Allow-Origin → JS 可存取</pre>
+
+    <hr>
+
+    <h2>🚨 CORS 的真正意義</h2>
+
+    <ul>
+        <li>CORS 不是伺服器防火牆</li>
+        <li>而是瀏覽器的「同源安全機制（Same-Origin Policy）」的一部分</li>
+        <li>它只影響「前端 JS 想要讀取跨域回應內容」的情況</li>
+        <li><strong>它不會阻止請求被送出</strong></li>
+    </ul>
+
+    <hr>
+
+    <h2>📌 補充重點</h2>
+
+    <ul>
+        <li>若後端沒處理 OPTIONS，瀏覽器會報：<code>CORS preflight response is invalid</code></li>
+        <li>curl、Postman 不會受 CORS 限制（因為那是瀏覽器機制）</li>
+        <li>若後端用 nginx、Apache 等，也可以在伺服器層設定 Header（不是程式層）</li>
+    </ul>
+    <hr>
+    <h1>CORS 與 Cookie 的關係</h1>
+
+    <h2>情況一：同源設定 Cookie</h2>
+
+    <h3>後端程式碼：</h3>
+    <pre>res.setHeader('Set-Cookie', 'user=yunxiang; HttpOnly; Path=/; SameSite=Lax');
+res.writeHead(200, { 'Content-Type': 'application/json' });
+res.end(JSON.stringify({ message: '✅ Cookie 已設定（同源）' }));</pre>
+
+    <h3>前端程式碼：</h3>
+    <pre>const res = await fetch('/api/setcookie');</pre>
+
+    <h3>結果：</h3>
+    <ul>
+        <li>HTML 與 API 完全同源（協定、host、port 全相同）</li>
+        <li>無需設定 CORS</li>
+        <li>Cookie 自動被儲存、附帶</li>
+    </ul>
+
+    <hr>
+
+    <h2>情況二：使用 Form 表單跨域提交</h2>
+
+    <p><strong>假設：</strong></p>
+    <ul>
+        <li>前端 HTML：<code>http://localhost:5500/index.html</code></li>
+        <li>後端 API：<code>http://localhost:3000/set-cookie</code></li>
+    </ul>
+
+    <h3>前端程式碼：</h3>
+    <pre>&lt;form action="http://localhost:3000/set-cookie" method="POST"&gt;
+  &lt;button type="submit"&gt;送出表單&lt;/button&gt;
+&lt;/form&gt;</pre>
+
+    <h3>💡 表單送出的屬性</h3>
+    <p>當使用 <code>&lt;form&gt;</code> 時，瀏覽器會直接發出 HTTP Request，由「瀏覽器主導」，不是用 fetch()，也沒有 JavaScript CORS 的概念。</p>
+    <pre>POST /set-cookie HTTP/1.1
+Host: localhost:3000
+Origin: http://localhost:5500
+Content-Type: application/x-www-form-urlencoded</pre>
+    <p>瀏覽器還是會附上 Origin header 告訴伺服器「我是誰發的」。</p>
+
+    <h3>🍪 伺服器的回應（Set-Cookie）</h3>
+    <p>如果後端回應：</p>
+    <pre>Set-Cookie: token=12345; Path=/;</pre>
+
+    <p><strong>結果：</strong></p>
+    <ul>
+        <li>這個 Cookie <strong>不會存到前端的網域</strong> (localhost:5500)</li>
+        <li>而是會被瀏覽器歸類成<strong>「屬於 localhost:3000」的 Cookie</strong></li>
+        <li>它會存在瀏覽器內的 Cookie jar 中，但只能被 localhost:3000 使用</li>
+        <li>localhost:5500 的 JS 或 document.cookie 看不到這個 Cookie</li>
+        <li>✅ 瀏覽器會接受，但只屬於 localhost:3000 網域</li>
+    </ul>
+    <p>舉例:</p>
+    <p>前端</p>
+    <pre><code>
+&lt;form action="http://localhost:3000/submit" method="POST" target="_blank"&gt;
+    &lt;input type="text" name="username" value="testUser" /&gt;
+    &lt;button type="submit"&gt;送出&lt;/button&gt;
+&lt;/form&gt;
+</code></pre>
+    <p>後端</p>
+    <pre>
+<pre><code>
+if (req.method === "POST" && req.url === "/submit") {
+    // 設定一個 cookie
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader("Set-Cookie", "formToken=123456; Path=/; SameSite=None; Secure");
+    res.end("&lt;h1&gt;Cookie 已設定（from localhost:3000）&lt;/h1&gt;");
+} else {
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "text/html");
+    res.end("&lt;h1&gt;Server OK&lt;/h1&gt;");
+}
+</code></pre>
+    </pre>
+    <p>結果: 頁面導向了http://localhost:3000/submit，且cookie寫在這裡，屬於這裡</p>
+
+    <hr>
+
+    <h2>什麼是 Cookie jar？</h2>
+
+    <h3>🍪 一句話定義</h3>
+    <p><strong>Cookie jar（Cookie 罐）</strong>是瀏覽器用來集中儲存並管理 Cookie 的地方。每個瀏覽器都會有一個「Cookie 儲存系統」，裡面存了所有網站設定過的 Cookie。</p>
+
+    <h3>Cookie Jar 結構範例：</h3>
+    <pre>Cookie Jar
+├── localhost:3000
+│   ├── user=alice
+│   ├── token=abc123; HttpOnly
+│
+├── example.com
+│   ├── sessionid=xyz789
+│   └── lang=zh-TW
+│
+└── google.com
+    ├── PREF=1234
+    └── SID=abcd</pre>
+
+    <p>當你訪問 <code>http://localhost:3000/api/profile</code>，瀏覽器就會從這個 jar 裡，挑出「屬於 localhost:3000」的 Cookie，然後在請求時自動加上：</p>
+    <pre>Cookie: user=alice; token=abc123</pre>
+
+    <h3>獨立性</h3>
+    <p>假設你的電腦開了三個網站：</p>
+    <ol>
+        <li>https://facebook.com</li>
+        <li>https://google.com</li>
+        <li>https://localhost:3000</li>
+    </ol>
+    <p>你的瀏覽器其實會維護三個「不同的 Cookie jar 區塊」。它們之間完全獨立，彼此看不到。哪怕你用表單跨域提交給對方，也只會讓對方的那個 jar 新增 Cookie。</p>
+
+    <h3>🧭 在「瀏覽器」中的 Cookie jar 儲存位置</h3>
+    <p>瀏覽器的 Cookie 不是放在單一檔案，而是放在「使用者資料目錄（User Data Directory）」裡的一個資料庫檔案中。現代瀏覽器幾乎都用 SQLite 來存 Cookie。</p>
+    <p><strong>以 Windows Chrome 為例：</strong></p>
+    <pre>C:\Users\&lt;你的使用者名稱&gt;\AppData\Local\Google\Chrome\User Data\Default\Network\Cookies</pre>
+
+    <hr>
+
+    <h2>情況三：跨域但未允許憑證（錯誤示範）</h2>
+
+    <p><strong>前端在：</strong><code>http://localhost:5500</code></p>
+    <p><strong>後端在：</strong><code>http://localhost:3000</code></p>
+
+    <h3>前端程式碼：</h3>
+    <pre>const res = await fetch('http://localhost:3000/set-cookie', {
+    method: 'GET',
+    credentials: 'include' // 嘗試攜帶 cookie
+});</pre>
+
+    <h3>後端程式碼：</h3>
+    <pre>// ✅ 指定明確網域（不要用 *）
+res.setHeader('Access-Control-Allow-Origin', 'http://192.168.0.12:5500');
+// 🚫 不允許 credentials（照你的設定）
+res.setHeader('Set-Cookie', 'token=abc123; Path=/; SameSite=None; Secure');
+res.setHeader('Content-Type', 'application/json');
+res.end(JSON.stringify({ message: '允許跨域，但不允許 credentials' }));</pre>
+
+    <h3>結果：</h3>
+    <p><strong>❌ 錯誤訊息：</strong></p>
+    <pre>The value of the 'Access-Control-Allow-Credentials' header in the response is ''
+which must be 'true' when the request's credentials mode is 'include'.</pre>
+
+    <p><strong>原因分析：</strong></p>
+    <ul>
+        <li>前端 <code>fetch(..., { credentials: 'include' })</code> ✅ 帶了憑證模式</li>
+        <li>伺服器有回應 <code>Access-Control-Allow-Origin</code> ✅</li>
+        <li>但是伺服器沒回傳 <code>Access-Control-Allow-Credentials: true</code></li>
+        <li>所以瀏覽器直接擋掉，連 response 都拿不到</li>
+    </ul>
+
+    <h3>💡 背後邏輯（CORS + Cookie = 雙保護機制）</h3>
+    <p>當你用 <code>credentials: 'include'</code> 時，瀏覽器要求伺服器同時明確表態：「你確定允許這個來源帶 Cookie 嗎？」</p>
+    <p>伺服器必須在 Response Header 明確回：</p>
+    <pre>Access-Control-Allow-Credentials: true</pre>
+    <p>否則 → 瀏覽器報錯、請求失敗（不是丟棄 Cookie，是整個擋）。</p>
+
+    <h3>🚨 重要規則：根據 W3C CORS 規範</h3>
+    <p>當你有 <code>credentials: 'include'</code>（即帶 Cookie / Authorization），伺服器<strong>不能用萬用字元 *</strong>
+        允許跨域。否則瀏覽器認為這樣太危險。</p>
+
+    <hr>
+
+    <h2>情況四：跨域設定 Cookie 正確做法</h2>
+
+    <h3>前端程式碼：</h3>
+    <pre>const res = await fetch('http://localhost:3000/set-cookie', {
+    method: 'GET',
+    credentials: 'include' // 攜帶 cookie
+});</pre>
+
+    <h3>後端程式碼：</h3>
+    <pre>res.setHeader('Access-Control-Allow-Origin', origin);
+res.setHeader('Access-Control-Allow-Credentials', 'true'); // ✅ 必須要有
+res.setHeader('Content-Type', 'application/json');
+res.setHeader('Set-Cookie', 'token=abc123; Path=/; SameSite=None; Secure'); // ✅ 實際設定 Cookie</pre>
+
+    <h3>結果：</h3>
+    <p>✅ 成功設定 Cookie</p>
+    <ul>
+        <li><strong>名稱：</strong>user</li>
+        <li><strong>值：</strong>yunxiang</li>
+        <li><strong>Domain：</strong>localhost</li>
+    </ul>
+
+    <hr>
+
+    <h2>🍪 重點：Cookie 屬於「設定它的網域 (Domain)」</h2>
+
+    <h3>🔍 結果：</h3>
+    <p>這個 Cookie 只會被瀏覽器自動附加在「送往 localhost:3000」的請求中。任何打去其他域名（例如 192.168.0.12:5500）的請求，都不會帶這個 Cookie。</p>
+
+    <h3>🧩 想讓 Cookie 在跨子網域共享？</h3>
+    <p>你可以在伺服器設定：</p>
+    <pre>Set-Cookie: token=abc123; Path=/; Domain=.example.com; SameSite=None; Secure</pre>
+
+    <p><strong>效果：</strong></p>
+    <ul>
+        <li>api.example.com 設的 Cookie</li>
+        <li>也會被 www.example.com 帶上去</li>
+        <li>（因為它們同屬於 .example.com）</li>
+    </ul>
+
+    <p><strong>⚠️ 限制：</strong></p>
+    <p>你不能把 Domain 設成別人的（例如 .google.com）——瀏覽器會直接忽略這種非法的設定。</p>
+
+    <hr>
+
+    <h2>📌 總結對照表</h2>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>情況</th>
+            <th>前端</th>
+            <th>後端</th>
+            <th>結果</th>
+        </tr>
+        <tr>
+            <td>同源</td>
+            <td>fetch('/api')</td>
+            <td>Set-Cookie</td>
+            <td>✅ Cookie 自動儲存、附帶</td>
+        </tr>
+        <tr>
+            <td>Form 跨域</td>
+            <td>&lt;form action="..."&gt;</td>
+            <td>Set-Cookie</td>
+            <td>✅ Cookie 存到後端網域，前端看不到</td>
+        </tr>
+        <tr>
+            <td>跨域無憑證</td>
+            <td>credentials: 'include'</td>
+            <td>未設 Allow-Credentials</td>
+            <td>❌ 瀏覽器擋下請求</td>
+        </tr>
+        <tr>
+            <td>跨域正確</td>
+            <td>credentials: 'include'</td>
+            <td>Allow-Credentials: true<br>SameSite=None; Secure</td>
+            <td>✅ Cookie 成功設定</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h2>🔑 關鍵 Cookie 屬性說明</h2>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+        <tr>
+            <th>屬性</th>
+            <th>說明</th>
+        </tr>
+        <tr>
+            <td>HttpOnly</td>
+            <td>JavaScript 無法透過 document.cookie 讀取，防止 XSS 攻擊</td>
+        </tr>
+        <tr>
+            <td>Path</td>
+            <td>Cookie 適用的路徑，預設為 /</td>
+        </tr>
+        <tr>
+            <td>Domain</td>
+            <td>Cookie 適用的域名，可設定子網域共享</td>
+        </tr>
+        <tr>
+            <td>SameSite</td>
+            <td>
+                <strong>Lax：</strong>同源請求 + 頂層導航（如 &lt;a&gt; 連結）會帶 Cookie<br>
+                <strong>Strict：</strong>只有完全同源才會帶 Cookie<br>
+                <strong>None：</strong>允許跨域，但必須配合 Secure
+            </td>
+        </tr>
+        <tr>
+            <td>Secure</td>
+            <td>只在 HTTPS 連線時傳送 Cookie</td>
+        </tr>
+    </table>
+</body>
+
+</html>
