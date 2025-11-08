@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTTP、HTTPS 與網路安全機制完整筆記</title>
+  </head>
+  <body>
+    <h1>HTTP、HTTPS 與網路安全機制完整筆記</h1>
+
+    <h2>目錄</h2>
+    <ol>
+      <li><a href="#http-basic">HTTP 基礎概念</a></li>
+      <li><a href="#http-structure">HTTP 通訊結構</a></li>
+      <li><a href="#encryption-basics">加密技術基礎</a></li>
+      <li><a href="#ssl-tls">SSL/TLS 協定</a></li>
+      <li><a href="#certificate">數位憑證機制</a></li>
+      <li><a href="#https-flow">HTTPS 完整連線流程</a></li>
+    </ol>
+
+    <hr />
+
+    <h2 id="http-basic">1. HTTP 基礎概念</h2>
+
+    <h3>1.1 什麼是 HTTP？</h3>
+    <p>
+      HTTP（HyperText Transfer
+      Protocol）是一種<strong>通訊協定（Protocol）</strong>，定義了瀏覽器（Client）與伺服器（Server）如何互相傳送與接收資料。
+    </p>
+
+    <h4>基本特性：</h4>
+    <table border="1">
+      <tr>
+        <th>特性</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>協定層級</td>
+        <td>應用層協定（OSI 第七層）</td>
+      </tr>
+      <tr>
+        <td>傳輸協定</td>
+        <td>使用 TCP/IP</td>
+      </tr>
+      <tr>
+        <td>預設埠號</td>
+        <td>80</td>
+      </tr>
+      <tr>
+        <td>狀態特性</td>
+        <td>無狀態協定（Stateless）- 每次請求彼此獨立</td>
+      </tr>
+    </table>
+
+    <h3>1.2 HTTP 通訊流程</h3>
+    <ol>
+      <li><strong>建立 TCP 連線：</strong>瀏覽器連接伺服器的 80 埠</li>
+      <li><strong>發送 Request：</strong>瀏覽器送出請求</li>
+      <li><strong>伺服器回應 Response：</strong>伺服器回傳資料</li>
+      <li><strong>關閉或保持連線：</strong>HTTP/1.1 之後支援 Keep-Alive</li>
+    </ol>
+
+    <hr />
+
+    <h2 id="http-structure">2. HTTP 通訊結構</h2>
+
+    <h3>2.1 HTTP Request（請求）結構</h3>
+    <table border="1">
+      <tr>
+        <th>部分</th>
+        <th>說明</th>
+        <th>範例</th>
+      </tr>
+      <tr>
+        <td>請求行</td>
+        <td>說明要做什麼事（方法、路徑、版本）</td>
+        <td>GET /page.html HTTP/1.1</td>
+      </tr>
+      <tr>
+        <td>標頭（Headers）</td>
+        <td>附加資訊（瀏覽器、Cookie、授權等）</td>
+        <td>User-Agent: Chrome<br />Host: www.example.com</td>
+      </tr>
+      <tr>
+        <td>主體（Body）</td>
+        <td>傳送資料（POST 時使用）</td>
+        <td>username=John&password=1234</td>
+      </tr>
+    </table>
+
+    <h3>2.2 HTTP Response（回應）結構</h3>
+    <table border="1">
+      <tr>
+        <th>部分</th>
+        <th>說明</th>
+        <th>範例</th>
+      </tr>
+      <tr>
+        <td>狀態行</td>
+        <td>顯示結果狀態</td>
+        <td>HTTP/1.1 200 OK</td>
+      </tr>
+      <tr>
+        <td>標頭（Headers）</td>
+        <td>附加資訊（Content-Type、Server 等）</td>
+        <td>Content-Type: text/html</td>
+      </tr>
+      <tr>
+        <td>主體（Body）</td>
+        <td>實際資料（HTML、JSON、圖片等）</td>
+        <td>&lt;html&gt;...&lt;/html&gt;</td>
+      </tr>
+    </table>
+
+    <h3>2.3 常見 HTTP 方法</h3>
+    <table border="1">
+      <tr>
+        <th>方法</th>
+        <th>用途</th>
+      </tr>
+      <tr>
+        <td>GET</td>
+        <td>取得資料（不改變伺服器狀態）</td>
+      </tr>
+      <tr>
+        <td>POST</td>
+        <td>傳送資料（建立或修改伺服器資源）</td>
+      </tr>
+      <tr>
+        <td>PUT</td>
+        <td>更新整個資源</td>
+      </tr>
+      <tr>
+        <td>PATCH</td>
+        <td>局部更新</td>
+      </tr>
+      <tr>
+        <td>DELETE</td>
+        <td>刪除資源</td>
+      </tr>
+      <tr>
+        <td>HEAD</td>
+        <td>只取回標頭，不取內容</td>
+      </tr>
+      <tr>
+        <td>OPTIONS</td>
+        <td>詢問伺服器支援哪些方法（CORS 會用）</td>
+      </tr>
+    </table>
+
+    <h3>2.4 HTTP 狀態碼</h3>
+    <table border="1">
+      <tr>
+        <th>類別</th>
+        <th>範圍</th>
+        <th>意義</th>
+        <th>範例</th>
+      </tr>
+      <tr>
+        <td>1xx</td>
+        <td>資訊</td>
+        <td>要求已收到，繼續處理</td>
+        <td>100 Continue</td>
+      </tr>
+      <tr>
+        <td>2xx</td>
+        <td>成功</td>
+        <td>一切正常</td>
+        <td>200 OK, 201 Created</td>
+      </tr>
+      <tr>
+        <td>3xx</td>
+        <td>重新導向</td>
+        <td>要去別的 URL</td>
+        <td>301 Moved Permanently, 302 Found</td>
+      </tr>
+      <tr>
+        <td>4xx</td>
+        <td>用戶端錯誤</td>
+        <td>用戶端請求有問題</td>
+        <td>400 Bad Request, 404 Not Found</td>
+      </tr>
+      <tr>
+        <td>5xx</td>
+        <td>伺服器錯誤</td>
+        <td>伺服器出問題</td>
+        <td>500 Internal Server Error</td>
+      </tr>
+    </table>
+
+    <h3>2.5 HTTP vs HTTPS</h3>
+    <table border="1">
+      <tr>
+        <th>協定</th>
+        <th>Port</th>
+        <th>是否加密</th>
+        <th>備註</th>
+      </tr>
+      <tr>
+        <td>HTTP</td>
+        <td>80</td>
+        <td>否</td>
+        <td>資料明文傳輸</td>
+      </tr>
+      <tr>
+        <td>HTTPS</td>
+        <td>443</td>
+        <td>是</td>
+        <td>使用 TLS/SSL 加密，確保安全</td>
+      </tr>
+    </table>
+
+    <hr />
+
+    <h2 id="encryption-basics">3. 加密技術基礎</h2>
+
+    <h3>3.1 對稱加密 vs 非對稱加密</h3>
+    <table border="1">
+      <tr>
+        <th>類型</th>
+        <th>使用金鑰</th>
+        <th>特點</th>
+        <th>範例</th>
+      </tr>
+      <tr>
+        <td>對稱加密</td>
+        <td>一把鑰匙（加密與解密相同）</td>
+        <td>快速，但難以安全分發金鑰</td>
+        <td>AES、DES</td>
+      </tr>
+      <tr>
+        <td>非對稱加密</td>
+        <td>兩把鑰匙（公鑰 + 私鑰）</td>
+        <td>安全，但速度慢</td>
+        <td>RSA、ECC</td>
+      </tr>
+    </table>
+
+    <h3>3.2 公鑰與私鑰（非對稱加密）</h3>
+    <table border="1">
+      <tr>
+        <th>名稱</th>
+        <th>說明</th>
+        <th>是否公開</th>
+        <th>用途</th>
+      </tr>
+      <tr>
+        <td>公鑰<br />(Public Key)</td>
+        <td>可以公開給任何人使用</td>
+        <td>可以公開</td>
+        <td>
+          <ul>
+            <li>加密資料</li>
+            <li>驗證數位簽章</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>私鑰<br />(Private Key)</td>
+        <td>只有擁有者自己知道</td>
+        <td>絕對保密</td>
+        <td>
+          <ul>
+            <li>解密資料</li>
+            <li>產生數位簽章</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h3>3.3 公鑰與私鑰的特性</h3>
+    <ul>
+      <li><strong>數學配對：</strong>公鑰和私鑰是數學上的一對</li>
+      <li><strong>加密規則：</strong>用公鑰加密的資料，只能用對應的私鑰解密</li>
+      <li><strong>簽章規則：</strong>用私鑰簽名的資料，可以用公鑰驗證真偽</li>
+    </ul>
+
+    <h3>3.4 兩種主要用途</h3>
+
+    <h4>用途一：數據加密與解密（確保機密性）</h4>
+    <ol>
+      <li><strong>瀏覽器</strong>使用伺服器的<strong>公鑰</strong>加密資料</li>
+      <li>加密後的資料即使被攔截，也無法讀取（是亂碼）</li>
+      <li><strong>伺服器</strong>使用自己的<strong>私鑰</strong>解密資料</li>
+    </ol>
+    <p>
+      <strong>比喻：</strong
+      >任何人都能用公鑰鎖起資料，但只有持有私鑰的人能打開。
+    </p>
+
+    <h4>用途二：數位簽章與身份驗證（確保身份和完整性）</h4>
+    <ol>
+      <li>
+        <strong>伺服器</strong>使用自己的<strong>私鑰</strong>對資料進行簽章
+      </li>
+      <li><strong>瀏覽器</strong>使用伺服器的<strong>公鑰</strong>驗證簽章</li>
+      <li>驗證成功代表：資料來自正確的伺服器且未被竄改</li>
+    </ol>
+    <p>
+      <strong>比喻：</strong
+      >就像官方印章，只有官員能蓋章（私鑰），但任何人都能對照印鑑簿驗證真偽（公鑰）。
+    </p>
+
+    <h3>3.5 常見非對稱加密演算法</h3>
+    <table border="1">
+      <tr>
+        <th>演算法</th>
+        <th>特色</th>
+        <th>常見用途</th>
+      </tr>
+      <tr>
+        <td>RSA</td>
+        <td>最傳統，安全性高但速度慢</td>
+        <td>HTTPS 憑證、公鑰基礎架構</td>
+      </tr>
+      <tr>
+        <td>ECC<br />(橢圓曲線加密)</td>
+        <td>效率高、金鑰短</td>
+        <td>TLS 1.3、行動裝置</td>
+      </tr>
+      <tr>
+        <td>DSA / ECDSA</td>
+        <td>專用於簽章</td>
+        <td>憑證簽名</td>
+      </tr>
+    </table>
+
+    <h3>3.6 現代 HTTPS 的混合加密策略</h3>
+    <p>為了兼顧安全性和效能，HTTPS 採用混合加密：</p>
+    <ol>
+      <li>
+        <strong>非對稱加密：</strong>用於安全交換「會話金鑰（Session Key）」
+      </li>
+      <li><strong>對稱加密：</strong>用於後續的資料傳輸（速度快）</li>
+    </ol>
+
+    <hr />
+
+    <h2 id="ssl-tls">4. SSL/TLS 協定</h2>
+
+    <h3>4.1 什麼是 SSL/TLS？</h3>
+    <p>
+      <strong>SSL（Secure Sockets Layer）</strong> 和
+      <strong>TLS（Transport Layer Security）</strong>
+      都是加密通訊協定，用來讓網路傳輸的資料變得安全。
+    </p>
+    <p>
+      <strong>一句話解釋：</strong>SSL/TLS
+      讓瀏覽器與伺服器之間傳的資料「加密」、「驗證身分」、「防止竄改」。
+    </p>
+
+    <h3>4.2 SSL 與 TLS 的歷史演進</h3>
+    <table border="1">
+      <tr>
+        <th>名稱</th>
+        <th>時代</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>SSL 1.0</td>
+        <td>1990s 初期</td>
+        <td>從未公開</td>
+      </tr>
+      <tr>
+        <td>SSL 2.0</td>
+        <td>1995</td>
+        <td>有嚴重漏洞，被淘汰</td>
+      </tr>
+      <tr>
+        <td>SSL 3.0</td>
+        <td>1996</td>
+        <td>被 POODLE 攻擊淘汰</td>
+      </tr>
+      <tr>
+        <td>TLS 1.0</td>
+        <td>1999</td>
+        <td>基於 SSL 3.0 改進而成</td>
+      </tr>
+      <tr>
+        <td>TLS 1.2</td>
+        <td>2008</td>
+        <td>過去最常見版本</td>
+      </tr>
+      <tr>
+        <td>TLS 1.3</td>
+        <td>2018</td>
+        <td>更安全、更快，目前主流</td>
+      </tr>
+    </table>
+
+    <p>
+      <strong>重要：</strong>TLS 就是新版的 SSL。現在說「SSL 憑證」其實都是指
+      TLS 憑證。
+    </p>
+
+    <h3>4.3 TLS/SSL 提供的三大安全保障</h3>
+    <table border="1">
+      <tr>
+        <th>安全性目標</th>
+        <th>說明</th>
+        <th>例子</th>
+      </tr>
+      <tr>
+        <td>加密<br />(Encryption)</td>
+        <td>傳輸的資料經過加密，第三方看不懂</td>
+        <td>駭客看到的是亂碼而不是密碼</td>
+      </tr>
+      <tr>
+        <td>驗證<br />(Authentication)</td>
+        <td>確認你連到的真的是正確網站</td>
+        <td>確定你連的是「google.com」而不是釣魚網站</td>
+      </tr>
+      <tr>
+        <td>完整性<br />(Integrity)</td>
+        <td>保證資料在傳輸過程中沒有被竄改</td>
+        <td>防止中間人修改傳送內容</td>
+      </tr>
+    </table>
+
+    <h3>4.4 TLS Handshake（握手）過程</h3>
+    <p>當你開啟一個 HTTPS 網站時，瀏覽器與伺服器會進行以下流程：</p>
+
+    <table border="1">
+      <tr>
+        <th>步驟</th>
+        <th>動作</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Client Hello</td>
+        <td>瀏覽器說：「嗨，我支援哪些加密方式，請挑一個。」</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Server Hello + Certificate</td>
+        <td>伺服器回應：「好，我用這種加密，這是我的憑證（含公鑰）。」</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>驗證憑證</td>
+        <td>瀏覽器檢查憑證是否合法（由受信任的 CA 簽發、未過期、域名正確）</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>產生會話金鑰</td>
+        <td>雙方使用公開金鑰加密協議（例如 ECDHE）產生一個臨時對稱密鑰</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>開始加密通訊</td>
+        <td>之後的 HTTP 傳輸就都用這個對稱密鑰加密</td>
+      </tr>
+    </table>
+
+    <h3>4.5 為什麼不再用 SSL？</h3>
+    <p>SSL（尤其 2.0 和 3.0）有嚴重安全漏洞：</p>
+    <ul>
+      <li>POODLE 攻擊</li>
+      <li>BEAST 攻擊</li>
+      <li>不支援現代加密演算法</li>
+    </ul>
+    <p><strong>目前所有主流瀏覽器都只支援 TLS 1.2 或 1.3。</strong></p>
+
+    <h3>4.6 協定關係圖</h3>
+    <pre>
+HTTP      → 資料明文傳輸
+HTTPS     → HTTP + TLS 加密
+TLS       → 加密協定（新版的 SSL）
+SSL       → TLS 的舊版本（已淘汰）
+
+換句話說：HTTPS = HTTP over TLS
+    </pre>
+
+    <hr />
+
+    <h2 id="certificate">5. 數位憑證機制</h2>
+
+    <h3>5.1 什麼是 SSL/TLS 憑證？</h3>
+    <p>憑證是 HTTPS 的<strong>身分證</strong>，用來證明網站的身份。</p>
+
+    <h3>5.2 憑證內容</h3>
+    <table border="1">
+      <tr>
+        <th>項目</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>網域名稱</td>
+        <td>例如：www.example.com</td>
+      </tr>
+      <tr>
+        <td>持有者資訊</td>
+        <td>公司或組織名稱</td>
+      </tr>
+      <tr>
+        <td>公鑰</td>
+        <td>用於加密和驗證</td>
+      </tr>
+      <tr>
+        <td>憑證簽發單位（CA）</td>
+        <td>發行此憑證的機構</td>
+      </tr>
+      <tr>
+        <td>有效期限</td>
+        <td>憑證的有效時間</td>
+      </tr>
+      <tr>
+        <td>數位簽章</td>
+        <td>CA 的簽章，確保憑證未被竄改</td>
+      </tr>
+    </table>
+
+    <h3>5.3 憑證頒發機構（CA）</h3>
+    <p>
+      <strong>CA（Certificate Authority）</strong>
+      是網際網路上受信任的「簽章機構」。
+    </p>
+
+    <h4>常見的 CA：</h4>
+    <ul>
+      <li>Let's Encrypt（免費）</li>
+      <li>DigiCert</li>
+      <li>GlobalSign</li>
+      <li>Sectigo</li>
+    </ul>
+
+    <h3>5.4 數位簽章的運作原理</h3>
+    <p><strong>比喻：</strong>數位簽章就像是一個無法偽造的官方印章。</p>
+
+    <table border="1">
+      <tr>
+        <th>數位簽章中的角色/物件</th>
+        <th>公文類比中的角色/物件</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>憑證頒發機構 (CA)</td>
+        <td>蓋章的官員</td>
+        <td>負責核發和擔保公文的權威機構</td>
+      </tr>
+      <tr>
+        <td>CA 的私鑰</td>
+        <td>官員的私章（刻名字的）</td>
+        <td>只有官員自己擁有的印章，用來「蓋章簽名」</td>
+      </tr>
+      <tr>
+        <td>CA 的公鑰</td>
+        <td>官方印鑑簿（公開的樣章）</td>
+        <td>任何人都可以取得，用來核對公文上的印章是否為真</td>
+      </tr>
+      <tr>
+        <td>伺服器憑證內容</td>
+        <td>公文內容</td>
+        <td>伺服器資訊、網域、公鑰等</td>
+      </tr>
+      <tr>
+        <td>數位簽章</td>
+        <td>公文上的印章痕跡</td>
+        <td>用私章蓋在公文上的加密雜湊值</td>
+      </tr>
+    </table>
+
+    <h3>5.5 數位簽章的驗證步驟</h3>
+
+    <h4>步驟一：檢查印章的真偽（驗證 CA 身份）</h4>
+    <ol>
+      <li>
+        <strong>官方蓋章（私鑰簽名）：</strong>CA
+        用自己的私鑰在憑證上產生數位簽章
+      </li>
+      <li><strong>您的驗證（公鑰解密）：</strong>瀏覽器用 CA 的公鑰解開簽章</li>
+      <li>
+        <strong>結果：</strong>如果能成功解開，證明這個簽章確實是該 CA 所簽發
+      </li>
+    </ol>
+
+    <h4>步驟二：檢查內容是否被篡改（雜湊值比對）</h4>
+    <ol>
+      <li>
+        <strong>CA 簽發時：</strong>CA 把憑證內容計算成雜湊值（摘要
+        B），並用私鑰加密這個雜湊值
+      </li>
+      <li>
+        <strong>瀏覽器驗證：</strong>
+        <ul>
+          <li>瀏覽器自己計算收到的憑證內容的雜湊值（摘要 A）</li>
+          <li>用 CA 公鑰解開簽章，得到原始的雜湊值（摘要 B）</li>
+        </ul>
+      </li>
+      <li>
+        <strong>比對：</strong>
+        <ul>
+          <li>如果 A = B：憑證內容完整，未被竄改</li>
+          <li>如果 A ≠ B：憑證內容被修改，驗證失敗</li>
+        </ul>
+      </li>
+    </ol>
+
+    <hr />
+
+    <h2 id="https-flow">6. HTTPS 完整連線流程</h2>
+
+    <h3>6.1 三個階段概覽</h3>
+    <table border="1">
+      <tr>
+        <th>階段</th>
+        <th>參與者</th>
+        <th>目的</th>
+      </tr>
+      <tr>
+        <td>階段一：憑證產生</td>
+        <td>Server → CA</td>
+        <td>Server 申請並取得由 CA 擔保的憑證</td>
+      </tr>
+      <tr>
+        <td>階段二：憑證發布</td>
+        <td>Server → Client</td>
+        <td>Server 將憑證傳送給瀏覽器</td>
+      </tr>
+      <tr>
+        <td>階段三：憑證驗證與建立安全連線</td>
+        <td>Client 端驗證</td>
+        <td>瀏覽器驗證憑證並建立加密通道</td>
+      </tr>
+    </table>
+
+    <h3>6.2 階段一：憑證的產生（Server 與 CA 之間）</h3>
+    <ol>
+      <li>
+        <strong>Server 產生金鑰對：</strong>
+        <ul>
+          <li>私鑰：伺服器自己嚴格保管</li>
+          <li>公鑰：會包含在憑證請求中</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Server 提交 CSR 給 CA：</strong>
+        <ul>
+          <li>
+            伺服器將公鑰和身份資訊打包成 CSR（Certificate Signing Request）
+          </li>
+          <li>提交給 CA 申請憑證</li>
+        </ul>
+      </li>
+      <li>
+        <strong>CA 驗證與簽發：</strong>
+        <ul>
+          <li>CA 驗證伺服器的身份和網域所有權</li>
+          <li>
+            驗證無誤後，CA 用自己的私鑰對伺服器的公鑰和身份資訊進行數位簽章
+          </li>
+          <li>將簽署好的憑證回傳給伺服器</li>
+        </ul>
+      </li>
+    </ol>
+
+    <h3>6.3 階段二：憑證的發布與呈現（Server 端）</h3>
+    <ol>
+      <li>伺服器收到 CA 簽發的憑證後，安裝在網頁伺服器軟體上</li>
+      <li>當瀏覽器訪問該網站時，伺服器在 TLS 握手的第一步將憑證發送給瀏覽器</li>
+    </ol>
+
+    <h3>6.4 階段三：憑證的驗證與建立安全連線（Client 端）</h3>
+    <p>這是最關鍵的階段，分為兩大步驟：</p>
+
+    <h4>第一步：驗證憑證與身份（身份驗證與完整性）</h4>
+    <table border="1">
+      <tr>
+        <th>動作</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>瀏覽器接收憑證</td>
+        <td>從伺服器收到包含公鑰的憑證</td>
+      </tr>
+      <tr>
+        <td>信任檢查</td>
+        <td>
+          瀏覽器檢查簽發該憑證的 CA 是否在自己內建的「受信任根憑證清單」中
+        </td>
+      </tr>
+      <tr>
+        <td>數位簽章驗證</td>
+        <td>瀏覽器使用內建的 CA 公鑰驗證憑證上的數位簽章</td>
+      </tr>
+      <tr>
+        <td>資訊比對</td>
+        <td>檢查憑證中的網域名稱是否與當前訪問的網址一致、憑證是否過期等</td>
+      </tr>
+    </table>
+    <p>
+      <strong>目的：</strong>確認伺服器身份是可信的，且憑證內容從 CA
+      簽發到傳輸到瀏覽器期間沒有被篡改。
+    </p>
+    <h4>第二步：建立安全通道（機密性）</h4>
+    <p>在確認了伺服器的身份和憑證的完整性後，接下來建立加密通訊：</p>
+    <p>
+      <strong>目的：</strong>確認伺服器身份是可信的，且憑證內容從 CA
+      簽發到傳輸到瀏覽器期間沒有被篡改。
+    </p>
+
+    <h4>第二步：建立安全通道（機密性）</h4>
+    <p>在確認了伺服器的身份和憑證的完整性後，接下來建立加密通訊：</p>
+
+    <table border="1">
+      <tr>
+        <th>步驟</th>
+        <th>動作</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>金鑰交換</td>
+        <td>瀏覽器生成一個對稱加密所需的 Session Key（會話金鑰）</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>公鑰加密</td>
+        <td>瀏覽器使用從憑證中取得的伺服器公鑰，將 Session Key 加密</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td>私鑰解密</td>
+        <td>伺服器收到加密的 Session Key，使用自己的私鑰解密</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td>安全通訊</td>
+        <td>
+          雙方現在共享 Session Key，後續的應用數據都使用這個金鑰進行對稱加密
+        </td>
+      </tr>
+    </table>
+
+    <p><strong>目的：</strong>建立機密通道，確保未來傳輸的內容無法被竊聽。</p>
+
+    <h3>6.5 完整流程圖示</h3>
+    <pre>
+    【階段一：憑證申請與簽發】
+Server → 產生公私鑰對
+Server → 製作 CSR（含公鑰）→ 提交給 CA
+CA → 驗證身份 → 用 CA 私鑰簽章 → 發回憑證給 Server
+【階段二：TLS 握手 - 第一步（驗證身份）】
+Client（瀏覽器）→ Client Hello
+Server → Server Hello + 憑證（含公鑰）
+Client → 驗證憑證：
+├─ 檢查 CA 是否在受信任清單
+├─ 用 CA 公鑰驗證數位簽章
+├─ 比對網域名稱
+└─ 檢查有效期限
+結果：確認「我是誰？」（Server 身份與憑證完整性）
+【階段三：TLS 握手 - 第二步（建立加密通道）】
+Client → 生成 Session Key
+Client → 用 Server 公鑰加密 Session Key → 傳給 Server
+Server → 用 Server 私鑰解密 → 取得 Session Key
+雙方 → 使用 Session Key 進行對稱加密通訊
+結果：協商「我們用什麼語言私密對話？」（機密通道）
+【階段四：安全的 HTTP 通訊】
+所有後續的 HTTP 請求與回應都使用 Session Key 加密
+</pre
+    >
+    <h3>6.6 兩大步驟總結</h3>
+    <table border="1">
+      <tr>
+        <th>步驟</th>
+        <th>核心問題</th>
+        <th>實現方式</th>
+        <th>確保的安全性</th>
+      </tr>
+      <tr>
+        <td>第一步：<br />憑證驗證</td>
+        <td>確認「我是誰？」</td>
+        <td>
+          <ul>
+            <li>檢查 CA 信任鏈</li>
+            <li>驗證數位簽章</li>
+            <li>比對網域與有效期</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>身份驗證（Authentication）</li>
+            <li>完整性（Integrity）</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>第二步：<br />金鑰交換</td>
+        <td>協商「我們用什麼語言私密對話？」</td>
+        <td>
+          <ul>
+            <li>用公鑰加密 Session Key</li>
+            <li>用私鑰解密 Session Key</li>
+            <li>雙方共享對稱金鑰</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>機密性（Encryption）</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <hr />
+
+    <h2>7. 重要概念總結</h2>
+
+    <h3>7.1 核心角色與責任</h3>
+    <table border="1">
+      <tr>
+        <th>角色</th>
+        <th>責任</th>
+        <th>關鍵物件</th>
+      </tr>
+      <tr>
+        <td>CA<br />（憑證頒發機構）</td>
+        <td>
+          <ul>
+            <li>驗證 Server 身份</li>
+            <li>簽發憑證</li>
+            <li>用 CA 私鑰簽章</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>CA 私鑰（簽章用）</li>
+            <li>CA 公鑰（內建於瀏覽器）</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>Server<br />（伺服器）</td>
+        <td>
+          <ul>
+            <li>申請憑證</li>
+            <li>保管私鑰</li>
+            <li>提供憑證給 Client</li>
+            <li>解密 Session Key</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>Server 私鑰（解密用）</li>
+            <li>Server 公鑰（在憑證中）</li>
+            <li>SSL/TLS 憑證</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>Client<br />（瀏覽器）</td>
+        <td>
+          <ul>
+            <li>驗證憑證真偽</li>
+            <li>生成 Session Key</li>
+            <li>用 Server 公鑰加密</li>
+            <li>進行安全通訊</li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>內建的 CA 公鑰清單</li>
+            <li>Session Key</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h3>7.2 金鑰使用總覽</h3>
+    <table border="1">
+      <tr>
+        <th>金鑰類型</th>
+        <th>擁有者</th>
+        <th>用途</th>
+        <th>公開性</th>
+      </tr>
+      <tr>
+        <td>CA 私鑰</td>
+        <td>CA</td>
+        <td>簽發憑證（產生數位簽章）</td>
+        <td>絕對保密</td>
+      </tr>
+      <tr>
+        <td>CA 公鑰</td>
+        <td>內建於瀏覽器</td>
+        <td>驗證憑證簽章</td>
+        <td>公開</td>
+      </tr>
+      <tr>
+        <td>Server 私鑰</td>
+        <td>Server</td>
+        <td>解密 Session Key</td>
+        <td>絕對保密</td>
+      </tr>
+      <tr>
+        <td>Server 公鑰</td>
+        <td>包含在憑證中</td>
+        <td>加密 Session Key</td>
+        <td>公開（在憑證內）</td>
+      </tr>
+      <tr>
+        <td>Session Key<br />（會話金鑰）</td>
+        <td>Client 與 Server 共享</td>
+        <td>對稱加密通訊內容</td>
+        <td>加密傳輸後共享</td>
+      </tr>
+    </table>
+
+    <h3>7.3 安全性保障三要素</h3>
+    <table border="1">
+      <tr>
+        <th>安全性目標</th>
+        <th>實現方式</th>
+        <th>涉及技術</th>
+      </tr>
+      <tr>
+        <td>機密性<br />(Confidentiality)</td>
+        <td>數據加密，第三方無法讀取</td>
+        <td>
+          <ul>
+            <li>非對稱加密（交換金鑰）</li>
+            <li>對稱加密（傳輸數據）</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>完整性<br />(Integrity)</td>
+        <td>確保數據在傳輸中未被竄改</td>
+        <td>
+          <ul>
+            <li>雜湊函數（Hash）</li>
+            <li>數位簽章</li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>身份驗證<br />(Authentication)</td>
+        <td>確認通訊對象的身份</td>
+        <td>
+          <ul>
+            <li>數位憑證</li>
+            <li>CA 信任鏈</li>
+            <li>數位簽章驗證</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
+
+    <h3>7.4 關鍵術語對照</h3>
+    <table border="1">
+      <tr>
+        <th>術語</th>
+        <th>英文</th>
+        <th>說明</th>
+      </tr>
+      <tr>
+        <td>憑證頒發機構</td>
+        <td>CA (Certificate Authority)</td>
+        <td>受信任的第三方機構，負責簽發憑證</td>
+      </tr>
+      <tr>
+        <td>憑證簽署請求</td>
+        <td>CSR (Certificate Signing Request)</td>
+        <td>伺服器向 CA 申請憑證時提交的文件</td>
+      </tr>
+      <tr>
+        <td>會話金鑰</td>
+        <td>Session Key</td>
+        <td>用於對稱加密的臨時密鑰</td>
+      </tr>
+      <tr>
+        <td>握手</td>
+        <td>Handshake</td>
+        <td>建立安全連線前的協商過程</td>
+      </tr>
+      <tr>
+        <td>雜湊值</td>
+        <td>Hash</td>
+        <td>數據的固定長度摘要，用於驗證完整性</td>
+      </tr>
+    </table>
+
+    <hr />
+
+    <h2>8. 常見問題 Q&A</h2>
+
+    <h3>Q1: 為什麼需要 CA？伺服器不能自己簽發憑證嗎？</h3>
+    <p>
+      <strong>A:</strong>
+      伺服器可以自己簽發憑證（稱為「自簽憑證」），但瀏覽器不會信任，因為沒有第三方擔保。CA
+      的作用就是作為受信任的第三方，確保憑證的真實性。瀏覽器內建了一份受信任的
+      CA 清單，只有這些 CA 簽發的憑證才會被接受。
+    </p>
+
+    <h3>Q2: Session Key 為什麼不直接用公鑰加密所有數據？</h3>
+    <p>
+      <strong>A:</strong>
+      因為非對稱加密（公鑰/私鑰）速度很慢，不適合大量數據傳輸。所以採用混合加密：先用非對稱加密安全地交換
+      Session Key，然後用速度快的對稱加密傳輸數據。
+    </p>
+
+    <h3>Q3: 私鑰洩露會有什麼後果？</h3>
+    <p><strong>A:</strong></p>
+    <ul>
+      <li>
+        <strong>Server 私鑰洩露：</strong
+        >攻擊者可以冒充該伺服器，解密過去攔截的流量（如果沒有使用 Perfect
+        Forward Secrecy）
+      </li>
+      <li>
+        <strong>CA 私鑰洩露：</strong
+        >災難性後果，攻擊者可以簽發任何網域的假憑證，該 CA 必須被撤銷信任
+      </li>
+    </ul>
+
+    <h3>Q4: HTTP 和 HTTPS 可以共存嗎？</h3>
+    <p><strong>A:</strong> 可以，但不建議。現代網站應該：</p>
+    <ul>
+      <li>全站使用 HTTPS</li>
+      <li>將 HTTP 請求自動重定向到 HTTPS（301/302）</li>
+      <li>使用 HSTS（HTTP Strict Transport Security）強制使用 HTTPS</li>
+    </ul>
+
+    <h3>Q5: 憑證過期會怎樣？</h3>
+    <p>
+      <strong>A:</strong>
+      瀏覽器會顯示安全警告，拒絕建立連線（除非使用者手動忽略警告）。網站管理員需要在憑證過期前更新憑證。
+    </p>
+
+    <h3>Q6: TLS 1.3 相比 TLS 1.2 有什麼改進？</h3>
+    <p><strong>A:</strong></p>
+    <ul>
+      <li><strong>更快：</strong>握手時間減少（1-RTT，甚至 0-RTT）</li>
+      <li><strong>更安全：</strong>移除了不安全的加密算法</li>
+      <li><strong>更簡潔：</strong>簡化了握手流程</li>
+      <li><strong>強制 PFS：</strong>Perfect Forward Secrecy 成為必需</li>
+    </ul>
+
+    <hr />
+
+    <h2>9. 學習重點回顧</h2>
+
+    <h3>9.1 必須理解的核心概念</h3>
+    <ol>
+      <li>
+        <strong>HTTP 是無狀態協定：</strong>每次請求獨立，需要
+        Cookie/Session/Token 維持狀態
+      </li>
+      <li><strong>HTTPS = HTTP + TLS：</strong>在 HTTP 基礎上加入加密層</li>
+      <li><strong>公鑰加密，私鑰解密：</strong>用於安全傳輸（機密性）</li>
+      <li><strong>私鑰簽名,公鑰驗證：</strong>用於身份驗證（完整性與身份）</li>
+      <li>
+        <strong>混合加密策略：</strong>非對稱加密交換金鑰 + 對稱加密傳輸數據
+      </li>
+      <li><strong>CA 是信任的基礎：</strong>提供第三方擔保</li>
+      <li><strong>數位簽章確保完整性：</strong>透過雜湊值比對</li>
+      <li><strong>TLS 握手分兩步：</strong>先驗證身份，再建立加密通道</li>
+    </ol>
+
+    <h3>9.2 關鍵流程記憶口訣</h3>
+    <p><strong>HTTPS 連線流程：</strong></p>
+    <pre>
+    申請 → 驗證 → 簽發 → 傳送 → 檢查 → 交換 → 加密
+(Server申請憑證 → CA驗證 → CA簽發 → Server傳憑證 → Client檢查 → 交換Session Key → 加密通訊)
+</pre
+    >
+    <p><strong>數位簽章驗證：</strong></p>
+    <pre>
+    解簽章 → 算雜湊 → 比對值 → 確認真
+(用公鑰解開簽章 → 自己計算雜湊 → 比對兩個雜湊值 → 確認完整性)
+</pre
+    >
+    <hr />
+
+    <footer>
+      <p><strong>最後更新：</strong>2025年11月</p>
+      <p>
+        <strong>注意：</strong
+        >網路安全技術持續演進，建議定期查閱最新的安全標準和最佳實踐。
+      </p>
+    </footer>
+  </body>
+</html>
